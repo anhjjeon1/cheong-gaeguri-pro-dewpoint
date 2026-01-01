@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>청개구리 결로진단 AI (PRO용)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* [전문가용 컬러 팔레트] */
+            --primary-dark: #1a237e;       /* 깊은 네이비 (신뢰) */
+            --primary-main: #283593;       /* 메인 블루 */
+            --accent-color: #00bcd4;       /* 테크니컬 시안 (강조) */
+            --bg-color: #f4f6f8;           /* 차분한 그레이 배경 */
+            --card-bg: #ffffff;            /* 깨끗한 화이트 카드 */
+            --text-primary: #2c3e50;       /* 진한 본문 텍스트 */
+            --text-secondary: #546e7a;     /* 보조 텍스트 */
+            --border-color: #cfd8dc;       /* 은은한 테두리 */
+            --success-green: #2e7d32;      /* 성공/완료 색상 */
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08); /* 고급스러운 그림자 */
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            border-radius: 24px; /* 더 부드러운 곡선 */
+            margin: 20px;
+            position: relative;
+        }
+
+        /* [헤더] 그라데이션 적용으로 고급스러움 강조 */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
+            color: white;
+            padding: 1.5rem 1.2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .main-header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .main-header h1 i {
+            margin-right: 8px;
+            color: var(--accent-color); /* 아이콘 포인트 컬러 */
+        }
+
+        .version-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .version-badge {
+            background-color: rgba(255, 255, 255, 0.2); /* 반투명 배경 */
+            backdrop-filter: blur(4px);
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .content {
+            padding: 24px;
+            background-color: #fff;
+        }
+
+        /* [섹션] 카드 형태 디자인 */
+        .section {
+            background-color: #fff;
+            padding: 0;
+            margin-bottom: 30px;
+            border: none;
+        }
+
+        .section-title {
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1.05rem;
+            border-bottom: 2px solid #eceff1;
+            padding-bottom: 8px;
+        }
+
+        .section-title i { 
+            margin-right: 8px; 
+            color: var(--primary-main);
+        }
+
+        .input-group { margin-bottom: 16px; }
+        
+        .input-label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            color: var(--text-secondary); 
+            font-size: 0.9rem;
+        }
+
+        /* [입력폼] 모던한 스타일 */
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            font-size: 1rem;
+            box-sizing: border-box; 
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-main);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(40, 53, 147, 0.1);
+        }
+
+        textarea { resize: none; height: 100px; }
+
+        .row-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* [체크박스] 버튼형 디자인으로 변경 */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .checkbox-label:hover { background-color: #e8eaf6; }
+        .checkbox-label input { margin-right: 10px; accent-color: var(--primary-main); transform: scale(1.1); }
+
+        /* [사진 업로드] 프로페셔널한 느낌 */
+        .photo-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .upload-box {
+            border: 2px dashed #b0bec5;
+            background-color: #fcfcfc;
+            border-radius: 16px;
+            width: 100%;
+            height: auto; 
+            aspect-ratio: 4 / 3; 
+            text-align: center;
+            color: #78909c;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-box:hover { 
+            border-color: var(--primary-main); 
+            background-color: #e8eaf6; 
+            color: var(--primary-main);
+        }
+
+        .upload-icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.7; }
+        .upload-text-main { font-size: 1rem; font-weight: 700; }
+        .upload-text-sub { font-size: 0.85rem; font-weight: 400; opacity: 0.8; }
+
+        .file-input { display: none; }
+
+        /* [버튼] 그라데이션 및 입체감 */
+        .analyze-btn {
+            width: 100%; 
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary-main), var(--primary-dark));
+            color: white;
+            border: none; 
+            border-radius: 16px;
+            font-size: 1.2rem; 
+            font-weight: 800;
+            cursor: pointer;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(26, 35, 126, 0.3);
+            margin-top: 30px;
+            transition: transform 0.2s;
+        }
+        
+        .analyze-btn:active { transform: scale(0.98); }
+        .analyze-btn i { margin-right: 10px; }
+
+        /* [결과 영역] */
+        #result-area {
+            margin-top: 24px; 
+            padding: 24px;
+            background-color: #f1f8e9; /* 아주 연한 그린 틴트 */
+            border-radius: 16px; 
+            border: 1px solid #c5e1a5;
+            min-height: 120px;
+        }
+        
+        #result-area .section-title {
+            color: #33691e;
+            border-bottom-color: #dcedc8;
+        }
+
+        .footer-btns { display: flex; gap: 12px; margin-top: 30px; }
+        .footer-btn {
+            flex: 1; padding: 14px; border: none; border-radius: 12px;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .call-btn { background-color: var(--accent-color); color: white; }
+        .save-btn { background-color: #37474f; }
+        
+        .main-footer {
+            background-color: #eceff1;
+            color: #90a4ae;
+            padding: 15px; /* 패딩 축소 */
+            text-align: center;
+            font-size: 0.65rem; /* 글자 크기 축소 (2줄 유지용) */
+            border-top: 1px solid #cfd8dc;
+            line-height: 1.5; /* 줄간격 조정 */
+            font-weight: 400;
+            white-space: nowrap; /* 자동 줄바꿈 방지하고 <br>로 제어 */
+        }
+        
+        /* 모바일 화면에서 너무 작아지면 줄바꿈 허용 */
+        @media (max-width: 360px) {
+            .main-footer {
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="mobile-container">
+    <header class="main-header">
+        <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI (PRO)</h1>
+        <div class="version-wrapper">
+            <span class="version-badge">Ver 2.3</span>
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="section">
+            <div class="row-group">
+                <div class="input-group">
+                    <label class="input-label" for="location">진단 장소</label>
+                    <input type="text" id="location" placeholder="예: 거실 창호">
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="date">진단 일자</label>
+                    <input type="text" id="date" value="2026. 1. 2." readonly style="text-align:center; color:#546e7a;">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="defect-content">하자 내용 상세</label>
+                <textarea id="defect-content" placeholder="발생 위치 및 증상을 상세히 입력해주세요."></textarea>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title"><i class="fas fa-thermometer-half"></i> 환경 데이터 (Environment)</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="input-group">
+                    <label class="input-label">실내온도 (°C)</label>
+                    <input type="number" placeholder="측정값">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">실내습도 (%)</label>
+                    <input type="number" placeholder="측정값">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">실외온도 (°C)</label>
+                    <input type="text" value="-10.6" readonly style="background-color: #eceff1;">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">실외습도 (%)</label>
+                    <input type="text" value="46" readonly style="background-color: #eceff1;">
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title"><i class="fas fa-crosshairs"></i> 발생 부위 체크</div>
+            <div class="checkbox-grid">
+                <label class="checkbox-label"><input type="checkbox"> 베란다</label>
+                <label class="checkbox-label"><input type="checkbox"> 창호주변</label>
+                <label class="checkbox-label"><input type="checkbox"> 벽 모서리</label>
+                <label class="checkbox-label"><input type="checkbox"> 커튼박스</label>
+                <label class="checkbox-label"><input type="checkbox"> 가구 뒤</label>
+                <label class="checkbox-label"><input type="checkbox"> 천장/기타</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title"><i class="fas fa-camera"></i> 현장 사진 (Evidence)</div>
+            
+            <div class="photo-stack">
+                <div>
+                    <label class="input-label" style="margin-bottom:8px;">1. 결로/곰팡이 메인 (필수)</label>
+                    <label for="img1-main" class="upload-box">
+                        <i class="fas fa-camera upload-icon"></i>
+                        <span class="upload-text-main">메인 사진 촬영/업로드</span>
+                        <span class="upload-text-sub">전체적인 모습이 나오게 찍어주세요</span>
+                    </label>
+                    <input type="file" id="img1-main" class="file-input" accept="image/*">
+                </div>
+                <div>
+                    <label class="input-label" style="margin-bottom:8px;">2. 근접 상세 사진 (필수)</label>
+                    <label for="img1-sub1" class="upload-box">
+                        <i class="fas fa-search-plus upload-icon"></i>
+                        <span class="upload-text-main">상세 부위 추가</span>
+                        <span class="upload-text-sub">문제 부위를 가까이서 찍어주세요</span>
+                    </label>
+                    <input type="file" id="img1-sub1" class="file-input" accept="image/*">
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title"><i class="fas fa-tools"></i> 전문 장비 데이터 (Optional)</div>
+            
+            <div class="photo-stack">
+                 <div>
+                    <label class="input-label">FLIR MR 277 측정</label>
+                    <label for="img2" class="upload-box">
+                        <i class="fas fa-ruler-combined upload-icon"></i>
+                        <span class="upload-text-main">수분계/습도계 데이터</span>
+                    </label>
+                    <input type="file" id="img2" class="file-input" accept="image/*">
+                </div>
+
+                 <div>
+                    <label class="input-label" style="color:#d84315;">열화상 카메라 측정</label>
+                    <label for="img3" class="upload-box" style="border-color: #ffccbc; background-color: #fffbe6;">
+                        <i class="fas fa-temperature-high upload-icon" style="color: #ff7043;"></i>
+                        <span class="upload-text-main" style="color: #bf360c;">열화상 이미지 업로드</span>
+                    </label>
+                    <input type="file" id="img3" class="file-input" accept="image/*">
+                </div>
+            </div>
+        </div>
+
+        <button class="analyze-btn">
+            <i class="fas fa-microchip"></i> Premium AI 정밀 분석
+        </button>
+
+        <div id="result-area">
+            <div class="section-title"><i class="fas fa-file-medical-alt"></i> 분석 리포트</div>
+            <p style="color: #558b2f; font-weight:500;">데이터 입력 후 분석 버튼을 눌러주세요.</p>
+        </div>
+
+        <div class="footer-btns">
+            <button class="footer-btn call-btn"><i class="fas fa-headset"></i> 기술지원 문의</button>
+            <button class="footer-btn save-btn"><i class="fas fa-file-download"></i> 리포트 저장</button>
+        </div>
+    </div> 
+    
+    <footer class="main-footer">
+        청개구리샤시 | 사업자등록번호 : 123-36-31426 | 대표 : 전영웅<br>
+        전화 1599-7380 | COPYRIGHT ⓒ 2026 Cheong-gaeguri Corp. All Rights Reserved.
+    </footer>
+
+</div>
+
+</body>
+</html>
