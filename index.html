@@ -6,8 +6,10 @@
     <title>청개구리 결로진단 AI (PRO)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
     <style>
         :root {
@@ -76,7 +78,7 @@
         }
 
         .version-badge {
-            background-color: #d50000; /* 강렬한 레드 (전문가용) */
+            background-color: #2962ff; /* 파이널 블루 */
             color: #fff;
             padding: 2px 10px;
             border-radius: 20px;
@@ -239,10 +241,10 @@
         
         #result-area .section-title { color: #33691e; border-bottom-color: #dcedc8; }
 
-        /* [차트 영역 스타일] */
+        /* 차트 영역 */
         .chart-container {
             position: relative; 
-            height: 250px; 
+            height: 300px; /* 차트 높이 조금 키움 */
             width: 100%; 
             margin-top: 20px;
             display: flex;
@@ -286,7 +288,7 @@
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI (PRO)</h1>
         <div class="version-wrapper">
-            <span class="version-badge">Ver 4.0 (Chart)</span>
+            <span class="version-badge">Ver 4.1 (Final Report)</span>
         </div>
     </header>
 
@@ -300,7 +302,7 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label" for="date">진단 일자</label>
-                    <input type="text" id="date" value="2026. 1. 2." readonly style="text-align:center; color:#546e7a;">
+                    <input type="text" id="date" value="2026. 1. 2." style="text-align:center; color:#546e7a;">
                 </div>
             </div>
 
@@ -425,7 +427,7 @@
                     <canvas id="causeChart"></canvas>
                 </div>
                 <p style="text-align:center; font-size:0.85rem; color:#666; margin-top:10px;">
-                    * AI가 분석한 원인별 기여도입니다. (단순 참고용)
+                    * AI가 정밀 진단한 원인별 기여도 (%) 입니다.
                 </p>
             </div>
         </div>
@@ -448,11 +450,13 @@
 </div>
 
 <script>
+    // 1. 보안키 설정
     const keyPart1 = "AIzaSyCGtANQJNBEGSh";
     const keyPart2 = "9zCrTXMEnR-";
     const keyPart3 = "PHxLlXtkw";
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
+    // 2. 이슬점 계산
     function calcDewPoint() {
         const temp = parseFloat(document.getElementById('temp-in').value);
         const humid = parseFloat(document.getElementById('humid-in').value);
@@ -467,13 +471,8 @@
         }
     }
 
-    // 이미지 데이터 저장소
-    let images = {
-        main: null,
-        sub: null,
-        equip: null,
-        thermal: null
-    };
+    // 3. 이미지 프리뷰
+    let images = { main: null, sub: null, equip: null, thermal: null };
 
     function previewImage(input, imgId, boxId, type) {
         if (input.files && input.files[0]) {
@@ -484,8 +483,6 @@
                 img.style.display = 'block';
                 const box = document.getElementById(boxId);
                 box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
-                
-                // 해당 타입의 이미지 데이터 저장 (Base64)
                 images[type] = e.target.result.split(',')[1];
             }
             reader.readAsDataURL(input.files[0]);
@@ -493,7 +490,11 @@
     }
 
     let myChart = null;
+    
+    // [차트 플러그인 등록]
+    Chart.register(ChartDataLabels);
 
+    // 4. AI 분석 시작
     async function startAnalysis() {
         const resultArea = document.getElementById('result-area');
         const loading = document.getElementById('loading-spinner');
@@ -501,22 +502,28 @@
         const content = document.getElementById('analysis-content');
         const chartSection = document.getElementById('chart-section');
         
+        // [중요] 사용자가 입력한 진단 날짜 가져오기
+        const userDate = document.getElementById('date').value;
+
         resultArea.style.display = 'block';
         loading.style.display = 'block';
         content.style.display = 'none';
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
-        // 최소한 메인 사진은 있어야 함
         if(!images.main) {
             alert("정밀 분석을 위해 '메인 사진'은 필수입니다.");
             loading.style.display = 'none';
             return;
         }
 
-        // [프롬프트] 전문가 페르소나 및 정밀 분석 요청
+        // [프롬프트] 날짜 정보와 정밀 분석 요청 포함
         const prompt = `
             당신은 20년 경력의 '건축물 결로 및 단열 진단 전문가(청개구리 박사)'입니다.
+            
+            [진단 정보]
+            - 진단 일자: ${userDate} (이 날짜를 리포트 상단에 명시하세요)
+
             사용자는 결로 현장 사진, FLIR MR277 계측기 화면(VAP, MIX 데이터), 열화상 이미지를 업로드했습니다.
             이 데이터를 종합 분석하여 **결로의 원인이 '거주자 관리 소홀(환기 부족)'인지 '시공상 하자(단열 불량)'인지** 명확히 판단해야 합니다.
 
@@ -543,7 +550,6 @@
             ___JSON_END___
         `;
 
-        // 이미지 데이터 패킹 (있는 것만 보냄)
         let parts = [{ text: prompt }];
         if(images.main) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.main } });
         if(images.sub) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.sub } });
@@ -570,12 +576,10 @@
                     if (data.candidates && data.candidates.length > 0) {
                         let aiText = data.candidates[0].content.parts[0].text;
                         
-                        // JSON 데이터 추출
                         const jsonMatch = aiText.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
                         if(jsonMatch) {
                             try {
                                 finalJson = JSON.parse(jsonMatch[1]);
-                                // 리포트에서 JSON 부분은 숨김
                                 aiText = aiText.replace(jsonMatch[0], ""); 
                             } catch(e) { console.error("JSON 파싱 오류", e); }
                         }
@@ -593,7 +597,6 @@
         content.style.display = 'block';
 
         if (success && finalJson) {
-            // 차트 그리기
             chartSection.style.display = 'block';
             drawChart(finalJson);
         } else if (!success) {
@@ -601,24 +604,18 @@
         }
     }
 
-    // Chart.js 그래프 그리기 함수
+    // 5. 차트 그리기 (숫자 표시 기능 추가)
     function drawChart(data) {
         const ctx = document.getElementById('causeChart').getContext('2d');
-        
-        // 기존 차트가 있으면 삭제 (중복 방지)
         if(myChart) myChart.destroy();
 
         myChart = new Chart(ctx, {
-            type: 'doughnut', // 도넛형 차트
+            type: 'doughnut',
             data: {
-                labels: ['환기 부족 (관리 소홀)', '단열/시공 불량 (하자)', '문제 없음 (정상)'],
+                labels: ['환기 부족', '단열 불량', '정상'],
                 datasets: [{
                     data: [data.ventilation, data.insulation, data.normal],
-                    backgroundColor: [
-                        '#FF9800', // 환기 (주황)
-                        '#D32F2F', // 단열 (빨강)
-                        '#4CAF50'  // 정상 (초록)
-                    ],
+                    backgroundColor: ['#FF9800', '#D32F2F', '#4CAF50'],
                     borderWidth: 1
                 }]
             },
@@ -627,10 +624,16 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'bottom' },
-                    title: {
-                        display: true,
-                        text: '결로 원인 분석 결과 (%)',
-                        font: { size: 16 }
+                    // [핵심] 차트 위에 숫자 표시
+                    datalabels: {
+                        color: '#fff',
+                        font: { weight: 'bold', size: 14 },
+                        formatter: (value) => {
+                            if(value > 0) return value + '%';
+                            else return '';
+                        },
+                        textShadowBlur: 4,
+                        textShadowColor: '#000'
                     }
                 }
             }
