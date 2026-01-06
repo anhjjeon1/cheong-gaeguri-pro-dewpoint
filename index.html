@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>결로진단 AI앱 (PRO)</title>
+    <title>결로진단 AI앱 (PRO + UltraSonic)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -13,15 +13,16 @@
 
     <style>
         :root {
-            --primary-dark: #1a237e;       
-            --primary-main: #283593;       
-            --accent-color: #00bcd4;       
-            --bg-color: #f4f6f8;           
-            --card-bg: #ffffff;            
-            --text-primary: #2c3e50;       
-            --text-secondary: #546e7a;     
-            --border-color: #cfd8dc;       
-            --success-green: #2e7d32;      
+            --primary-dark: #1a237e;        
+            --primary-main: #283593;        
+            --accent-color: #00bcd4;        
+            --bg-color: #f4f6f8;            
+            --card-bg: #ffffff;             
+            --text-primary: #2c3e50;        
+            --text-secondary: #546e7a;      
+            --border-color: #cfd8dc;        
+            --success-green: #2e7d32;       
+            --sonic-purple: #6200ea; /* 초음파 전용 컬러 */
             --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
@@ -78,7 +79,7 @@
         }
 
         .version-badge {
-            background-color: #2962ff; /* 파이널 블루 */
+            background-color: var(--sonic-purple);
             color: #fff;
             padding: 2px 10px;
             border-radius: 20px;
@@ -244,7 +245,7 @@
         /* 차트 영역 */
         .chart-container {
             position: relative; 
-            height: 300px; /* 차트 높이 조금 키움 */
+            height: 300px; 
             width: 100%; 
             margin-top: 20px;
             display: flex;
@@ -288,7 +289,7 @@
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI (PRO)</h1>
         <div class="version-wrapper">
-            <span class="version-badge">Ver 4.1 (Final Report)</span>
+            <span class="version-badge">Ver 5.0 (Ultrasonic Edit)</span>
         </div>
     </header>
 
@@ -382,7 +383,7 @@
         </div>
 
         <div class="section">
-            <div class="section-title"><i class="fas fa-tools"></i> 3. 전문 장비 데이터 (Optional)</div>
+            <div class="section-title"><i class="fas fa-tools"></i> 3. 전문 장비 데이터 (Advanced)</div>
             
             <div class="photo-stack">
                  <div>
@@ -404,6 +405,20 @@
                     </label>
                     <input type="file" id="img3" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-4', 'preview-box-4', 'thermal')">
                 </div>
+
+                <div>
+                    <label class="input-label" style="color: var(--sonic-purple);">초음파 음향 카메라 + 송신기 (누설분석)</label>
+                    <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">
+                        * FLIR Si1-LD (Si124-LD) & UD-40 (40kHz 송신기)
+                    </div>
+                    <label for="img4" class="upload-box" id="preview-box-5" style="border-color: #b388ff; background-color: #f3e5f5;">
+                        <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i>
+                        <span class="upload-text-main" style="color: var(--sonic-purple);">초음파 진단사진 업로드</span>
+                        <span class="upload-text-sub" style="color: #673ab7;">기밀 불량(누기) 부위 시각화 데이터</span>
+                        <img id="preview-5" class="preview-img">
+                    </label>
+                    <input type="file" id="img4" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-5', 'preview-box-5', 'acoustic')">
+                </div>
             </div>
         </div>
 
@@ -415,7 +430,7 @@
             <div class="section-title"><i class="fas fa-file-medical-alt"></i> 분석 리포트</div>
             <div id="loading-spinner" style="text-align:center; padding:20px; display:none;">
                 <i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--primary-main);"></i>
-                <p id="loading-text" style="margin-top:10px;">FLIR 데이터 및 열화상 패턴 분석 중...</p>
+                <p id="loading-text" style="margin-top:10px;">FLIR 열화상 및 초음파 누기 패턴 분석 중...</p>
             </div>
             <div id="analysis-content">
                 <p style="color: #558b2f; font-weight:500;">데이터 입력 후 분석 버튼을 눌러주세요.</p>
@@ -471,8 +486,8 @@
         }
     }
 
-    // 3. 이미지 프리뷰
-    let images = { main: null, sub: null, equip: null, thermal: null };
+    // 3. 이미지 프리뷰 (acoustic 추가)
+    let images = { main: null, sub: null, equip: null, thermal: null, acoustic: null };
 
     function previewImage(input, imgId, boxId, type) {
         if (input.files && input.files[0]) {
@@ -502,7 +517,6 @@
         const content = document.getElementById('analysis-content');
         const chartSection = document.getElementById('chart-section');
         
-        // [중요] 사용자가 입력한 진단 날짜 가져오기
         const userDate = document.getElementById('date').value;
 
         resultArea.style.display = 'block';
@@ -517,36 +531,40 @@
             return;
         }
 
-        // [프롬프트] 날짜 정보와 정밀 분석 요청 포함
+        // [프롬프트] 초음파 음향 카메라 분석 로직 추가
         const prompt = `
-            당신은 20년 경력의 '건축물 결로 및 단열 진단 전문가(청개구리 박사)'입니다.
+            당신은 20년 경력의 '건축물 결로, 단열, 기밀 진단 전문가(청개구리 박사)'입니다.
             
             [진단 정보]
             - 진단 일자: ${userDate} (이 날짜를 리포트 상단에 명시하세요)
 
-            사용자는 결로 현장 사진, FLIR MR277 계측기 화면(VAP, MIX 데이터), 열화상 이미지를 업로드했습니다.
-            이 데이터를 종합 분석하여 **결로의 원인이 '거주자 관리 소홀(환기 부족)'인지 '시공상 하자(단열 불량)'인지** 명확히 판단해야 합니다.
+            사용자는 결로 현장 사진, FLIR MR277 계측 데이터, 열화상 이미지, 그리고 **초음파 음향 카메라(FLIR Si1-LD / Si124-LD) 진단 사진**을 업로드했습니다.
+            이 데이터를 종합 분석하여 결로의 원인을 규명하세요.
 
             [분석 지침]
-            1. **FLIR MR277 데이터 분석**:
-               - 사진 속 계측기 화면에 보이는 **Mix(혼합비, g/kg)**와 **VAP(수증기압, kPa)** 수치를 읽으세요.
-               - Mix 수치가 높다면(예: 10g/kg 이상) 실내 절대 습도가 높은 것이므로 **환기 부족** 가능성이 높습니다.
-               - Mix 수치가 정상인데 표면 온도가 낮다면 **단열 불량**입니다.
-            2. **열화상 이미지 분석**:
-               - **열교(Thermal Bridge)** 현상(주변보다 현저히 차가운 색상 패턴)이 있는지 확인하세요.
-               - 모서리나 창틀 주변에 뚜렷한 냉기 패턴이 있다면 **단열/시공 불량**입니다.
-            3. **결과 판정**:
-               - 위 데이터를 근거로 **환기 부족 vs 단열 불량 vs 정상**의 비중(%)을 판단하세요.
+            1. **초음파 음향 카메라(Si1-LD) 분석 (가장 중요)**:
+               - 이 사진은 UD-40 초음파 송신기(40kHz)를 내부에 설치하고 외부에서 촬영하거나, 그 반대로 **기밀 불량(누기)**을 탐지한 것입니다.
+               - 이미지에 표시된 **음원(Sound Source) 시각화 패턴(컬러 스팟)**은 **틈새 바람(Air Leak)**이 발생하는 지점입니다.
+               - 초음파가 누설된다는 것은 공기도 통한다는 뜻이며, 이는 겨울철 냉기 유입의 결정적 원인(시공 불량)입니다.
+               - 화면의 dB(데시벨) 수치나 주파수 패턴이 보이면 언급하세요.
+
+            2. **FLIR MR277 & 열화상 분석**:
+               - 계측기: Mix(절대습도), VAP(수증기압)을 읽어 환기 부족 여부를 판단하세요.
+               - 열화상: 열교(Thermal Bridge)로 인한 표면 온도 저하를 확인하세요.
+
+            3. **결과 판정 및 솔루션**:
+               - **초음파로 누기(틈새)가 확인되면 '단열/시공 불량' 비중을 매우 높게(최소 60% 이상) 책정하세요.**
+               - 해결책으로: 가스켓(Gasket) 교체, 풍지판 설치, 창호 밸런스 조정, 우레탄 폼 코킹 보수 등을 제안하세요.
 
             [출력 형식]
-            1. 전문적인 진단 리포트를 작성하세요 (마크다운 형식). VAP, MIX 수치를 언급하며 논리적으로 설명하세요.
-            2. 리포트 맨 마지막 줄에 반드시 아래 **JSON 형식**으로 비중을 출력하세요. (차트 그리기용)
+            1. 전문적인 진단 리포트를 작성하세요 (마크다운). 특히 초음파 진단 결과(기밀성)를 강조하세요.
+            2. 리포트 맨 마지막 줄에 반드시 아래 **JSON 형식**으로 비중을 출력하세요.
             
             Example Output:
             ... (리포트 내용) ...
             
             ___JSON_START___
-            {"ventilation": 30, "insulation": 70, "normal": 0}
+            {"ventilation": 20, "insulation": 80, "normal": 0}
             ___JSON_END___
         `;
 
@@ -555,6 +573,8 @@
         if(images.sub) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.sub } });
         if(images.equip) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.equip } });
         if(images.thermal) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.thermal } });
+        // [NEW] 초음파 이미지 추가
+        if(images.acoustic) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.acoustic } });
 
         const models = ["gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-1.5-flash"];
         let success = false;
@@ -604,7 +624,7 @@
         }
     }
 
-    // 5. 차트 그리기 (숫자 표시 기능 추가)
+    // 5. 차트 그리기
     function drawChart(data) {
         const ctx = document.getElementById('causeChart').getContext('2d');
         if(myChart) myChart.destroy();
@@ -612,7 +632,7 @@
         myChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['환기 부족', '단열 불량', '정상'],
+                labels: ['환기 부족 (생활습관)', '단열/기밀 불량 (시공하자)', '정상 범위'],
                 datasets: [{
                     data: [data.ventilation, data.insulation, data.normal],
                     backgroundColor: ['#FF9800', '#D32F2F', '#4CAF50'],
@@ -624,7 +644,6 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'bottom' },
-                    // [핵심] 차트 위에 숫자 표시
                     datalabels: {
                         color: '#fff',
                         font: { weight: 'bold', size: 14 },
@@ -643,4 +662,3 @@
 
 </body>
 </html>
-
