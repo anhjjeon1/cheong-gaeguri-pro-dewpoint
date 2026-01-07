@@ -140,13 +140,13 @@
             display: none; 
         }
 
-        /* 3D 차트 컨테이너 (수정됨: 높이 증가 및 페이지 넘김 방지) */
+        /* 3D 차트 컨테이너 (높이 증가 및 페이지 넘김 방지) */
         .chart-container {
             position: relative; 
-            height: 400px; /* 기존 350px에서 증가 */
+            height: 400px; 
             width: 100%; 
             margin-top: 20px;
-            page-break-inside: avoid; /* 인쇄 시 잘림 방지 */
+            page-break-inside: avoid;
         }
 
         .footer-btns { display: flex; gap: 12px; margin-top: 30px; }
@@ -190,7 +190,7 @@
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
         <div style="overflow:hidden;">
-            <span class="version-badge">Ver 5.2 (Weather Linked)</span>
+            <span class="version-badge">Ver 5.3 (Auto Weather)</span>
         </div>
     </header>
 
@@ -354,48 +354,49 @@
     const keyPart3 = "PHxLlXtkw";
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // [추가됨] 2-1. 날씨 정보 가져오기 (OpenWeatherMap)
+    // [수정됨] 2-1. 날씨 정보 가져오기 (Open-Meteo: 키 필요 없음)
     function fetchWeather() {
         const tempOut = document.getElementById('temp-out');
         const humidOut = document.getElementById('humid-out');
         
-        // [중요] 이곳에 OpenWeatherMap API 키를 입력하세요. 키가 없으면 작동하지 않습니다.
-        // 테스트용 무료 키를 발급받아 'YOUR_API_KEY' 자리에 넣으세요.
-        const WEATHER_API_KEY = "YOUR_OPENWEATHER_API_KEY"; 
-
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 
-                // API 키가 없으면 함수 종료 (수동 입력 가능하도록 유지)
-                if(WEATHER_API_KEY === "YOUR_OPENWEATHER_API_KEY") {
-                    tempOut.placeholder = "API키 필요";
-                    humidOut.placeholder = "직접 입력";
-                    return;
-                }
-
                 try {
-                    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`;
+                    // Open-Meteo 무료 API 사용 (키 불필요)
+                    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m&timezone=auto`;
+                    
                     const response = await fetch(url);
                     if(response.ok) {
                         const data = await response.json();
-                        tempOut.value = data.main.temp.toFixed(1);
-                        humidOut.value = data.main.humidity;
-                        tempOut.style.backgroundColor = "#e8eaf6"; // 값이 들어오면 색상 변경 효과
+                        // 데이터 파싱
+                        const current = data.current;
+                        
+                        tempOut.value = current.temperature_2m.toFixed(1);
+                        humidOut.value = current.relative_humidity_2m;
+                        
+                        // 입력 완료 시각적 효과
+                        tempOut.style.backgroundColor = "#e8eaf6"; 
                         humidOut.style.backgroundColor = "#e8eaf6";
+                        tempOut.style.color = "#1a237e";
+                        humidOut.style.color = "#1a237e";
+                        tempOut.style.fontWeight = "bold";
+                        humidOut.style.fontWeight = "bold";
                     } else {
-                        throw new Error("날씨 정보 수신 실패");
+                        throw new Error("날씨 서버 응답 없음");
                     }
                 } catch (e) {
                     console.error(e);
-                    tempOut.placeholder = "직접 입력";
-                    humidOut.placeholder = "직접 입력";
+                    tempOut.placeholder = "직접 입력 필요";
+                    humidOut.placeholder = "직접 입력 필요";
                 }
             }, (error) => {
-                console.error("위치 정보 권한 거부됨", error);
-                tempOut.placeholder = "권한 필요";
+                console.error("위치 권한 에러", error);
+                tempOut.placeholder = "위치 권한 필요";
                 humidOut.placeholder = "직접 입력";
+                alert("위치 정보 권한을 허용해야 실외 날씨를 자동으로 가져올 수 있습니다.");
             });
         } else {
             alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
