@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>결로진단 AI앱 (PRO + UltraSonic)</title>
+    <title>결로진단 AI앱 (PRO)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -49,7 +49,6 @@
             position: relative;
         }
 
-        /* 헤더 스타일 */
         .main-header {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
             color: white;
@@ -110,7 +109,6 @@
         textarea { resize: none; height: 100px; }
         .row-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
-        /* 사진 업로드 박스 스타일 */
         .photo-stack { display: flex; flex-direction: column; gap: 16px; }
         .upload-box {
             border: 2px dashed #b0bec5;
@@ -140,7 +138,6 @@
             display: none; 
         }
 
-        /* 3D 차트 컨테이너 (높이 증가 및 페이지 넘김 방지) */
         .chart-container {
             position: relative; 
             height: 400px; 
@@ -163,23 +160,15 @@
             padding: 15px; text-align: center; font-size: 0.65rem; border-top: 1px solid #cfd8dc;
         }
 
-        /* [중요] 인쇄/저장 시 스타일 */
         @media print {
             body { background: white; padding: 0; }
             .mobile-container { max-width: 100%; width: 100%; box-shadow: none; margin: 0; border-radius: 0; }
             .analyze-btn, .footer-btns, .file-input { display: none !important; }
-            
-            /* 업로드 박스: 이미지가 있으면 테두리 없애고 이미지만 출력 */
             .upload-box { border: none !important; background: none !important; height: auto !important; aspect-ratio: auto !important; }
             .upload-box img.preview-img[src] { display: block !important; max-height: 400px; width: auto; margin: 0 auto; }
             .upload-box i, .upload-box span { display: none !important; } 
-            
-            /* 이미지가 없는 박스는 아예 숨김 */
             .photo-stack > div { page-break-inside: avoid; }
-            
             #result-area { display: block !important; border: 1px solid #ddd; background: #fff !important; }
-            
-            /* 차트 강제 표시 및 높이 확보 */
             #chart_div { width: 100% !important; height: 400px !important; page-break-inside: avoid; }
         }
     </style>
@@ -190,7 +179,7 @@
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
         <div style="overflow:hidden;">
-            <span class="version-badge">Ver 5.3 (Auto Weather)</span>
+            <span class="version-badge">Ver 5.4 (Expert Logic)</span>
         </div>
     </header>
 
@@ -286,8 +275,8 @@
                     <input type="file" id="img3" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-4', 'box-4', 'thermal')">
                 </div>
                 <div>
-                    <label class="input-label" style="color: var(--sonic-purple);">초음파 음향 카메라 (기밀 분석)</label>
-                    <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">* FLIR Si124-LD + UD-40 송신기</div>
+                    <label class="input-label" style="color: var(--sonic-purple);">FLIR Si1-LD + 초음파 송신기</label>
+                    <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">* 기밀 불량(누기) 시각화 데이터</div>
                     <label for="img4" class="upload-box" id="box-5" style="border-color: #b388ff; background-color: #f3e5f5;">
                         <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i>
                         <span class="upload-text-main" style="color: var(--sonic-purple);">초음파 진단 이미지</span>
@@ -306,7 +295,7 @@
             <div class="section-title"><i class="fas fa-file-medical-alt"></i> 전문 진단 리포트</div>
             <div id="loading-spinner" style="text-align:center; padding:20px; display:none;">
                 <i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--primary-main);"></i>
-                <p id="loading-text" style="margin-top:10px;">데이터 정밀 분석 및 리포트 작성 중...</p>
+                <p id="loading-text" style="margin-top:10px;">VAP/MIX 정밀 분석 및 귀책 사유 산정 중...</p>
             </div>
             
             <div id="analysis-content"></div>
@@ -338,23 +327,19 @@
 </div>
 
 <script>
-    // 0. 구글 차트 로드
     google.charts.load("current", {packages:["corechart"]});
 
-    // 1. 기본 날짜 설정
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const day = today.getDate();
     document.getElementById('date').value = `${year}. ${month}. ${day}.`;
 
-    // 2. 보안키 설정 (AI 키)
     const keyPart1 = "AIzaSyCGtANQJNBEGSh";
     const keyPart2 = "9zCrTXMEnR-";
     const keyPart3 = "PHxLlXtkw";
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // [수정됨] 2-1. 날씨 정보 가져오기 (Open-Meteo: 키 필요 없음)
     function fetchWeather() {
         const tempOut = document.getElementById('temp-out');
         const humidOut = document.getElementById('humid-out');
@@ -363,52 +348,29 @@
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
-                
                 try {
-                    // Open-Meteo 무료 API 사용 (키 불필요)
                     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m&timezone=auto`;
-                    
                     const response = await fetch(url);
                     if(response.ok) {
                         const data = await response.json();
-                        // 데이터 파싱
                         const current = data.current;
-                        
                         tempOut.value = current.temperature_2m.toFixed(1);
                         humidOut.value = current.relative_humidity_2m;
                         
-                        // 입력 완료 시각적 효과
                         tempOut.style.backgroundColor = "#e8eaf6"; 
                         humidOut.style.backgroundColor = "#e8eaf6";
                         tempOut.style.color = "#1a237e";
                         humidOut.style.color = "#1a237e";
                         tempOut.style.fontWeight = "bold";
                         humidOut.style.fontWeight = "bold";
-                    } else {
-                        throw new Error("날씨 서버 응답 없음");
                     }
-                } catch (e) {
-                    console.error(e);
-                    tempOut.placeholder = "직접 입력 필요";
-                    humidOut.placeholder = "직접 입력 필요";
-                }
-            }, (error) => {
-                console.error("위치 권한 에러", error);
-                tempOut.placeholder = "위치 권한 필요";
-                humidOut.placeholder = "직접 입력";
-                alert("위치 정보 권한을 허용해야 실외 날씨를 자동으로 가져올 수 있습니다.");
-            });
-        } else {
-            alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+                } catch (e) { console.error(e); }
+            }, (error) => { console.error("위치 권한 에러", error); });
         }
     }
     
-    // 페이지 로드 시 날씨 실행
-    window.onload = function() {
-        fetchWeather();
-    };
+    window.onload = function() { fetchWeather(); };
 
-    // 3. 이슬점 계산
     function calcDewPoint() {
         const temp = parseFloat(document.getElementById('temp-in').value);
         const humid = parseFloat(document.getElementById('humid-in').value);
@@ -423,7 +385,6 @@
         }
     }
 
-    // 4. 이미지 프리뷰
     let images = { main: null, sub: null, equip: null, thermal: null, acoustic: null };
 
     function previewImage(input, imgId, boxId, type) {
@@ -433,17 +394,14 @@
                 const img = document.getElementById(imgId);
                 img.src = e.target.result;
                 img.style.display = 'block'; 
-                
                 const box = document.getElementById(boxId);
                 box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
-                
                 images[type] = e.target.result.split(',')[1];
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // 5. AI 분석 시작
     async function startAnalysis() {
         const resultArea = document.getElementById('result-area');
         const loading = document.getElementById('loading-spinner');
@@ -454,7 +412,6 @@
         const location = document.getElementById('location').value || "미지정 장소";
         const defect = document.getElementById('defect-content').value || "상세 내용 없음";
         
-        // 날씨 정보도 프롬프트에 포함
         const tempOutVal = document.getElementById('temp-out').value || "정보 없음";
         const humidOutVal = document.getElementById('humid-out').value || "정보 없음";
 
@@ -482,21 +439,29 @@
             - 진단 전문가: **청개구리샤시**
 
             [2. 분석 데이터 소스]
-            사용자는 결로 사진, FLIR MR277 계측값, 열화상, 초음파 기밀 진단 사진을 제출했습니다.
+            사용자는 결로 사진, FLIR MR277 계측값(VAP/MIX), 열화상, **FLIR Si1-LD + 초음파 송신기** 진단 사진을 제출했습니다.
 
-            [3. 분석 지침 - 초음파 진단 중요]
-            - **초음파 음향 카메라(Si124-LD)** 이미지에 컬러 스팟(음원)이 보이면, 이는 **'기밀 불량(Air Leak)'**을 의미합니다.
-            - 이는 단순 환기 부족이 아니라, 창호나 벽체의 **시공 하자(틈새 바람)**가 주원인임을 강력하게 시사합니다.
+            [3. 정밀 분석 로직 (VAP/MIX 상세 분석 필수)]
+            - **FLIR MR277 데이터 해석:** - 사진 속 계측기 화면의 **MIX(혼합비, g/kg)**와 **VAP(수증기압, kPa)** 수치를 정확히 읽으세요.
+              - **겨울철 적정 기준:** MIX는 **9.0g/kg 미만**, VAP는 **1.2kPa 미만**이 이상적입니다.
+              - **비교 분석:** - 만약 측정된 MIX가 10.0g/kg 이상이라면, "현재 실내 공기 중 절대 수분량이 과도하게 높음(과습)"으로 진단하고, 이는 **환기 부족**이 주원인임을 명시하세요.
+                - 만약 MIX가 8.0g/kg 이하로 낮은데 결로가 생겼다면, 이는 **명백한 단열 불량**입니다.
+              - **개선 방안:** MIX 수치를 낮추기 위한 구체적인 환기법(하루 3회, 10분 이상)이나 제습기 사용을 제안하세요.
 
-            [4. 보고서 작성 톤앤매너]
-            - 문체: 매우 전문적이고 논리적이며, 단호한 어조
-            - 구조: 1. 현장 개요, 2. 데이터 정밀 분석, 3. 종합 소견, 4. 원인 판정
+            - **초음파 음향 카메라(Si1-LD) 분석:**
+              - 컬러 스팟이 보이면 **기밀 불량(Air Leak)**으로 판정하고, 이는 시공 하자(단열/기밀 불량) 비율을 높이는 결정적 증거입니다.
+
+            [4. 귀책 사유 비율 산정 (동적 로직 적용)]
+            - **모든 세대를 70:30으로 하지 말고, MIX 수치에 따라 비율을 조정하세요.**
+            - **Case A (과습):** MIX > 10.5 g/kg 이면 -> **환기 부족 비중을 50%~70%**로 높이세요.
+            - **Case B (건조/정상):** MIX < 9.0 g/kg 이면 -> **단열/기밀 불량 비중을 80%~90%**로 높이세요.
+            - **Case C (초음파 누설 확인):** MIX와 상관없이 **단열/기밀 불량 비중을 +20% 가산**하세요.
 
             [5. 필수 출력 (JSON)]
-            보고서 맨 마지막에 귀책 사유 비율을 JSON으로 출력하세요.
+            보고서 맨 마지막에 귀책 사유 비율을 JSON으로 출력하세요. (위 로직에 따라 계산된 값)
             
             ___JSON_START___
-            {"ventilation": 30, "insulation": 70, "normal": 0}
+            {"ventilation": (숫자), "insulation": (숫자), "normal": 0}
             ___JSON_END___
         `;
 
@@ -549,7 +514,6 @@
         }
     }
 
-    // [변경] 구글 3D 차트 그리기 함수 (잘림 방지 및 옵션 수정)
     function drawChart(data) {
         var chartData = google.visualization.arrayToDataTable([
             ['원인', '비율'],
@@ -559,7 +523,7 @@
         ]);
 
         var options = {
-            title: '원인 귀책 사유 분석',
+            title: '원인 귀책 사유 분석 (AI 산출)',
             is3D: true,
             slices: {
                 0: { color: '#FF9800' }, 
@@ -568,8 +532,7 @@
             },
             backgroundColor: 'transparent',
             fontSize: 14,
-            // [핵심 수정] 차트 영역을 조정하여 잘림 방지 (전체를 그릴 공간 확보)
-            chartArea: { left: '10%', top: '10%', width: '80%', height: '75%' },
+            chartArea: { width: '90%', height: '80%' },
             legend: { position: 'bottom', alignment: 'center' }
         };
 
