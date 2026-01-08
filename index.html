@@ -179,7 +179,7 @@
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
         <div style="overflow:hidden;">
-            <span class="version-badge">Ver 5.6 (Ultimate Expert)</span>
+            <span class="version-badge">Ver 5.7 (Humidity Alert)</span>
         </div>
     </header>
 
@@ -414,6 +414,11 @@
         
         const tempOutVal = document.getElementById('temp-out').value || "정보 없음";
         const humidOutVal = document.getElementById('humid-out').value || "정보 없음";
+        
+        // [중요] 사용자 입력 환경 데이터 읽기
+        const tempInVal = parseFloat(document.getElementById('temp-in').value) || 0;
+        const humidInVal = parseFloat(document.getElementById('humid-in').value) || 0;
+        const dewVal = document.getElementById('dew-result').value || "정보 없음";
 
         resultArea.style.display = 'block';
         loading.style.display = 'block';
@@ -427,13 +432,15 @@
             return;
         }
 
+        // --- AI 프롬프트 (습도 과다 로직 강화) ---
         const prompt = `
             당신은 '청개구리샤시' 소속의 최고 권위 결로 진단 전문가입니다.
-            의뢰인에게 제출할 **종합 정밀 진단 보고서**를 작성하세요. 모든 증거 자료(환경수치, 열화상, 초음파)를 빠짐없이 분석해야 합니다.
+            의뢰인에게 제출할 **종합 정밀 진단 보고서**를 작성하세요. 모든 증거 자료를 교차 검증해야 합니다.
 
             [1. 진단 개요]
             - 진단 일자: ${userDate}
             - 진단 장소: ${location}
+            - **실내 환경:** 온도 ${tempInVal}°C, 습도 ${humidInVal}% (이슬점: ${dewVal})
             - 실외 환경: 온도 ${tempOutVal}°C, 습도 ${humidOutVal}%
             - 하자 내용: ${defect}
             - 진단 전문가: **청개구리샤시**
@@ -443,28 +450,28 @@
 
             [3. 정밀 분석 상세 가이드 (모든 데이터 필수 분석)]
             
-            **A. 환경 계측 (FLIR MR277 VAP/MIX 분석):**
-            - 계측기 화면의 **MIX(g/kg)**와 **VAP(kPa)** 수치를 읽으세요.
-            - **[겨울철 절대 기준]**: MIX 9.0g/kg 미만, VAP 1.2kPa 미만이어야 안전합니다.
-            - 현재 수치가 이 기준보다 높으면 "과습(환기 부족)", 낮으면 "환경은 정상이나 단열이 불량함"으로 명확히 구분하세요.
-            - 전문가 조언: 현재 수치에 따른 구체적인 환기 횟수나 제습 솔루션을 제시하세요.
+            **A. 환경 계측 (습도 및 이슬점 정밀 분석 - 매우 중요):**
+            - **[습도 경고]:** 입력된 실내 습도가 **${humidInVal}%**입니다. 겨울철 적정 습도는 **40~50%**입니다.
+            - 만약 습도가 60% 이상이면, 이는 **"명백한 과습(환기 부족)"** 상태입니다.
+            - 습도가 높으면 이슬점(${dewVal})이 상승하여, 단열이 양호한 벽면(20도 기준 15~16도)이라도 결로가 생길 수밖에 없습니다.
+            - **MIX 수치 확인:** MIX가 10.0g/kg을 넘는다면, 이는 거주자의 생활 습관(환기 부족)이 결로의 주된 원인 중 하나임을 강력하게 시사합니다.
 
             **B. 열화상 카메라 (Thermal Imaging) 분석:**
             - 이미지의 **냉점(Cold Spot)**이나 **열교(Thermal Bridge)** 부위를 식별하세요.
-            - 주변 색상과 확연히 다른 푸른/검은 영역이 있다면 "단열재 끊김" 또는 "구조적 열교"로 진단하세요.
-            - 이 냉점이 결로 발생 위치와 일치하는지 확인하세요.
+            - 단열 불량이 있다면 냉점이 뚜렷하게 나타날 것입니다.
 
-            **C. 초음파 음향 카메라 (FLIR Si1-LD) 분석 (가장 중요):**
-            - 화면에 **컬러 스팟(음원)**이 잡혔는지 확인하세요. 이것은 **'공기 누설(Air Leak)'**의 직접적 증거입니다.
-            - 송신기 신호가 새어 나온다는 것은 창호 기밀성(Air Tightness)이 파괴되었음을 의미합니다.
-            - **[종합 판정]**: 열화상의 '냉점' 위치와 초음파의 '누설' 위치가 일치한다면, 이는 **"시공상 하자로 인한 외풍 및 결로"**가 100% 확실합니다. 강력하게 주장하세요.
+            **C. 초음파 음향 카메라 (FLIR Si1-LD) 분석:**
+            - **컬러 스팟(음원)**이 보이면 **'기밀 불량(Air Leak)'**입니다. 이는 시공 하자입니다.
+
+            **D. 종합 판정 (귀책 사유 밸런스 조정):**
+            - 이번 케이스처럼 **습도가 ${humidInVal}%로 높고 이슬점이 높은 경우**, 단열 불량만 탓할 수 없습니다.
+            - **"환기 부족(거주자 과실)"** 비율을 반드시 **30~50% 이상** 반영하여, 거주자의 관리 책임도 있음을 과학적으로 설명하세요.
+            - 물론 열화상 냉점이나 초음파 누설이 있다면 시공사 책임(단열 불량)도 50~70% 존재합니다. **복합적인 원인**임을 강조하세요.
 
             [4. 귀책 사유 비율 산정 (동적 알고리즘)]
-            데이터에 기반하여 냉철하게 비율을 산정하세요.
-            - **Case A (과습):** MIX > 10.5 g/kg -> 환기 부족 비중 높임 (50~70%)
-            - **Case B (환경 정상):** MIX < 9.0 g/kg -> 단열 불량 비중 높임 (80~90%)
-            - **Case C (초음파 누설 발견):** MIX 수치와 무관하게 **단열/기밀 불량 비중을 대폭 상향(+20%)** 하세요. (시공 하자임이 명백함)
-
+            - **습도 > 60%:** 환기 부족 비중 **40% 이상** 설정 (단열 불량 60% 이하)
+            - **습도 < 50%:** 환기 부족 비중 10% 미만 (단열 불량 90% 이상)
+            
             [5. 필수 출력 (JSON)]
             보고서 맨 마지막에 귀책 사유 비율을 JSON으로 출력하세요.
             
@@ -525,7 +532,7 @@
     function drawChart(data) {
         var chartData = google.visualization.arrayToDataTable([
             ['원인', '비율'],
-            ['환기 부족', data.ventilation],
+            ['환기 부족 (과습)', data.ventilation],
             ['단열/기밀 불량', data.insulation],
             ['정상', data.normal]
         ]);
@@ -534,8 +541,8 @@
             title: '원인 귀책 사유 분석 (AI 산출)',
             is3D: true,
             slices: {
-                0: { color: '#FF9800' }, 
-                1: { color: '#D32F2F', offset: 0.1 }, 
+                0: { color: '#FF9800' }, // 환기 부족 (오렌지)
+                1: { color: '#D32F2F', offset: 0.1 }, // 단열 불량 (레드)
                 2: { color: '#4CAF50' }  
             },
             backgroundColor: 'transparent',
