@@ -68,7 +68,7 @@
         .main-header h1 i { margin-right: 8px; color: var(--accent-color); }
 
         .version-badge {
-            background-color: #2e7d32; /* 신뢰감을 주는 짙은 녹색 */
+            background-color: #d50000; 
             color: #fff;
             padding: 2px 10px;
             border-radius: 20px;
@@ -179,7 +179,7 @@
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
         <div style="overflow:hidden;">
-            <span class="version-badge">Ver 6.1 (Technical Report)</span>
+            <span class="version-badge">Ver 6.1 (Report Fix)</span>
         </div>
     </header>
 
@@ -431,9 +431,9 @@
             return;
         }
 
-        // --- AI 프롬프트 (수정: 법적 효력 문구 삭제 및 상세 솔루션 추가) ---
+        // --- AI 프롬프트 (JSON 형식 강화 및 문구 수정) ---
         const prompt = `
-            당신은 대한민국 국토교통부 '공동주택 결로 방지 설계기준' 및 건축 물리 이론에 정통한 **'건축물 결로 진단 전문가(Technical Expert)'**입니다.
+            당신은 대한민국 국토교통부 기준을 준수하는 '건축물 결로 진단 기술사(Professional Engineer)'입니다.
             제출된 데이터를 바탕으로 의뢰인에게 제공할 **전문적이고 객관적인 기술 소견서(Technical Opinion Report)**를 작성하세요.
             **(주의: 본 보고서는 기술적 진단 결과이며, 법적 효력을 보증하거나 증거 자료로서의 법적 책임을 지지 않는다는 뉘앙스로 작성하세요.)**
 
@@ -451,34 +451,28 @@
             - FLIR Si1-LD 초음파 카메라 (기밀/누기 분석)
 
             [3. 정밀 분석 상세 (Professional Analysis)]
+            **A. 공기선도(Psychrometric) 및 환경 분석:**
+            - **상대습도(${humidInVal}%) 평가:** 겨울철 적정 기준(40~50%)을 초과했는지 확인.
+            - **저온 과습 분석(필수 포함):** 현재 실내 온도(${tempInVal}°C)가 낮아 상대습도가 상승한 '저온 과습' 현상인지 분석하고, 난방의 중요성을 과학적으로 설명하세요.
             
-            **A. 공기선도(Psychrometric) 및 환경 분석 (매우 중요):**
-            - **상대습도(${humidInVal}%) 평가:** 겨울철 적정 기준(40~50%)을 초과했습니다.
-            - **저온 과습 분석(필수 포함):** "현재 실내 온도(${tempInVal}°C)가 다소 낮습니다. 공기 중 포함된 수증기량(절대습도 MIX)이 동일하더라도, **온도가 낮으면 포화수증기압이 낮아져 상대습도가 급격히 상승**합니다. 즉, 현재의 높은 습도는 수증기 발생이 많아서가 아니라, **난방 부족으로 인한 저온 현상이 주원인**일 가능성이 큽니다."라고 전문적으로 설명하세요.
-            - **이슬점(${dewVal}) 위험도:** 이슬점이 높아 벽체 표면온도가 조금만 낮아도 결로가 발생하는 위험 구간입니다.
-
             **B. 열화상(Thermal) 및 TDR(온도저하율) 분석:**
             - 냉점(Cold Spot)과 주변부의 온도 차이(Delta T)를 확인하세요.
-            - **[전문가 소견]:** "해당 부위 표면 온도가 노점(${dewVal})보다 낮게 형성되어 결로가 발생했습니다. 이는 국토교통부 기준에서 요구하는 단열 성능(TDR)에 미치지 못하는 '열교(Thermal Bridge)' 현상으로 판단됩니다."
+            - **[전문가 소견]:** "표면 온도가 노점(${dewVal})보다 낮아 결로가 발생했습니다. 이는 국토부 단열 기준 미달(열교 현상)로 추정됩니다."
 
             **C. 초음파(Ultrasonic) 기밀 진단:**
-            - 컬러 스팟(누기) 확인 시 "기밀선(Air Tightness Line) 파괴" 용어를 사용하여 시공 하자를 지적하세요.
+            - 컬러 스팟(누기) 확인 시 "기밀선(Air Tightness Line) 파괴" 용어를 사용하세요.
 
-            **D. 종합 개선 방안 및 솔루션 (Detailed Action Plan - 필수):**
-            기존 분석을 유지하되, 아래의 **구체적인 개선 방안**을 상세히 서술하세요.
-            1.  **환경 개선 (즉시 실행):**
-                * **난방 가동:** "가장 시급한 조치는 **실내 온도를 22℃ 이상으로 올리는 것**입니다. 온도를 높이면 포화수증기압이 상승하여, 제습기를 틀지 않아도 상대습도가 자연스럽게 40~50% 안정권으로 떨어집니다." (과학적 원리 설명 포함)
-                * **환기 전략:** "무분별한 환기는 벽체를 차갑게 만듭니다. 실외 절대습도가 낮은 시간대에 하루 2회, 10분 내외로 '짧고 굵게' 환기하십시오."
-            2.  **물리적 보수 (전문 시공):**
-                * **기밀 보강:** "초음파로 탐지된 누기 부위(창호 하부 등)에 대해 기존 코킹을 제거하고 고밀도 우레탄 폼 충진 및 기밀 테이프 시공을 권장합니다."
-                * **단열 보강:** "열화상 냉점이 심한 부위는 단열재가 누락되었거나 끊긴 곳입니다. 단열재(아이소핑크 등) 보강 시공이 근본 해결책입니다."
+            **D. 종합 개선 방안 및 솔루션 (Detailed Action Plan):**
+            1.  **환경 개선:** "실내 온도를 22℃ 이상으로 올려 포화수증기압을 높이고 상대습도를 낮추세요. 하루 2회 짧고 굵게 환기하십시오."
+            2.  **물리적 보수:** "누기 부위 우레탄 폼/코킹 보수 및 단열재 보강 시공을 권장합니다."
 
             [4. 귀책 사유 비율 산정 (동적 알고리즘)]
-            - 습도 > 60% & 온도 < 20도: 환기 부족(난방 부족) 40% (단열 불량 60%)
-            - 습도 < 50%: 환기 부족 10% (단열 불량 90%)
+            - 습도 > 60% & 온도 < 20도: 환기 부족(난방 부족) 40%, 단열 불량 60%
+            - 습도 < 50%: 환기 부족 10%, 단열 불량 90%
             
-            [5. 필수 출력 (JSON)]
-            보고서 맨 마지막에 귀책 사유 비율을 JSON으로 출력하세요.
+            [5. 필수 출력 (JSON) - 중요]
+            보고서 맨 마지막 줄에 반드시 아래 형식으로 JSON 데이터를 출력하세요. 
+            (마크다운 코드 블록이나 기타 텍스트 없이 순수 JSON만 출력할 것)
             
             ___JSON_START___
             {"ventilation": (숫자), "insulation": (숫자), "normal": 0}
@@ -507,12 +501,16 @@
                     let aiText = data.candidates[0].content.parts[0].text;
                     let finalJson = null;
 
-                    const jsonMatch = aiText.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
+                    // [수정] JSON 파싱 로직 강화 (유연한 매칭)
+                    const jsonMatch = aiText.match(/(?:___|_)JSON_START(?:___|_)([\s\S]*?)(?:___|_)JSON_END(?:___|_)/i);
+                    
                     if(jsonMatch) {
                         try {
-                            finalJson = JSON.parse(jsonMatch[1]);
+                            // 코드 블록(```json ... ```)이 있을 경우 제거
+                            let rawJson = jsonMatch[1].replace(/```json/g, "").replace(/```/g, "").trim();
+                            finalJson = JSON.parse(rawJson);
                             aiText = aiText.replace(jsonMatch[0], ""); 
-                        } catch(e) { console.error(e); }
+                        } catch(e) { console.error("JSON Parsing Error:", e); }
                     }
 
                     const md = window.markdownit();
