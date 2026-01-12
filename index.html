@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>결로진단 AI앱 (PRO + UltraSonic)</title>
+    <title>결로진단 AI앱 (PRO + UltraSonic Expert)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -11,6 +11,7 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <style>
+        /* --- 기존 디자인 유지 --- */
         :root {
             --primary-dark: #1a237e;        
             --primary-main: #283593;        
@@ -68,7 +69,7 @@
         .main-header h1 i { margin-right: 8px; color: var(--accent-color); }
 
         .version-badge {
-            background-color: #2e7d32;
+            background-color: #ff6f00; /* Expert 버전 색상 변경 */
             color: #fff;
             padding: 2px 10px;
             border-radius: 20px;
@@ -179,7 +180,7 @@
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
         <div style="overflow:hidden;">
-            <span class="version-badge">Ver 6.2 (JSON Parser Fix)</span>
+            <span class="version-badge">Ver 12.0 Expert Edition</span>
         </div>
     </header>
 
@@ -258,6 +259,7 @@
             <div class="photo-stack">
                  <div>
                     <label class="input-label">FLIR MR 277 (VAP/MIX) 데이터</label>
+                    <div style="font-size:0.8rem; color:#d32f2f; margin-bottom:5px;">* 수증기압 및 혼합비 데이터 필수</div>
                     <label for="img2" class="upload-box" id="box-3">
                         <i class="fas fa-ruler-combined upload-icon"></i>
                         <span class="upload-text-main">계측기 화면</span>
@@ -276,7 +278,7 @@
                 </div>
                 <div>
                     <label class="input-label" style="color: var(--sonic-purple);">FLIR Si1-LD + 초음파 송신기</label>
-                    <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">* 기밀 불량(누기) 시각화 데이터</div>
+                    <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">* 외부(송신) -> 내부(수신) 기밀 테스트</div>
                     <label for="img4" class="upload-box" id="box-5" style="border-color: #b388ff; background-color: #f3e5f5;">
                         <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i>
                         <span class="upload-text-main" style="color: var(--sonic-purple);">초음파 진단 이미지</span>
@@ -295,16 +297,16 @@
             <div class="section-title"><i class="fas fa-file-contract"></i> 정밀 기술 소견서</div>
             <div id="loading-spinner" style="text-align:center; padding:20px; display:none;">
                 <i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--primary-main);"></i>
-                <p id="loading-text" style="margin-top:10px;">환경, 열화상, 초음파 데이터 정밀 분석 및 기술 소견 작성 중...</p>
+                <p id="loading-text" style="margin-top:10px;">VAP/MIX 데이터 해석 및 기밀 성능 정밀 분석 중...</p>
             </div>
             
             <div id="analysis-content"></div>
             
             <div id="chart-section" style="display:none; margin-top:30px; padding-top:20px; border-top:1px dashed #ccc;">
-                <div class="section-title"><i class="fas fa-chart-pie"></i> 원인 귀책 사유 분석 (3D)</div>
+                <div class="section-title"><i class="fas fa-chart-pie"></i> 결로 원인 귀책 분석 (3D)</div>
                 <div id="chart_div" class="chart-container"></div>
                 <p style="text-align:center; font-size:0.85rem; color:#666; margin-top:10px;">
-                    * 귀책 사유 비율 (%)
+                    * 귀책 사유 비율 (%) - 시공 결함 vs 관리 미흡
                 </p>
             </div>
         </div>
@@ -395,7 +397,7 @@
                 img.src = e.target.result;
                 img.style.display = 'block'; 
                 const box = document.getElementById(boxId);
-                box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
+                box.querySelectorAll('i, span, div').forEach(el => el.style.display = 'none'); // 텍스트 모두 숨김
                 images[type] = e.target.result.split(',')[1];
             }
             reader.readAsDataURL(input.files[0]);
@@ -432,54 +434,44 @@
         }
 
         const prompt = `
-            당신은 대한민국 국토교통부 기준을 준수하는 '건축물 결로 진단 기술사(Professional Engineer)'입니다.
-            제출된 데이터를 바탕으로 의뢰인에게 제공할 **전문적이고 객관적인 기술 소견서(Technical Opinion Report)**를 작성하세요.
-            **(주의: 본 보고서는 기술적 진단 결과이며, 법적 효력을 보증하거나 증거 자료로서의 법적 책임을 지지 않는다는 뉘앙스로 작성하세요.)**
+            당신은 건축 환경 공학 박사(Ph.D.)이자 건축물 결로 진단 최고 전문가입니다.
+            제공된 데이터(FLIR MR277 VAP/MIX, 열화상, 초음파)를 정밀 분석하여 전문적인 '기술 소견서'를 작성하세요.
 
             [1. 진단 개요]
             - 진단 일자: ${userDate}
             - 진단 장소: ${location}
-            - **실내 환경:** 온도 ${tempInVal}°C, 상대습도 ${humidInVal}% (노점온도: ${dewVal})
-            - 실외 환경: 온도 ${tempOutVal}°C, 습도 ${humidOutVal}%
+            - 실내 환경: 온도 ${tempInVal}°C, 습도 ${humidInVal}% (노점: ${dewVal})
             - 하자 내용: ${defect}
-            - 진단 전문가: **청개구리샤시**
 
-            [2. 분석 데이터 소스]
-            - FLIR MR277 (VAP/MIX 및 온습도 계측)
-            - 열화상 카메라 (열교/단열 분석)
-            - FLIR Si1-LD 초음파 카메라 (기밀/누기 분석)
-
-            [3. 정밀 분석 상세 (Professional Analysis)]
+            [2. 전문 분석 (Professional Analysis) - 중요]
             
-            **A. 공기선도(Psychrometric) 및 환경 분석 (매우 중요):**
-            - **상대습도(${humidInVal}%) 평가:** 겨울철 적정 기준(40~50%)을 초과했습니다.
-            - **저온 과습 분석(필수 포함):** "현재 실내 온도(${tempInVal}°C)가 다소 낮습니다. 공기 중 포함된 수증기량(절대습도 MIX)이 동일하더라도, **온도가 낮으면 포화수증기압이 낮아져 상대습도가 급격히 상승**합니다. 즉, 현재의 높은 습도는 수증기 발생이 많아서가 아니라, **난방 부족으로 인한 저온 현상이 주원인**일 가능성이 큽니다."라고 전문적으로 설명하세요.
-            - **이슬점(${dewVal}) 위험도:** 이슬점이 높아 벽체 표면온도가 조금만 낮아도 결로가 발생하는 위험 구간입니다.
+            **A. 공기선도 및 절대습도(MIX) 분석 (MR277 데이터 기반)**
+            * **VAP (수증기압):** 사진 속 계측기의 VAP(kPa) 값을 확인하여 설명하세요. VAP가 높으면 습기가 벽체 내부로 침투하려는 힘(Moisture Drive)이 강함을 의미하며, 이는 결로 위험을 가중시킵니다.
+            * **MIX (혼합비/절대습도):** 사진 속 MIX(g/kg) 값을 확인하세요.
+              - **기준:** 겨울철 실내 쾌적/안전 기준은 대략 **7~9 g/kg** 이하입니다.
+              - **판정:** 현재 MIX 값이 9 g/kg를 초과하면 **"절대습도 과다(심각)"** 단계로, 단순 환기 부족이 의심됩니다. 7~9 g/kg 사이면 **"주의"** 단계입니다.
+              - **분석:** "현재 측정된 MIX 값은 [수치]g/kg로, 기준치([기준])를 [초과/충족]합니다. 이는 [과도한 가습/환기 부족/적절한 관리] 상태임을 시사합니다."라고 작성하세요.
 
-            **B. 열화상(Thermal) 및 TDR(온도저하율) 분석:**
-            - 냉점(Cold Spot)과 주변부의 온도 차이(Delta T)를 확인하세요.
-            - **[전문가 소견]:** "해당 부위 표면 온도가 노점(${dewVal})보다 낮게 형성되어 결로가 발생했습니다. 이는 국토교통부 기준에서 요구하는 단열 성능(TDR)에 미치지 못하는 '열교(Thermal Bridge)' 현상으로 판단됩니다."
+            **B. 초음파(Ultrasonic) 기밀 성능 진단**
+            * **진단 원리 설명:** "본 진단은 창호 외부에 **40kHz 대역의 초음파 송신기(Transmitter)**를 설치하고, 실내에서 음향 카메라로 투과되는 초음파를 탐지하는 **능동형 기밀 진단법**입니다."
+            * **결과 해석:** "초음파가 탐지된 컬러 스팟은 육안으로 보이지 않는 미세한 틈새를 의미합니다. 이는 단순 외풍 유입을 넘어, **기밀선(Air Barrier)의 파괴**로 인한 지속적인 열 손실과 결로의 직접적 원인입니다."
 
-            **C. 초음파(Ultrasonic) 기밀 진단:**
-            - 컬러 스팟(누기) 확인 시 "기밀선(Air Tightness Line) 파괴" 용어를 사용하여 시공 하자를 지적하세요.
+            **C. 열화상(Thermal) 및 단열 성능 평가**
+            * **TDR 분석:** 열화상 이미지의 냉점(Cold Spot) 온도가 노점(${dewVal})보다 낮은지 확인하여 결로 발생 메커니즘을 설명하세요.
 
-            **D. 종합 개선 방안 및 솔루션 (Detailed Action Plan - 필수):**
-            기존 분석을 유지하되, 아래의 **구체적인 개선 방안**을 상세히 서술하세요.
-            1.  **환경 개선 (즉시 실행):**
-                * **난방 가동:** "가장 시급한 조치는 **실내 온도를 22℃ 이상으로 올리는 것**입니다. 온도를 높이면 포화수증기압이 상승하여, 제습기를 틀지 않아도 상대습도가 자연스럽게 40~50% 안정권으로 떨어집니다." (과학적 원리 설명 포함)
-                * **환기 전략:** "무분별한 환기는 벽체를 차갑게 만듭니다. 실외 절대습도가 낮은 시간대에 하루 2회, 10분 내외로 '짧고 굵게' 환기하십시오."
-            2.  **물리적 보수 (전문 시공):**
-                * **기밀 보강:** "초음파로 탐지된 누기 부위(창호 하부 등)에 대해 기존 코킹을 제거하고 고밀도 우레탄 폼 충진 및 기밀 테이프 시공을 권장합니다."
-                * **단열 보강:** "열화상 냉점이 심한 부위는 단열재가 누락되었거나 끊긴 곳입니다. 단열재(아이소핑크 등) 보강 시공이 근본 해결책입니다."
-
-            [4. 귀책 사유 비율 산정 (동적 알고리즘)]
-            - 습도 > 60% & 온도 < 20도: 환기 부족(난방 부족) 40% (단열 불량 60%)
-            - 습도 < 50%: 환기 부족 10% (단열 불량 90%)
+            [3. 종합 결론 및 귀책 사유 판정]
+            * **종합 판단:** 위 3가지(MIX, 초음파, 열화상) 데이터를 종합하여 결론을 내리세요.
+            * **귀책 사유 판정:**
+              - MIX가 매우 높음(>10g/kg) + 기밀/단열 양호 -> **거주자 환기 부족 (70% 이상)**
+              - MIX 보통 + 기밀 누기(초음파) 또는 단열 결손(열화상) 확인 -> **시공사 시공 불량 (80% 이상)**
+              - 둘 다 문제 -> **복합 원인 (50:50 등)**
             
-            [5. 필수 출력 (JSON) - 중요]
-            보고서 맨 마지막 줄에 반드시 아래 형식으로 JSON 데이터를 출력하세요. 
-            (다른 텍스트 없이 순수 JSON만 출력할 것)
-            
+            [4. 개선 방안 (Action Plan)]
+            * 거주자: 적정 MIX(g/kg) 관리를 위한 환기법 안내.
+            * 시공사: 기밀 파괴 부위(초음파 탐지 위치) 재충진 및 단열 보강.
+
+            [5. 필수 출력 (JSON) - 차트용]
+            보고서 맨 끝에 아래 JSON을 출력하세요. 비율은 위 '귀책 사유 판정'에 따라 정하세요.
             ___JSON_START___
             {"ventilation": (숫자), "insulation": (숫자), "normal": 0}
             ___JSON_END___
@@ -507,30 +499,22 @@
                     let aiText = data.candidates[0].content.parts[0].text;
                     let finalJson = null;
 
-                    // [수정] JSON 파싱 로직 강화 (유연한 매칭 & 자동 감지)
                     let match = aiText.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
-                    if (!match) match = aiText.match(/JSON_START([\s\S]*?)JSON_END/i); // 태그 누락 대비
-                    if (!match) match = aiText.match(/\{[\s\n]*"ventilation"[\s\S]*?\}/); // 태그 완전 누락 시 패턴 검색
+                    if (!match) match = aiText.match(/JSON_START([\s\S]*?)JSON_END/i);
+                    if (!match) match = aiText.match(/\{[\s\n]*"ventilation"[\s\S]*?\}/);
 
                     if(match) {
                         try {
-                            // 매칭된 내용에서 불필요한 태그/문자 제거
                             let rawJson = match[0]
                                 .replace(/___JSON_START___|___JSON_END___|JSON_START|JSON_END/gi, "")
                                 .replace(/```json|```/g, "")
                                 .trim();
-                            
-                            // 혹시 텍스트가 섞여있을 경우 대비해 첫번째 { ... } 만 추출
                             const braceMatch = rawJson.match(/\{[\s\S]*\}/);
                             if(braceMatch) rawJson = braceMatch[0];
 
                             finalJson = JSON.parse(rawJson);
-                            
-                            // 원본 텍스트에서 JSON 부분 삭제 (화면에 안 보이게)
                             aiText = aiText.replace(match[0], ""); 
-                            // AI가 남긴 "5. 필수 출력..." 같은 잔여 텍스트도 삭제
                             aiText = aiText.replace(/5\.\s*필수\s*출력.*$/im, ""); 
-
                         } catch(e) { console.error("JSON Parsing Error:", e); }
                     }
 
@@ -556,17 +540,17 @@
     function drawChart(data) {
         var chartData = google.visualization.arrayToDataTable([
             ['원인', '비율'],
-            ['환기/난방 관리 미흡', data.ventilation],
-            ['단열/기밀 시공 하자', data.insulation],
-            ['정상', data.normal]
+            ['거주자 습도 관리 미흡', data.ventilation],
+            ['시공사 단열/기밀 불량', data.insulation],
+            ['기타/정상', data.normal]
         ]);
 
         var options = {
-            title: '원인 귀책 사유 분석 (AI 산출)',
+            title: '결로 원인 귀책 분석 (AI 산출)',
             is3D: true,
             slices: {
-                0: { color: '#FF9800' }, // 환기 부족 (오렌지)
-                1: { color: '#D32F2F', offset: 0.1 }, // 단열 불량 (레드)
+                0: { color: '#FF9800' }, 
+                1: { color: '#D32F2F', offset: 0.1 }, 
                 2: { color: '#4CAF50' }  
             },
             backgroundColor: 'transparent',
