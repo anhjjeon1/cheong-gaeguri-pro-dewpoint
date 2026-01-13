@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>결로진단 AI앱 (Ver 14.2 UI Final)</title>
+    <title>결로진단 AI앱 (Ver 14.3 UI Perfect)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -49,38 +49,38 @@
             position: relative;
         }
 
-        /* [수정 1] 헤더 및 버전 배지 우측 고정 */
+        /* [수정 1] 헤더 레이아웃 변경 */
         .main-header {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
             color: white;
-            padding: 0 20px;
-            height: 60px; /* 높이 고정 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative; /* 배지 위치 기준점 */
+            padding: 15px 20px 25px 20px; /* 하단 여백 확보 */
+            text-align: center;
+            position: relative;
         }
 
         .main-header h1 {
             margin: 0;
             font-size: 1.3rem;
             font-weight: 900;
-            display: flex; align-items: center;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1.2;
         }
         .main-header h1 i { margin-right: 10px; color: #81d4fa; }
 
+        /* [수정 1] 배지 위치 및 크기 조정 */
         .version-badge {
-            position: absolute; /* 절대 위치 */
-            right: 15px;        /* 우측 끝에서 15px */
-            bottom: 12px;       /* 바닥에서 12px */
+            position: absolute;
+            right: 20px;
+            bottom: 8px; /* 바닥에 더 붙임 */
             background-color: var(--expert-gold);
             color: #fff;
-            padding: 2px 10px;
-            border-radius: 20px;
+            padding: 1px 8px; /* 패딩을 줄여서 높이 축소 */
+            border-radius: 12px;
             font-size: 0.65rem;
             font-weight: 800;
-            border: 2px solid rgba(255,255,255,0.3);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            line-height: 1.4;
         }
 
         .content { padding: 24px; background-color: #fff; }
@@ -118,11 +118,13 @@
         .photo-stack { display: flex; flex-direction: column; gap: 20px; }
         .upload-wrapper { border: 1px solid #eee; padding: 15px; border-radius: 12px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         
+        /* [수정 2] 사진 비율 4:3으로 변경 */
         .upload-box {
             border: 2px dashed #b0bec5;
             background-color: #fcfcfc;
             border-radius: 12px;
-            width: 100%; aspect-ratio: 16 / 9; 
+            width: 100%; 
+            aspect-ratio: 4 / 3; /* 16/9 -> 4/3 변경 */
             text-align: center; color: #78909c; cursor: pointer;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             position: relative; overflow: hidden;
@@ -151,11 +153,10 @@
 
         .chart-container { position: relative; height: 350px; width: 100%; margin-top: 10px; }
 
-        /* [수정 3] 하단 버튼 다이어트 (높이 축소) */
         .footer-btns { display: flex; gap: 8px; margin-top: 30px; }
         .footer-btn {
             flex: 1; 
-            padding: 10px 0; /* 세로 패딩 축소 (14px -> 10px) */
+            padding: 10px 0; 
             border: none; border-radius: 10px;
             font-size: 0.95rem; font-weight: 700; cursor: pointer; color: white;
             display: flex; justify-content: center; align-items: center;
@@ -191,7 +192,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge">Ver 14.2 UI Fix</span>
+        <span class="version-badge">Ver 14.3 UI Fix</span>
     </header>
 
     <div class="content">
@@ -371,9 +372,9 @@
     document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
 
     // 2. API 키 (사용자 입력)
-    const keyPart1 = "AIzaSyCGtANQJNBEGSh"; // [수정]
-    const keyPart2 = "9zCrTXMEnR-";     // [수정]
-    const keyPart3 = "PHxLlXtkw";     // [수정]
+    const keyPart1 = "AIzaSyCGtANQJNBEGSh"; // [수정 필요]
+    const keyPart2 = "9zCrTXMEnR-";     // [수정 필요]
+    const keyPart3 = "PHxLlXtkw";     // [수정 필요]
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
     // 3. 날씨
