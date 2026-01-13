@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>결로진단 AI앱 (Ver 14.0 Ultimate Master)</title>
+    <title>결로진단 AI앱 (Ver 14.1 Final Polish)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -21,7 +21,7 @@
             --text-secondary: #546e7a;      
             --border-color: #cfd8dc;        
             --expert-gold: #ff6f00;       
-            --moisture-blue: #0288d1; /* 수분 측정 전용 컬러 */
+            --moisture-blue: #0288d1;
             --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
@@ -150,8 +150,10 @@
             font-size: 0.95rem; font-weight: 700; cursor: pointer; color: white;
             display: flex; justify-content: center; align-items: center;
         }
+        /* 버튼 색상 */
         .call-btn { background: linear-gradient(to right, #2962ff, #0091ea); }
         .save-btn { background: linear-gradient(to right, #455a64, #263238); }
+        .footer-btn i { margin-right: 6px; }
         
         .main-footer {
             background-color: #eceff1; color: #90a4ae;
@@ -179,7 +181,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge">Ver 14.0 Ultimate Master</span>
+        <span class="version-badge">Ver 14.1 Final Polish</span>
     </header>
 
     <div class="content">
@@ -336,10 +338,10 @@
 
         <div class="footer-btns">
             <button class="footer-btn call-btn" onclick="window.location.href='tel:15997380'">
-                <i class="fas fa-headset"></i> 기술지원 (전화)
+                <i class="fas fa-headset"></i> 수리문의 (전화)
             </button>
             <button class="footer-btn save-btn" onclick="window.print()">
-                <i class="fas fa-file-pdf"></i> PDF 리포트 저장
+                <i class="fas fa-file-pdf"></i> PDF로 저장
             </button>
         </div>
     </div> 
@@ -419,7 +421,7 @@
         }
     }
 
-    // 6. AI 분석 (5종 데이터 통합 분석)
+    // 6. AI 분석
     async function startAnalysis() {
         const resultArea = document.getElementById('result-area');
         const loading = document.getElementById('loading-spinner');
@@ -451,7 +453,6 @@
              return;
         }
 
-        // [최상위 전문가 프롬프트]
         const prompt = `
             당신은 건축 환경 공학 박사이자 결로/누수 진단 최고 권위자입니다.
             제공된 5가지 정밀 계측 데이터를 종합 분석하여 법적 분쟁에서도 활용 가능한 수준의 '기술 소견서'를 작성하세요.
@@ -499,8 +500,8 @@
         if(images.main) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.main } });
         if(images.sub) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.sub } });
         if(images.equip) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.equip } });
-        if(images.probe) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.probe } }); // MR12 볼 프로브
-        if(images.moisture) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.moisture } }); // 일반 수분계
+        if(images.probe) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.probe } }); 
+        if(images.moisture) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.moisture } }); 
         if(images.thermal) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.thermal } });
         if(images.acoustic) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.acoustic } });
 
@@ -581,4 +582,3 @@
 
 </body>
 </html>
-
