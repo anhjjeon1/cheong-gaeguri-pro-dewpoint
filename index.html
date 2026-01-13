@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>결로진단 AI앱 (Ver 14.4 Header Master)</title>
+    <title>결로진단 AI앱 (Ver 14.5 PDF Safe)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -49,11 +49,10 @@
             position: relative;
         }
 
-        /* [수정 1] 헤더 높이 확장 및 여백 조정 */
         .main-header {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
             color: white;
-            padding: 20px 20px 35px 20px; /* 상단 20px, 하단 35px로 늘림 */
+            padding: 20px 20px 35px 20px;
             text-align: center;
             position: relative;
         }
@@ -64,26 +63,25 @@
             font-weight: 900;
             display: flex; align-items: center; justify-content: center;
             line-height: 1.2;
-            padding-bottom: 5px; /* 제목 아래 여백 추가 */
+            padding-bottom: 5px;
         }
         .main-header h1 i { margin-right: 10px; color: #81d4fa; }
 
-        /* [수정 2, 3] 배지 높이 축소 및 위치 조정 */
         .version-badge {
             position: absolute;
             right: 20px;
-            bottom: 10px; /* 바닥에서 10px 떨어뜨림 */
+            bottom: 10px;
             background-color: var(--expert-gold);
             color: #fff;
-            padding: 0px 8px; /* 상하 패딩을 0으로 줄여서 최대한 슬림하게 */
+            padding: 0px 8px;
             border-radius: 10px;
             font-size: 0.65rem;
             font-weight: 800;
             border: 1px solid rgba(255,255,255,0.4);
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            line-height: 1.5; /* 텍스트 수직 정렬을 위해 line-height 조정 */
-            height: 18px; /* 높이 강제 지정 */
-            display: flex; align-items: center; /* 텍스트 가운데 정렬 */
+            line-height: 1.5;
+            height: 18px;
+            display: flex; align-items: center;
         }
 
         .content { padding: 24px; background-color: #fff; }
@@ -153,7 +151,12 @@
             display: none; 
         }
 
-        .chart-container { position: relative; height: 350px; width: 100%; margin-top: 10px; }
+        .chart-container { 
+            position: relative; 
+            height: 350px; 
+            width: 100%; 
+            margin-top: 10px; 
+        }
 
         .footer-btns { display: flex; gap: 8px; margin-top: 30px; }
         .footer-btn {
@@ -185,7 +188,13 @@
             .upload-box i, .upload-box span { display: none !important; } 
             .photo-stack > div { page-break-inside: avoid; margin-bottom: 20px; }
             #result-area { display: block !important; border: 1px solid #000; }
-            #chart_div { width: 100% !important; height: 350px !important; }
+            /* [수정] 인쇄 시 차트 영역 높이 확보 및 여백 처리 */
+            #chart_div { 
+                width: 100% !important; 
+                height: 450px !important; /* 높이 충분히 확보 */
+                page-break-inside: avoid; 
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
@@ -194,7 +203,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge">Ver 14.4 Header Fix</span>
+        <span class="version-badge">Ver 14.5 PDF Safe</span>
     </header>
 
     <div class="content">
@@ -566,6 +575,7 @@
         }
     }
 
+    // [수정] 차트 크기 및 옵션 최적화
     function drawChart(data) {
         var chartData = google.visualization.arrayToDataTable([
             ['원인', '비율'],
@@ -583,9 +593,9 @@
                 2: { color: '#4CAF50' }  
             },
             backgroundColor: 'transparent',
-            fontSize: 13,
-            chartArea: { width: '95%', height: '80%' },
-            legend: { position: 'bottom' }
+            fontSize: 12, // 폰트 사이즈 조정
+            chartArea: { width: '85%', height: '70%' }, // 여백 확보
+            legend: { position: 'bottom', maxLines: 2 } // 범례 줄바꿈 허용
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
