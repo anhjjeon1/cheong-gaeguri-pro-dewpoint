@@ -51,7 +51,7 @@
         }
 
         .main-header {
-            /* 배경을 조금 더 어둡게 하여 물방울이 잘 보이게 함 */
+            /* 정적인 배경으로 변경 */
             background: linear-gradient(135deg, #001a57, var(--primary-main));
             color: white;
             padding: 20px 20px 35px 20px;
@@ -60,69 +60,13 @@
             overflow: hidden;
         }
 
-        .rain-container {
+        /* [수정 1] 정적 물방울 스타일 (애니메이션 제거) */
+        .static-drop {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* [핵심 수정] 사실적인 결로 물방울 스타일 */
-        .drop {
-            position: absolute;
-            left: var(--left);
-            /* 크기 다양화: 기본 크기에 랜덤 스케일 적용 */
-            width: calc(var(--size) * 1px); 
-            height: calc(var(--size) * 1.2px + 5px); /* 약간 길쭉한 형태 */
-            
-            /* 유리창에 맺힌 물방울 느낌의 그라데이션 및 투명도 */
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.4) 60%, rgba(255, 255, 255, 0.1) 100%);
-            
-            /* 둥글고 불규칙한 모양 */
-            border-radius: 40% 60% 60% 40% / 60% 40% 40% 60%;
-            
-            opacity: 0;
-            /* 천천히 흐르는 애니메이션 적용 */
-            animation: flow var(--duration) cubic-bezier(0.4, 0.0, 0.2, 1) var(--delay) infinite;
-            
-            /* 입체감을 위한 은은한 그림자 */
-            box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.1), 1px 1px 3px rgba(255, 255, 255, 0.3);
-            
-            /* 위치 보정 */
-            top: -20px; 
-        }
-
-        /* [핵심 수정] 천천히 흘러내리고 뭉치는 듯한 애니메이션 */
-        @keyframes flow {
-            0% {
-                top: -20px; /* 시작점 */
-                opacity: 0;
-                transform: scale(1);
-            }
-            10% {
-                opacity: var(--opacity-start, 0.8); /* 나타날 때 투명도 */
-            }
-            /* 중간에 잠시 머무르거나 천천히 이동 (뭉치는 느낌) */
-            40% {
-                top: var(--mid-top, 30%); 
-                transform: scale(1.1) rotate(var(--rotate-start, 0deg));
-            }
-            /* 갑자기 빠르게 미끄러져 내림 */
-            60% {
-                top: var(--mid-top-2, 50%);
-                transform: scale(1) rotate(var(--rotate-end, 0deg));
-            }
-            90% {
-                opacity: var(--opacity-end, 0.6); /* 사라지기 전 투명도 */
-            }
-            100% {
-                top: 105%; /* 끝점 */
-                opacity: 0;
-                transform: scale(0.8);
-            }
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.2) 60%, rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 50%; /* 완전한 원형 또는 약간 타원 */
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            z-index: 0; /* 글자 뒤로 배치 */
         }
 
         .main-header h1 {
@@ -133,8 +77,8 @@
             line-height: 1.2;
             margin-bottom: 0px;
             position: relative;
-            z-index: 1;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* 텍스트 가독성 위해 그림자 추가 */
+            z-index: 1; /* 물방울보다 위에 표시 */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
 
@@ -331,7 +275,7 @@
             .main-header h1 { color: #000; justify-content: flex-start; }
             .main-header h1 i { color: #000; }
             .version-badge { border: 1px solid #000; color: #000; background: #fff; }
-            .rain-container { display: none; } 
+            .static-drop { display: none; } /* 인쇄 시 물방울 숨김 */
         }
     </style>
 </head>
@@ -339,7 +283,19 @@
 
 <div class="mobile-container">
     <header class="main-header">
-        <div class="rain-container" id="rain-container"></div>
+        <div class="static-drop" style="width: 20px; height: 20px; top: 15%; left: 10%;"></div>
+        <div class="static-drop" style="width: 18px; height: 18px; top: 10%; left: 85%;"></div>
+        <div class="static-drop" style="width: 25px; height: 25px; top: 60%; left: 80%; opacity: 0.6;"></div>
+        
+        <div class="static-drop" style="width: 12px; height: 12px; top: 25%; left: 20%;"></div>
+        <div class="static-drop" style="width: 14px; height: 14px; top: 70%; left: 15%;"></div>
+        <div class="static-drop" style="width: 10px; height: 10px; top: 50%; left: 90%;"></div>
+        
+        <div class="static-drop" style="width: 6px; height: 6px; top: 40%; left: 5%;"></div>
+        <div class="static-drop" style="width: 5px; height: 5px; top: 80%; left: 25%;"></div>
+        <div class="static-drop" style="width: 7px; height: 7px; top: 30%; left: 75%;"></div>
+        <div class="static-drop" style="width: 5px; height: 5px; top: 10%; left: 50%;"></div>
+
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
         <span class="version-badge" id="version-badge" title="버전 정보를 불러오는 중...">Loading Ver...</span>
     </header>
@@ -395,6 +351,9 @@
                 <div class="input-group">
                     <label class="input-label">실외습도 (%)</label>
                     <input type="text" id="humid-out" placeholder="확인 중.." style="background-color: #eceff1;">
+                    <div style="font-size:0.6rem; color:#cfd8dc; line-height:1.2; margin-top:2px; text-align:center; letter-spacing: -0.5px;">
+                        (GPS수신에 자동으로 입력되므로<br>오류발생 시 수동입력)
+                    </div>
                 </div>
             </div>
         </div>
@@ -549,47 +508,12 @@
     const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- [수정] 1. 사실적인 결로 물방울 생성 함수 ---
-    function createRain() {
-        const rainContainer = document.getElementById('rain-container');
-        const numDrops = 50; // 물방울 개수 조절
-
-        for (let i = 0; i < numDrops; i++) {
-            const drop = document.createElement('div');
-            drop.classList.add('drop');
-            
-            // 랜덤 위치 배정
-            drop.style.setProperty('--left', `${Math.random() * 100}%`);
-            
-            // [핵심] 크기 다양화 (아주 작은 것부터 큰 덩어리까지)
-            const size = Math.random() * 12 + 4; // 4px ~ 16px
-            drop.style.setProperty('--size', size);
-
-            // [핵심] 속도 다양화 (천천히 흐르도록)
-            const duration = Math.random() * 4 + 4; // 4s ~ 8s
-            drop.style.setProperty('--duration', `${duration}s`); 
-            
-            // [핵심] 지연 시간 및 중간 멈춤 지점 랜덤 설정
-            drop.style.setProperty('--delay', `${Math.random() * 5}s`);
-            drop.style.setProperty('--mid-top', `${Math.random() * 20 + 30}%`); // 30% ~ 50% 지점에서 뭉침
-            drop.style.setProperty('--mid-top-2', `${Math.random() * 20 + 60}%`); // 60% ~ 80% 지점
-            
-            // 투명도 및 회전 랜덤 설정
-            drop.style.setProperty('--opacity-start', `${Math.random() * 0.3 + 0.6}`);
-            drop.style.setProperty('--opacity-end', `${Math.random() * 0.3 + 0.3}`);
-            drop.style.setProperty('--rotate-start', `${Math.random() * 30 - 15}deg`);
-            drop.style.setProperty('--rotate-end', `${Math.random() * 30 - 15}deg`);
-            
-            rainContainer.appendChild(drop);
-        }
-    }
-
-    // --- [수정] 2. 동적 버전 관리 ---
+    // --- [수정] 3. 버전 정보 업데이트 ---
     const versionData = {
-        "version": "17.3",
-        "build": "20240526-04",
+        "version": "17.4",
+        "build": "20240526-05",
         "last_updated": "2024. 05. 26.",
-        "changes": "사실적인 유리창 결로 흐름 효과 구현 (크기 다양화, 뭉침/미끄러짐 표현)"
+        "changes": "헤더 정적 이미지로 변경 및 실외습도 안내 문구 추가"
     };
 
     function loadVersionInfo() {
@@ -631,7 +555,7 @@
     
     window.onload = function() { 
         fetchWeather();
-        createRain(); 
+        // createRain(); // 애니메이션 제거됨
         loadVersionInfo(); 
     };
 
