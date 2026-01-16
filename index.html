@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="app-title">결로진단 AI앱 (Legal Safe)</title>
+    <title id="app-title">결로진단 AI앱 (Expert Analysis)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -23,7 +23,7 @@
             --expert-gold: #ff6f00;        
             --moisture-blue: #0288d1;
             --sonic-purple: #7b1fa2;
-            --warning-red: #d32f2f; /* 법적 경고색 */
+            --warning-red: #d32f2f;
             --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
@@ -60,7 +60,7 @@
             overflow: hidden;
         }
 
-        /* 정적 물방울 디자인 (애니메이션 없음) */
+        /* 정적 물방울 디자인 */
         .water-drop {
             position: absolute;
             background: rgba(255, 255, 255, 0.1); 
@@ -151,19 +151,13 @@
         .add-photo-btn:hover { background-color: #e3f2fd; color: var(--primary-main); border-color: var(--primary-main); }
         .add-photo-btn i { margin-right: 4px; }
 
-        /* [신규] 법적 면책 동의 박스 스타일 */
+        /* 법적 면책 박스 */
         .legal-disclaimer-box {
-            background-color: #fff8e1; /* 주의 환기용 노란색 계열 */
-            border: 1px solid #ffca28;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 25px;
-            margin-bottom: 10px;
+            background-color: #fff8e1; border: 1px solid #ffca28; border-radius: 8px;
+            padding: 12px; margin-top: 25px; margin-bottom: 10px;
         }
         .legal-title { color: #d32f2f; font-weight: 900; font-size: 0.85rem; display: flex; align-items: center; margin-bottom: 5px;}
-        .legal-title i { margin-right: 5px; }
         .legal-text { font-size: 0.75rem; color: #455a64; line-height: 1.4; text-align: justify; margin-bottom: 10px; letter-spacing: -0.5px;}
-        
         .legal-check-wrapper {
             display: flex; align-items: center; cursor: pointer; 
             padding-top: 8px; border-top: 1px dashed #cfd8dc;
@@ -173,14 +167,13 @@
 
         .analyze-btn {
             width: 100%; padding: 14px;
-            background: linear-gradient(135deg, #78909c, #455a64); /* 비활성 색상 */
+            background: linear-gradient(135deg, #78909c, #455a64);
             color: #eceff1; border: none; border-radius: 10px;
             font-size: 1.05rem; font-weight: 800; cursor: not-allowed;
             display: flex; align-items: center; justify-content: center;
             box-shadow: none; margin-top: 10px;
             transition: all 0.3s;
         }
-        /* 활성화 시 스타일 */
         .analyze-btn.active { 
             background: linear-gradient(135deg, var(--primary-main), #000051);
             color: white; cursor: pointer;
@@ -193,19 +186,19 @@
             border: 2px solid var(--primary-main); display: none; 
         }
 
-        /* [신규] 결과 보고서 내 강제 면책 조항 (워터마크 역할) */
+        /* 워터마크 스타일 */
         .report-header-warning {
             text-align: center; color: #d32f2f; font-size: 0.7rem; font-weight: 900;
             border: 1px solid #d32f2f; padding: 5px; border-radius: 4px; margin-bottom: 15px;
             background-color: #ffebee;
         }
 
-        .report-footer-disclaimer {
-            margin-top: 20px; padding: 10px;
-            background-color: #fafafa; border-top: 2px solid #bdbdbd;
-            color: #616161; font-size: 0.65rem; text-align: justify;
-            line-height: 1.4;
+        /* 인쇄 전용 법적 문구 */
+        .print-legal-footer {
+            display: none; margin-top: 30px; border: 2px solid #000; padding: 15px; text-align: center;
         }
+        .print-legal-title { font-size: 14px; font-weight: 900; margin-bottom: 10px; text-decoration: underline; }
+        .print-legal-content { font-size: 11px; text-align: justify; line-height: 1.6; }
 
         .chart-container { position: relative; height: 300px; width: 100%; margin-top: 10px; }
 
@@ -253,6 +246,8 @@
             .main-header h1 i { color: #000; }
             .version-badge { border: 1px solid #000; color: #000; background: #fff; }
             .water-drop { display: none; } 
+
+            .print-legal-footer { display: block !important; page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -461,11 +456,13 @@
                 <div class="section-title"><i class="fas fa-chart-pie"></i> 결로 원인 귀책 분석 (3D)</div>
                 <div id="chart_div" class="chart-container"></div>
                 
-                <div class="report-footer-disclaimer">
-                    <strong>[면책 공고]</strong> 본 문서는 현장 상황을 AI가 분석한 비공식 소견서입니다. 
-                    계측 장비의 오차, 촬영 환경, 사용자 입력 값에 따라 실제 원인과 다를 수 있습니다. 
-                    본 문서는 법원 제출용 감정서가 아니며, 시공사/시행사를 상대로 한 소송의 증거 자료로 활용 시 발생하는 불이익에 대해 
-                    '청개구리샤시'는 일체의 책임을 지지 않음을 명시합니다.
+                <div class="print-legal-footer">
+                    <div class="print-legal-title">※ 법적 면책 고지 및 주의사항 (Legal Disclaimer) ※</div>
+                    <div class="print-legal-content">
+                        1. <strong>[법적 효력 부존재]</strong> 본 문서는 사용자가 입력한 제한된 데이터와 AI 알고리즘을 기반으로 작성된 '비공식 참고용 소견서'입니다. 본 문서는 건축법령에 따른 공인된 안전진단기관의 정밀안전진단 보고서가 아니며, 법원, 관공서, 소비자보호원 등의 분쟁 해결 기관에서 <strong>법적 증거 능력(감정서 효력)을 갖지 않습니다.</strong><br><br>
+                        2. <strong>[책임 제한]</strong> 본 데이터는 계측 장비의 오차, 촬영 환경, 날씨, 사용자 입력 값의 정확도에 따라 실제 원인과 다를 수 있습니다. 본 결과를 근거로 시공사, 시행사, 임대인 등을 상대로 진행하는 소송, 내용증명 발송, 하자 보수 요구 등으로 인해 발생하는 금전적 손실 및 법적 불이익에 대해 <strong>'청개구리샤시' 및 앱 개발사는 민·형사상 어떠한 책임도 지지 않습니다.</strong><br><br>
+                        3. <strong>[전문가 자문 권고]</strong> 정확한 하자 판정 및 귀책 사유 규명을 위해서는 반드시 건축구조기술사 또는 공인된 하자 진단 전문 기관의 현장 정밀 진단을 받으시기 바랍니다.
+                    </div>
                 </div>
             </div>
         </div>
@@ -498,22 +495,20 @@
     const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- [수정] 버전 정보 및 법적 안전 조치 업데이트 ---
+    // --- 버전 정보 및 로직 업데이트 ---
     const versionData = {
-        "version": "17.7",
-        "build": "20240526-LegalSafe",
+        "version": "18.0",
+        "build": "20240526-ExpertLegal",
         "last_updated": "2024. 05. 26.",
-        "changes": "법적 분쟁 예방을 위한 강제 면책 동의 및 경고 문구 추가"
+        "changes": "ASHRAE 기준 FLIR 데이터 분석 강화 및 강력한 법적 보호 장치 적용"
     };
 
     function loadVersionInfo() {
         const versionString = `Ver ${versionData.version} PRO Expert`;
         document.getElementById('app-title').textContent = `결로진단 AI앱 (${versionString})`;
-        
         const versionBadge = document.getElementById('version-badge');
         versionBadge.textContent = versionString;
-        versionBadge.title = `Build: ${versionData.build}\nLast Updated: ${versionData.last_updated}\nChanges: ${versionData.changes}`;
-
+        versionBadge.title = `Build: ${versionData.build}\nChanges: ${versionData.changes}`;
         const footer = document.getElementById('main-footer');
         if (!footer.innerHTML.includes('Last Updated:')) {
              footer.innerHTML += `<br><span style="font-size: 0.65rem; color: #b0bec5; margin-top: 5px; display: inline-block;">
@@ -522,7 +517,6 @@
         }
     }
 
-    // [신규] 법적 동의 체크 시에만 버튼 활성화
     function toggleAnalyzeBtn() {
         const checkbox = document.getElementById('legal-agree');
         const btn = document.getElementById('analyze-btn');
@@ -582,11 +576,9 @@
         const newId = `added-${uniqueIdCounter}`;
         const groupDiv = document.getElementById(groupId);
         const btn = groupDiv.querySelector('.add-photo-btn');
-        
         const wrapper = document.createElement('div');
         wrapper.className = 'upload-wrapper';
         wrapper.id = `wrap-${newId}`;
-        
         wrapper.innerHTML = `
             <label class="input-label" style="color:${color};">${labelText} (추가)</label>
             <label for="img-${newId}" class="upload-box" style="background-color: ${bgColor};">
@@ -596,7 +588,6 @@
             </label>
             <input type="file" id="img-${newId}" class="file-input" accept="image/*" onchange="handleImage(this)">
         `;
-        
         groupDiv.insertBefore(wrapper, btn);
     }
 
@@ -607,12 +598,9 @@
                 const wrapper = input.closest('.upload-wrapper');
                 const img = wrapper.querySelector('.preview-img');
                 const box = wrapper.querySelector('.upload-box');
-                
                 img.src = e.target.result;
                 img.style.display = 'block';
-                
                 box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
-                
                 wrapper.classList.add('filled');
             }
             reader.readAsDataURL(input.files[0]);
@@ -656,32 +644,32 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
-        // [수정] AI에게 법적 책임 회피를 위한 말투 지시
         const prompt = `
-            당신은 '청개구리샤시'의 결로 진단 보조 AI입니다. 
-            **중요 지침:** 본 진단 결과는 법적 효력이 없는 '참고용'이므로, '확정적' 단어(예: 100% 하자, 명백한 부실시공 등)를 피하고 '가능성이 높음', '의심됨', '정밀 진단 권고' 등의 표현을 사용하십시오.
+            당신은 '청개구리샤시'의 최고 권위 건축 환경 공학 박사(AI)입니다.
+            제공된 데이터를 정밀 분석하되, **법적 분쟁 방지를 위해 모든 소견은 '추정' 또는 '가능성'으로 표현**하십시오.
 
             [1. 진단 개요]
-            - 위치: ${fullLocation}
+            - 위치: ${fullLocation} (진단일: ${new Date().toLocaleDateString()})
             - 환경: 실내 ${tempIn}°C / ${humidIn}% (이슬점: ${dew})
             - 증상: ${defect}
 
-            [2. 정밀 분석 (사진 기반)]
-            * 제공된 모든 사진을 분석하여 다음을 수행:
-            A. 계측기(MR277, 수분계) 수치 판독.
-            B. 열화상/초음파 분석.
+            [2. 정밀 분석 (전문가 레벨)]
+            **A. FLIR MR277 계측 데이터 (MIX/VAP) 분석 - 핵심**
+            - ASHRAE(미국냉동공조협회) 겨울철 실내 절대습도 기준(약 7.0g/kg 이하)을 적용하여 원인을 1차 판별하십시오.
+            - MIX > 9.0g/kg: 환기 부족 등 생활 습관에 의한 과습 가능성 높음.
+            - MIX < 7.0g/kg 이면서 결로 발생: 단열 미흡 또는 구조적 열교 가능성 높음.
+            - 신축 아파트인 경우 콘크리트/마감재 양생 수분(Construction Moisture) 영향성도 언급하십시오.
 
-            [중요] **'방화문(현관문)' 또는 '대피공간' 진단 시:**
-            1. 가스켓 불량 가능성
-            2. 문짝 휨(Bending)에 의한 기밀 저하 가능성
-            3. 단열/사춤 불량 의심 여부
-            4. 저층부 냉기 유입 영향성
+            **B. 열화상(Thermal) 및 초음파 이미지 분석**
+            - **[중요] 미서기(Sliding) 창호 특성 반영:** 창호가 미서기 방식일 경우, 레일 부위의 미세한 냉기 유입은 구조적 특성(Structural Limitation)일 수 있으므로 이를 무조건적인 '시공 하자'로 단정 짓지 마십시오. 온도 차이가 극심한 경우에만 '기밀재(모헤어 등) 점검 필요'로 기술하십시오.
+            - 단열재 끊김(열교) 의심 부위는 '추정'으로 표현하십시오.
 
-            [3. 결론 및 귀책 (추정)]
-            - 사용자 과실 vs 시공 하자 비율 산정 (단, '추정치'임을 명시할 것).
+            [3. 결론 및 귀책 (비공식 추정)]
+            - 사용자 관리 요인 vs 건물/창호 단열 요인의 비율을 논리적으로 추산하십시오.
 
             [4. 조치 권고]
-            - 전문 기관의 정밀 진단 의뢰 권고 포함.
+            - 생활 습관 개선(환기, 제습) 및 필요시 단열 보강 등 솔루션 제시.
+            - **"확정적 원인 규명을 위해 공인 기관의 정밀 진단을 권장합니다"**라는 문구 필수 포함.
 
             [5. 필수 JSON]
             맨 마지막에:
