@@ -50,35 +50,33 @@
             position: relative;
         }
 
-        /* [수정] 헤더 스타일 변경 */
+        /* [수정 1] 헤더 높이 및 간격 축소 */
         .main-header {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
             color: white;
-            /* 세로 크기를 키우고(padding 늘림), 텍스트 간격을 위해 하단 여백 확보 */
-            padding: 30px 20px 50px 20px; 
+            /* 위 20px, 아래 30px로 줄여서 전체 높이 축소 */
+            padding: 20px 20px 30px 20px; 
             text-align: center;
             position: relative;
         }
 
         .main-header h1 {
             margin: 0;
-            font-size: 1.3rem; /* 제목 크기 살짝 키움 */
+            font-size: 1.3rem; 
             font-weight: 900;
             display: flex; align-items: center; justify-content: center;
             line-height: 1.2;
-            /* 제목을 위쪽으로 배치하여 배지와 겹치지 않게 함 */
-            margin-bottom: 5px; 
+            margin-bottom: 0px; /* 제목 아래 여백 제거 */
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
 
-        /* [수정] 버전 배지 스타일 변경 */
+        /* 버전 배지 위치 미세 조정 */
         .version-badge {
             position: absolute;
             right: 15px;
-            bottom: 12px; /* 하단에서 약간 띄움 */
+            bottom: 8px; /* 바닥에서 8px 띄움 (헤더가 줄어들었으므로 위치 조정) */
             background-color: var(--expert-gold);
             color: #fff;
-            /* 배지 크기 축소: 패딩과 폰트 사이즈 줄임 */
             padding: 2px 8px; 
             border-radius: 10px;
             font-size: 0.6rem; 
@@ -138,6 +136,11 @@
             grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; 
             gap: 4px; 
             align-items: end;
+        }
+        
+        /* [수정 2] 동, 호, 진단장소, 진단일자 라벨 중앙 정렬 */
+        .info-grid-row .input-label {
+            text-align: center;
         }
 
         .photo-stack { display: flex; flex-direction: column; gap: 15px; }
