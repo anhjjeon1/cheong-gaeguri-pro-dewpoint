@@ -51,7 +51,6 @@
         }
 
         .main-header {
-            /* 정적인 배경으로 변경 */
             background: linear-gradient(135deg, #001a57, var(--primary-main));
             color: white;
             padding: 20px 20px 35px 20px;
@@ -60,13 +59,30 @@
             overflow: hidden;
         }
 
-        /* [수정 1] 정적 물방울 스타일 (애니메이션 제거) */
-        .static-drop {
+        /* [수정 1] 사실적인 물방울 디자인 (Real Water Drop CSS) */
+        .water-drop {
             position: absolute;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.2) 60%, rgba(255, 255, 255, 0.05) 100%);
-            border-radius: 50%; /* 완전한 원형 또는 약간 타원 */
-            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-            z-index: 0; /* 글자 뒤로 배치 */
+            background: rgba(255, 255, 255, 0.1); /* 반투명 배경 */
+            border-radius: 50%;
+            /* 입체감을 위한 그림자: 내부 그림자와 외부 그림자 조합 */
+            box-shadow: 
+                inset 2px 2px 5px rgba(0, 0, 0, 0.2), /* 내부 어두움 */
+                inset -2px -2px 5px rgba(255, 255, 255, 0.5), /* 내부 밝음 (반사) */
+                2px 2px 5px rgba(0, 0, 0, 0.3); /* 외부 그림자 */
+            z-index: 0;
+        }
+        
+        /* 물방울 하이라이트 (빛 반사) */
+        .water-drop::after {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 25%;
+            height: 25%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            filter: blur(1px);
         }
 
         .main-header h1 {
@@ -77,7 +93,7 @@
             line-height: 1.2;
             margin-bottom: 0px;
             position: relative;
-            z-index: 1; /* 물방울보다 위에 표시 */
+            z-index: 1; 
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
@@ -275,7 +291,7 @@
             .main-header h1 { color: #000; justify-content: flex-start; }
             .main-header h1 i { color: #000; }
             .version-badge { border: 1px solid #000; color: #000; background: #fff; }
-            .static-drop { display: none; } /* 인쇄 시 물방울 숨김 */
+            .water-drop { display: none; } 
         }
     </style>
 </head>
@@ -283,18 +299,18 @@
 
 <div class="mobile-container">
     <header class="main-header">
-        <div class="static-drop" style="width: 20px; height: 20px; top: 15%; left: 10%;"></div>
-        <div class="static-drop" style="width: 18px; height: 18px; top: 10%; left: 85%;"></div>
-        <div class="static-drop" style="width: 25px; height: 25px; top: 60%; left: 80%; opacity: 0.6;"></div>
+        <div class="water-drop" style="width: 25px; height: 25px; top: 15%; left: 10%; border-radius: 50% 50% 50% 50%;"></div>
+        <div class="water-drop" style="width: 18px; height: 22px; top: 10%; left: 85%; border-radius: 60% 40% 60% 40%;"></div>
+        <div class="water-drop" style="width: 30px; height: 28px; top: 60%; left: 80%; opacity: 0.9; border-radius: 45% 55% 50% 50%;"></div>
         
-        <div class="static-drop" style="width: 12px; height: 12px; top: 25%; left: 20%;"></div>
-        <div class="static-drop" style="width: 14px; height: 14px; top: 70%; left: 15%;"></div>
-        <div class="static-drop" style="width: 10px; height: 10px; top: 50%; left: 90%;"></div>
+        <div class="water-drop" style="width: 15px; height: 15px; top: 25%; left: 20%;"></div>
+        <div class="water-drop" style="width: 12px; height: 16px; top: 70%; left: 15%; border-radius: 40% 60% 70% 30%;"></div>
+        <div class="water-drop" style="width: 10px; height: 10px; top: 50%; left: 90%;"></div>
         
-        <div class="static-drop" style="width: 6px; height: 6px; top: 40%; left: 5%;"></div>
-        <div class="static-drop" style="width: 5px; height: 5px; top: 80%; left: 25%;"></div>
-        <div class="static-drop" style="width: 7px; height: 7px; top: 30%; left: 75%;"></div>
-        <div class="static-drop" style="width: 5px; height: 5px; top: 10%; left: 50%;"></div>
+        <div class="water-drop" style="width: 8px; height: 8px; top: 40%; left: 5%;"></div>
+        <div class="water-drop" style="width: 6px; height: 6px; top: 80%; left: 25%;"></div>
+        <div class="water-drop" style="width: 9px; height: 9px; top: 30%; left: 75%;"></div>
+        <div class="water-drop" style="width: 7px; height: 7px; top: 10%; left: 50%;"></div>
 
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
         <span class="version-badge" id="version-badge" title="버전 정보를 불러오는 중...">Loading Ver...</span>
@@ -508,12 +524,12 @@
     const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- [수정] 3. 버전 정보 업데이트 ---
+    // --- [수정 3] 버전 정보 및 방화문 로직 업데이트 ---
     const versionData = {
-        "version": "17.4",
-        "build": "20240526-05",
+        "version": "17.5",
+        "build": "20240526-06",
         "last_updated": "2024. 05. 26.",
-        "changes": "헤더 정적 이미지로 변경 및 실외습도 안내 문구 추가"
+        "changes": "방화문 결로 진단 로직(가스켓, 벤딩, 외풍 등) 강화 및 물방울 디자인 개선"
     };
 
     function loadVersionInfo() {
@@ -555,7 +571,6 @@
     
     window.onload = function() { 
         fetchWeather();
-        // createRain(); // 애니메이션 제거됨
         loadVersionInfo(); 
     };
 
@@ -653,9 +668,10 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
+        // [수정 2] 방화문 특화 진단 로직이 포함된 프롬프트
         const prompt = `
             당신은 건축 환경 공학 박사이자 결로/누수 진단 전문가입니다.
-            제공된 사진 데이터(일반, 열화상, 초음파, 수분계 등 포함)를 종합 분석하여 소견서를 작성하세요.
+            제공된 사진 데이터(일반, 열화상, 초음파, 수분계 등 포함)를 종합 분석하여 법적 효력이 있는 수준의 기술 소견서를 작성하세요.
 
             [1. 진단 개요]
             - 위치: ${fullLocation}
@@ -670,11 +686,18 @@
             B. 열화상/초음파 분석: 
                - 단열 누락 부위(냉점) 및 기밀 파괴(누기) 지점 지적.
 
+            [중요] **'방화문(현관문)' 또는 '대피공간' 진단 시 아래 원인을 우선적으로 검토하십시오:**
+            1. **가스켓 불량:** 방화문 가스켓의 노후화, 경화, 탈락으로 인한 외풍 유입 여부.
+            2. **문짝 휨(Bending):** 방화문이 휘어 문틀과 밀착되지 않아 발생하는 기밀 성능 저하 (Turning 방식 개폐의 취약점).
+            3. **단열/사춤 불량:** 문틀(Frame) 주위의 우레탄폼 충진 부족 및 단열재 시공 결함으로 인한 열교 현상.
+            4. **저층부 냉기 유입:** 1~2층 저층부의 경우, 공동현관을 통해 유입되는 강한 냉기와 연돌 효과에 의한 결로 가능성.
+
             [3. 결론 및 귀책]
-            - 사용자 과실(환기 부족) vs 시공 하자(단열/기밀 불량) 비율 산정.
+            - 사용자 과실(환기 부족) vs 시공 하자(단열/기밀 불량/자재 불량) 비율 산정.
 
             [4. 조치 권고]
-            - 생활 습관 개선 또는 재시공 방법 제안.
+            - 방화문일 경우: 가스켓 교체, 도어 힌지 조정, 문틀 주위 단열 보강 등 구체적 제안.
+            - 일반 결로일 경우: 생활 습관 개선 또는 단열 재시공 제안.
 
             [5. 필수 JSON]
             맨 마지막에:
