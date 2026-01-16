@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>결로진단 AI앱 (Ver 15.0 PRO Expert)</title>
+    <title>결로진단 AI앱 (Ver 16.0 PRO Expert)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -22,7 +22,7 @@
             --border-color: #cfd8dc;        
             --expert-gold: #ff6f00;        
             --moisture-blue: #0288d1;
-            --sonic-purple: #7b1fa2; /* 초음파 색상 */
+            --sonic-purple: #7b1fa2;
             --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
@@ -103,22 +103,37 @@
         }
         .section-title i { margin-right: 10px; color: var(--primary-main); font-size: 1.2rem; }
 
-        .input-group { margin-bottom: 16px; }
-        .input-label { display: block; font-weight: 700; margin-bottom: 6px; color: var(--text-secondary); font-size: 0.9rem; }
+        .input-group { margin-bottom: 0; } /* Grid 내부용 */
+        .input-label { display: block; font-weight: 700; margin-bottom: 6px; color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         input[type="text"], input[type="number"], textarea {
-            width: 100%; padding: 12px;
+            width: 100%; padding: 10px;
             border: 1px solid var(--border-color);
             border-radius: 8px; background-color: #fafafa;
-            font-size: 0.95rem; box-sizing: border-box; 
+            font-size: 0.9rem; box-sizing: border-box; 
             color: var(--text-primary); font-weight: 500;
         }
 
-        textarea { resize: none; height: 80px; }
-        .row-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        textarea { resize: none; height: 80px; width: 100%; margin-top: 10px; }
         
+        /* 1. 기본 정보 한 줄 레이아웃 (Grid) */
+        .info-grid-row {
+            display: grid;
+            grid-template-columns: 0.6fr 0.6fr 1.8fr 1.2fr; /* 동:호:장소:날짜 비율 */
+            gap: 6px;
+            align-items: end;
+        }
+
         .photo-stack { display: flex; flex-direction: column; gap: 20px; }
-        .upload-wrapper { border: 1px solid #eee; padding: 15px; border-radius: 12px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        
+        /* 사진 업로드 래퍼 */
+        .upload-wrapper { 
+            border: 1px solid #eee; padding: 15px; 
+            border-radius: 12px; background: #fff; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02); 
+            margin-bottom: 10px;
+            position: relative;
+        }
         
         .upload-box {
             border: 2px dashed #b0bec5;
@@ -135,6 +150,28 @@
         .upload-icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.7; }
         .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
         .file-input { display: none; }
+
+        /* 2. 추가 사진 버튼 스타일 */
+        .add-photo-btn {
+            background-color: #f5f5f5;
+            color: var(--text-secondary);
+            border: 1px dashed var(--border-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 5px;
+            transition: all 0.2s;
+        }
+        .add-photo-btn:hover {
+            background-color: #e3f2fd;
+            color: var(--primary-main);
+            border-color: var(--primary-main);
+        }
+        .add-photo-btn i { margin-right: 5px; }
 
         .analyze-btn {
             width: 100%; padding: 16px;
@@ -181,20 +218,35 @@
         @keyframes rotate { 100% { transform: rotate(360deg); } }
 
         @media print {
-            body { background: white; padding: 0; }
-            .mobile-container { max-width: 100%; width: 100%; box-shadow: none; margin: 0; }
-            .analyze-btn, .footer-btns, .file-input { display: none !important; }
-            .upload-box { border: 1px solid #ccc !important; height: 300px !important; }
-            .upload-box img.preview-img[src] { display: block !important; height: 100%; width: auto; margin: 0 auto; }
+            body { background: white; padding: 0; display: block; }
+            .mobile-container { max-width: 100%; width: 100%; box-shadow: none; margin: 0; border: none; }
+            
+            /* UI 요소 숨김 */
+            .analyze-btn, .footer-btns, .file-input, .add-photo-btn { display: none !important; }
+            
+            /* 3. 빈 사진 입력칸 숨김 (filled 클래스가 없는 .upload-wrapper 숨김) */
+            .upload-wrapper { display: none !important; }
+            .upload-wrapper.filled { display: block !important; page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #ccc; }
+
+            .upload-box { border: none !important; height: 300px !important; background: none !important; }
+            .upload-box img.preview-img[src] { display: block !important; height: 100%; width: auto; margin: 0 auto; object-fit: contain; }
             .upload-box i, .upload-box span { display: none !important; } 
-            .photo-stack > div { page-break-inside: avoid; margin-bottom: 20px; }
-            #result-area { display: block !important; border: 1px solid #000; }
+            
+            .section { page-break-inside: avoid; }
+            #result-area { display: block !important; border: 2px solid #000; margin-top: 20px; }
             #chart_div { 
                 width: 100% !important; 
-                height: 450px !important;
+                height: 400px !important;
                 page-break-inside: avoid; 
-                margin-bottom: 20px;
             }
+            
+            /* 입력 필드 스타일 단순화 */
+            input, textarea { border: none; background: transparent; padding: 0; font-weight: bold; }
+            .section-title { background: none; border-left: 5px solid #000; color: #000; padding-left: 10px; }
+            .main-header { background: #fff; color: #000; border-bottom: 2px solid #000; padding: 10px; }
+            .main-header h1 { color: #000; justify-content: flex-start; }
+            .main-header h1 i { color: #000; }
+            .version-badge { border: 1px solid #000; color: #000; background: #fff; }
         }
     </style>
 </head>
@@ -203,25 +255,34 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge">Ver 15.0 PRO Expert</span>
+        <span class="version-badge">Ver 16.0 PRO Expert</span>
     </header>
 
     <div class="content">
         <div class="section">
             <div class="section-title"><i class="fas fa-clipboard-list"></i> 기본 정보 (Basic Info)</div>
-            <div class="row-group">
+            
+            <div class="info-grid-row">
+                <div class="input-group">
+                    <label class="input-label">동</label>
+                    <input type="text" id="dong" placeholder="101동" style="text-align:center;">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">호</label>
+                    <input type="text" id="ho" placeholder="1204호" style="text-align:center;">
+                </div>
                 <div class="input-group">
                     <label class="input-label">진단 장소</label>
-                    <input type="text" id="location" placeholder="예: 안방 드레스룸 창호">
+                    <input type="text" id="location" placeholder="안방 드레스룸">
                 </div>
                 <div class="input-group">
                     <label class="input-label">진단 일자</label>
-                    <input type="text" id="date" style="text-align:center; color:#546e7a; font-weight:bold;">
+                    <input type="text" id="date" style="text-align:center; color:#546e7a; font-weight:bold; font-size:0.8rem; padding: 11px 5px;">
                 </div>
             </div>
+
             <div class="input-group">
-                <label class="input-label">하자 증상 상세</label>
-                <textarea id="defect-content" placeholder="예: 벽지 젖음, 곰팡이 발생 등"></textarea>
+                <textarea id="defect-content" placeholder="하자 증상 상세 (예: 벽지 젖음, 곰팡이 발생 등)"></textarea>
             </div>
         </div>
 
@@ -253,93 +314,98 @@
         </div>
 
         <div class="section">
-            <div class="section-title"><i class="fas fa-camera-retro"></i> 현장 증거 사진 (Evidence)</div>
+            <div class="section-title"><i class="fas fa-camera-retro"></i> 현장 및 계측 사진 (Photo Data)</div>
             <div class="photo-stack">
-                <div class="upload-wrapper">
-                    <label class="input-label">1. 결로/곰팡이 메인 (필수)</label>
-                    <label for="img1-main" class="upload-box" id="box-1">
-                        <i class="fas fa-camera upload-icon"></i>
-                        <span class="upload-text-main">터치하여 촬영</span>
-                        <img id="preview-1" class="preview-img">
-                    </label>
-                    <input type="file" id="img1-main" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-1', 'box-1', 'main')">
-                </div>
-                <div class="upload-wrapper">
-                    <label class="input-label">2. 근접 상세 사진 (필수)</label>
-                    <label for="img1-sub1" class="upload-box" id="box-2">
-                        <i class="fas fa-search-plus upload-icon"></i>
-                        <span class="upload-text-main">터치하여 촬영</span>
-                        <img id="preview-2" class="preview-img">
-                    </label>
-                    <input type="file" id="img1-sub1" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-2', 'box-2', 'sub')">
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title"><i class="fas fa-microscope"></i> 정밀 계측 데이터 (Deep Analysis)</div>
-            <div class="photo-stack">
-                 <div class="upload-wrapper">
-                    <label class="input-label" style="color:#0d47a1;">■ FLIR MR 277 (VAP/MIX)</label>
-                    <div style="font-size:0.8rem; color:#666;">* 수증기압(kPa) 및 혼합비(g/kg) 필수</div>
-                    <label for="img2" class="upload-box" id="box-3">
-                        <i class="fas fa-ruler-combined upload-icon" style="color:#0d47a1;"></i>
-                        <span class="upload-text-main">계측기 화면 촬영</span>
-                        <img id="preview-3" class="preview-img">
-                    </label>
-                    <input type="file" id="img2" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-3', 'box-3', 'equip')">
+                
+                <div id="group-general">
+                    <div class="upload-wrapper" id="wrap-main">
+                        <label class="input-label">1. 결로/곰팡이 메인 (필수)</label>
+                        <label for="img-main" class="upload-box">
+                            <i class="fas fa-camera upload-icon"></i>
+                            <span class="upload-text">터치하여 촬영</span>
+                            <img id="view-main" class="preview-img">
+                        </label>
+                        <input type="file" id="img-main" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    </div>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-general', '일반/상세 추가')">
+                        <i class="fas fa-plus-circle"></i> 일반 사진 추가
+                    </button>
                 </div>
 
-                <div class="upload-wrapper">
-                    <label class="input-label" style="color:var(--moisture-blue);">■ FLIR MR12 볼 프로브 (비파괴 수분)</label>
-                    <div style="font-size:0.8rem; color:#666;">* 마감재 손상 없이 내부 수분량 측정</div>
-                    <label for="img-probe" class="upload-box" id="box-probe" style="background-color: #e1f5fe;">
-                        <i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i>
-                        <span class="upload-text-main" style="color:var(--moisture-blue);">볼 프로브 측정 사진</span>
-                        <img id="preview-probe" class="preview-img">
-                    </label>
-                    <input type="file" id="img-probe" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-probe', 'box-probe', 'probe')">
+                <div id="group-mr277" style="margin-top:20px;">
+                    <div class="upload-wrapper" id="wrap-mr277">
+                        <label class="input-label" style="color:#0d47a1;">■ FLIR MR 277 (VAP/MIX)</label>
+                        <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">* 수증기압(kPa) 및 혼합비(g/kg)</div>
+                        <label for="img-mr277" class="upload-box">
+                            <i class="fas fa-ruler-combined upload-icon" style="color:#0d47a1;"></i>
+                            <span class="upload-text">계측기 화면 촬영</span>
+                            <img id="view-mr277" class="preview-img">
+                        </label>
+                        <input type="file" id="img-mr277" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    </div>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-mr277', 'MR277 추가', '#0d47a1')">
+                        <i class="fas fa-plus-circle"></i> 계측 사진 추가
+                    </button>
                 </div>
 
-                <div class="upload-wrapper">
-                    <label class="input-label" style="color:var(--moisture-blue);">■ 핀 타입 수분측정기 (함수율 %)</label>
-                    <div style="font-size:0.8rem; color:#666;">* 표면 수분 함량(%) 수치 확인용</div>
-                    <label for="img-moisture" class="upload-box" id="box-moisture" style="background-color: #e1f5fe;">
-                        <i class="fas fa-tint upload-icon" style="color:var(--moisture-blue);"></i>
-                        <span class="upload-text-main" style="color:var(--moisture-blue);">수분계 측정 사진</span>
-                        <img id="preview-moisture" class="preview-img">
-                    </label>
-                    <input type="file" id="img-moisture" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-moisture', 'box-moisture', 'moisture')">
+                <div id="group-probe" style="margin-top:20px;">
+                    <div class="upload-wrapper">
+                        <label class="input-label" style="color:var(--moisture-blue);">■ FLIR MR12 볼 프로브</label>
+                        <label for="img-probe" class="upload-box" style="background-color: #e1f5fe;">
+                            <i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i>
+                            <span class="upload-text">볼 프로브 촬영</span>
+                            <img id="view-probe" class="preview-img">
+                        </label>
+                        <input type="file" id="img-probe" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    </div>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-probe', '볼 프로브 추가', 'var(--moisture-blue)', '#e1f5fe')">
+                        <i class="fas fa-plus-circle"></i> 프로브 사진 추가
+                    </button>
                 </div>
 
-                <div class="upload-wrapper">
-                    <label class="input-label" style="color:#d84315;">■ 열화상 카메라 (단열/열교)</label>
-                    <label for="img3" class="upload-box" id="box-4" style="background-color: #fffbe6;">
-                        <i class="fas fa-temperature-high upload-icon" style="color: #ff7043;"></i>
-                        <span class="upload-text-main" style="color: #bf360c;">열화상 이미지</span>
-                        <img id="preview-4" class="preview-img">
-                    </label>
-                    <input type="file" id="img3" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-4', 'box-4', 'thermal')">
+                <div id="group-moist" style="margin-top:20px;">
+                    <div class="upload-wrapper">
+                        <label class="input-label" style="color:var(--moisture-blue);">■ 핀 타입 수분측정기</label>
+                        <label for="img-moist" class="upload-box" style="background-color: #e1f5fe;">
+                            <i class="fas fa-tint upload-icon" style="color:var(--moisture-blue);"></i>
+                            <span class="upload-text">수분계 촬영</span>
+                            <img id="view-moist" class="preview-img">
+                        </label>
+                        <input type="file" id="img-moist" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    </div>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-moist', '수분계 추가', 'var(--moisture-blue)', '#e1f5fe')">
+                        <i class="fas fa-plus-circle"></i> 수분계 사진 추가
+                    </button>
                 </div>
 
-                <div class="upload-wrapper">
-                    <label class="input-label" style="color: var(--sonic-purple);">■ 초음파(Ultrasonic) 기밀 진단 1</label>
-                    <label for="img4" class="upload-box" id="box-5" style="background-color: #f3e5f5;">
-                        <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i>
-                        <span class="upload-text-main" style="color: var(--sonic-purple);">초음파 이미지 1</span>
-                        <img id="preview-5" class="preview-img">
-                    </label>
-                    <input type="file" id="img4" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-5', 'box-5', 'acoustic')">
+                <div id="group-thermal" style="margin-top:20px;">
+                    <div class="upload-wrapper">
+                        <label class="input-label" style="color:#d84315;">■ 열화상 카메라 (Thermal)</label>
+                        <label for="img-thermal" class="upload-box" style="background-color: #fffbe6;">
+                            <i class="fas fa-temperature-high upload-icon" style="color: #ff7043;"></i>
+                            <span class="upload-text">열화상 이미지</span>
+                            <img id="view-thermal" class="preview-img">
+                        </label>
+                        <input type="file" id="img-thermal" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    </div>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-thermal', '열화상 추가', '#d84315', '#fffbe6')">
+                        <i class="fas fa-plus-circle"></i> 열화상 사진 추가
+                    </button>
                 </div>
 
-                <div class="upload-wrapper">
-                    <label class="input-label" style="color: var(--sonic-purple);">■ 초음파(Ultrasonic) 기밀 진단 2 (추가)</label>
-                    <label for="img4-2" class="upload-box" id="box-5-2" style="background-color: #f3e5f5;">
-                        <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i>
-                        <span class="upload-text-main" style="color: var(--sonic-purple);">초음파 이미지 2</span>
-                        <img id="preview-6" class="preview-img">
-                    </label>
-                    <input type="file" id="img4-2" class="file-input" accept="image/*" onchange="previewImage(this, 'preview-6', 'box-5-2', 'acoustic2')">
+                <div id="group-sonic" style="margin-top:20px;">
+                    <div class="upload-wrapper">
+                        <label class="input-label" style="color: var(--sonic-purple);">■ 초음파(Ultrasonic) 진단</label>
+                        <label for="img-sonic" class="upload-box" style="background-color: #f3e5f5;">
+                            <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i>
+                            <span class="upload-text">초음파 이미지</span>
+                            <img id="view-sonic" class="preview-img">
+                        </label>
+                        <input type="file" id="img-sonic" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    </div>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-sonic', '초음파 추가', 'var(--sonic-purple)', '#f3e5f5')">
+                        <i class="fas fa-plus-circle"></i> 초음파 사진 추가
+                    </button>
                 </div>
 
             </div>
@@ -354,7 +420,7 @@
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
                 <i class="fas fa-spinner spinner"></i>
                 <p id="loading-text" style="margin-top:15px; font-weight:bold; color:var(--primary-main);">
-                    첨단 계측 데이터(VAP/MIX 기준 분석 포함)를<br>종합 분석하여 결로 원인을 규명 중입니다...
+                    동, 호수 및 환경 데이터를 기반으로<br>모든 계측 사진을 종합 정밀 분석 중입니다...
                 </p>
             </div>
             
@@ -389,17 +455,17 @@
 <script>
     google.charts.load("current", {packages:["corechart"]});
 
-    // 1. 날짜
+    // 1. 날짜 설정
     const today = new Date();
     document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
 
-    // 2. API 키 (사용자 입력)
-    const keyPart1 = "AIzaSyCGtANQJNBEGSh"; // [수정 필요]
-    const keyPart2 = "9zCrTXMEnR-";     // [수정 필요]
-    const keyPart3 = "PHxLlXtkw";     // [수정 필요]
+    // 2. API 키 설정 (보안 주의)
+    const keyPart1 = "AIzaSyCGtANQJNBEGSh"; 
+    const keyPart2 = "9zCrTXMEnR-";     
+    const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // 3. 날씨
+    // 3. 날씨 API
     function fetchWeather() {
         const tempOut = document.getElementById('temp-out');
         const humidOut = document.getElementById('humid-out');
@@ -421,7 +487,7 @@
     }
     window.onload = function() { fetchWeather(); };
 
-    // 4. 이슬점
+    // 4. 이슬점 계산
     function calcDewPoint() {
         const temp = parseFloat(document.getElementById('temp-in').value);
         const humid = parseFloat(document.getElementById('humid-in').value);
@@ -436,37 +502,87 @@
         }
     }
 
-    // 5. 이미지 처리 (초음파2 추가됨)
-    let images = { main: null, sub: null, equip: null, thermal: null, acoustic: null, acoustic2: null, probe: null, moisture: null };
+    // 5. 동적 사진 입력 필드 추가 함수
+    let uniqueIdCounter = 0;
+    function addPhotoInput(groupId, labelText, color = '#546e7a', bgColor = '#ffffff') {
+        uniqueIdCounter++;
+        const newId = `added-${uniqueIdCounter}`;
+        const groupDiv = document.getElementById(groupId);
+        const btn = groupDiv.querySelector('.add-photo-btn');
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'upload-wrapper';
+        wrapper.id = `wrap-${newId}`;
+        
+        wrapper.innerHTML = `
+            <label class="input-label" style="color:${color};">${labelText} (추가)</label>
+            <label for="img-${newId}" class="upload-box" style="background-color: ${bgColor};">
+                <i class="fas fa-plus upload-icon" style="color:${color};"></i>
+                <span class="upload-text" style="color:${color};">추가 사진 촬영</span>
+                <img id="view-${newId}" class="preview-img">
+            </label>
+            <input type="file" id="img-${newId}" class="file-input" accept="image/*" onchange="handleImage(this)">
+        `;
+        
+        // 버튼 위에 삽입
+        groupDiv.insertBefore(wrapper, btn);
+    }
 
-    function previewImage(input, imgId, boxId, type) {
+    // 6. 이미지 미리보기 및 상태 관리 (PDF 출력용 클래스 제어)
+    function handleImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const img = document.getElementById(imgId);
+                // 해당 input의 wrapper 찾기
+                const wrapper = input.closest('.upload-wrapper');
+                const img = wrapper.querySelector('.preview-img');
+                const box = wrapper.querySelector('.upload-box');
+                
                 img.src = e.target.result;
-                img.style.display = 'block'; 
-                const box = document.getElementById(boxId);
-                box.querySelectorAll('i, span, div').forEach(el => el.style.display = 'none'); 
-                images[type] = e.target.result.split(',')[1];
+                img.style.display = 'block';
+                
+                // 아이콘 숨기기
+                box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
+                
+                // [중요] PDF 출력을 위해 'filled' 클래스 추가
+                wrapper.classList.add('filled');
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // 6. AI 분석
+    // 7. AI 분석 (동적 이미지 수집 로직 개선)
     async function startAnalysis() {
         const resultArea = document.getElementById('result-area');
         const loading = document.getElementById('loading-spinner');
         const content = document.getElementById('analysis-content');
         const chartSection = document.getElementById('chart-section');
         
-        const userDate = document.getElementById('date').value;
-        const location = document.getElementById('location').value || "미지정 장소";
-        const defect = document.getElementById('defect-content').value || "상세 내용 없음";
+        const dong = document.getElementById('dong').value;
+        const ho = document.getElementById('ho').value;
+        const location = document.getElementById('location').value;
+        const fullLocation = `${dong ? dong + ' ' : ''}${ho ? ho + ' ' : ''}${location || "미지정 장소"}`;
+        
+        const defect = document.getElementById('defect-content').value;
         const tempIn = document.getElementById('temp-in').value;
         const humidIn = document.getElementById('humid-in').value;
         const dew = document.getElementById('dew-result').value;
+
+        // 이미지 수집 (동적으로 추가된 모든 이미지 포함)
+        let imageParts = [];
+        const allImages = document.querySelectorAll('.preview-img');
+        
+        allImages.forEach((img, index) => {
+            if(img.src && img.src.startsWith('data:image')) {
+                const base64Data = img.src.split(',')[1];
+                imageParts.push({ inline_data: { mime_type: "image/jpeg", data: base64Data } });
+            }
+        });
+
+        if(imageParts.length === 0) {
+            alert("최소 1장 이상의 사진을 등록해주세요.");
+            return;
+        }
 
         resultArea.style.display = 'block';
         loading.style.display = 'block';
@@ -474,72 +590,37 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
-        if(!images.main) {
-            alert("메인 사진은 필수입니다.");
-            loading.style.display = 'none';
-            return;
-        }
-
-        if (API_KEY.includes("AIzaSy...") || API_KEY.length < 20) {
-             alert("API 키를 확인해주세요.");
-             loading.style.display = 'none';
-             return;
-        }
-
         const prompt = `
-            당신은 건축 환경 공학 박사이자 결로/누수 진단 최고 권위자입니다.
-            제공된 사진 데이터와 아래 환경 기준을 바탕으로 법적 효력이 있는 수준의 '기술 소견서'를 작성하세요.
+            당신은 건축 환경 공학 박사이자 결로/누수 진단 전문가입니다.
+            제공된 사진 데이터(일반, 열화상, 초음파, 수분계 등 포함)를 종합 분석하여 소견서를 작성하세요.
 
-            [1. 진단 환경]
-            - 일자: ${userDate}, 장소: ${location}
-            - 환경: 실내 ${tempIn}°C / ${humidIn}% (노점: ${dew})
+            [1. 진단 개요]
+            - 위치: ${fullLocation}
+            - 환경: 실내 ${tempIn}°C / ${humidIn}% (이슬점: ${dew})
             - 증상: ${defect}
 
-            [2. 계측 데이터 정밀 분석 및 기준 대조]
-            **중요:** 아래 기준치(ASHRAE 및 국내 KICT 동절기 기준)를 명시하고, 측정값을 비교 설명하세요.
+            [2. 정밀 분석 (사진 기반)]
+            * 제공된 모든 사진을 분석하여 다음을 수행:
+            A. 계측기(MR277, 수분계) 수치 판독: 
+               - MIX(절대습도)가 9.0g/kg 초과시 '과도한 생활 습기' 경고.
+               - 표면 수분함량 과다 시 누수/결로 판별.
+            B. 열화상/초음파 분석: 
+               - 단열 누락 부위(냉점) 및 기밀 파괴(누기) 지점 지적.
 
-            **A. 공기선도 및 절대습도 (FLIR MR277 분석)**
-            * **MIX(혼합비/절대습도) 기준 (출처: ASHRAE 62.1 & KICT):**
-              - **동절기 적정 기준:** 7.0 g/kg 이하 (쾌적)
-              - **주의 단계:** 7.0 ~ 9.0 g/kg (환기 필요)
-              - **위험 단계:** 9.0 g/kg 초과 (과도한 수증기 부하)
-            * **판정 지침:**
-              - 측정된 MIX 값이 **9.0g/kg을 초과**하는 경우: 
-                "현재 MIX 수치는 [수치]g/kg로, 동절기 적정 기준(7g/kg)을 크게 초과하였습니다. 이는 **'재실자의 생활 습관(빨래 건조, 요리, 환기 부족 등)에 기인한 과도한 수증기 부하(Moisture Load)'** 상태로 판단됩니다. 이 수치에서는 아무리 좋은 창호를 써도 물리적으로 결로를 막기 어렵습니다." 라고 명시하세요.
-            * **VAP(수증기압):** - 동절기 실내 적정: 1.2 kPa 이하. 수치가 높을수록 벽체 내부로 습기가 침투하려는 힘(Moisture Drive)이 강함을 설명하세요.
+            [3. 결론 및 귀책]
+            - 사용자 과실(환기 부족) vs 시공 하자(단열/기밀 불량) 비율 산정.
 
-            **B. 마감재 수분 함량 (MR12 & 핀타입)**
-            * 표면 함수율(%)이 12%를 넘거나, MR12(Rel) 수치가 높으면 내부 결로/누수를 지적하세요.
+            [4. 조치 권고]
+            - 생활 습관 개선 또는 재시공 방법 제안.
 
-            **C. 열화상(Thermal) 및 초음파(Acoustic)**
-            * 열교 현상 및 초음파 누기 지점(기밀선 파괴)을 분석하세요. 초음파 사진은 최대 2장이 제공됩니다.
-
-            [3. 종합 결론 및 귀책 분석]
-            * **알고리즘:** 1. MIX > 9.0g/kg 이고, 단열재 내부 수분이 적음 -> **사용자 과실 (환기 부족/과습 생활)** (JSON: ventilation 높게)
-              2. MIX < 8.0g/kg 인데, 열화상 냉점/초음파 누기가 심함 -> **시공 하자 (단열/기밀 불량)** (JSON: insulation 높게)
-            
-            [4. 개선 및 조치 방안 (Professional Advice)]
-            * **MIX/VAP 과다 시 (고객 과실):** - "현재 환경에서는 단순 환기로 부족할 수 있습니다. 1) **강제 제습(제습기 가동)**을 통해 절대습도를 7g/kg대로 낮추고, 2) 실내 온도를 22°C 이상 유지하여 포화수증기압을 높여야 합니다. 3) 하루 3회 이상 맞통풍 환기를 시행하여 공기 중 수분 부하를 줄이십시오."
-            * **시공 하자 시:** 단열재 재시공 및 기밀 보강 권고.
-
-            [5. 필수 JSON 출력]
-            보고서 끝에 아래 JSON을 포함하세요. (비율은 위 분석에 따라 산정)
+            [5. 필수 JSON]
+            맨 마지막에:
             ___JSON_START___
-            {"ventilation": (숫자), "insulation": (숫자), "normal": 0}
+            {"ventilation": (0~100), "insulation": (0~100), "normal": (0~20)}
             ___JSON_END___
         `;
 
-        let parts = [{ text: prompt }];
-        if(images.main) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.main } });
-        if(images.sub) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.sub } });
-        if(images.equip) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.equip } });
-        if(images.probe) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.probe } }); 
-        if(images.moisture) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.moisture } }); 
-        if(images.thermal) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.thermal } });
-        if(images.acoustic) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.acoustic } });
-        // [추가] 2번째 초음파 사진 전송
-        if(images.acoustic2) parts.push({ inline_data: { mime_type: "image/jpeg", data: images.acoustic2 } });
-
+        let parts = [{ text: prompt }, ...imageParts];
         const modelName = "gemini-2.0-flash-exp"; 
 
         try {
@@ -556,16 +637,16 @@
                     let finalJson = null;
 
                     let match = aiText.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
-                    if (!match) match = aiText.match(/JSON_START([\s\S]*?)JSON_END/i);
                     if (!match) match = aiText.match(/\{[\s\n]*"ventilation"[\s\S]*?\}/);
 
                     if(match) {
                         try {
-                            let rawJson = match[0].replace(/___JSON_START___|___JSON_END___|JSON_START|JSON_END|```json|```/gi, "").trim();
+                            let rawJson = match[0].replace(/___JSON_START___|___JSON_END___|```json|```/gi, "").trim();
+                            // {} 만 추출
                             const braceMatch = rawJson.match(/\{[\s\S]*\}/);
                             if(braceMatch) rawJson = braceMatch[0];
                             finalJson = JSON.parse(rawJson);
-                            aiText = aiText.replace(match[0], "").replace(/5\.\s*필수\s*출력.*$/im, "");
+                            aiText = aiText.replace(match[0], ""); 
                         } catch(e) { console.error("JSON Error", e); }
                     }
 
@@ -584,17 +665,16 @@
             console.error(error);
             loading.style.display = 'none';
             content.style.display = 'block';
-            content.innerHTML = "<p style='color:red;'>분석 중 오류가 발생했습니다. API 키를 확인하세요.</p>";
+            content.innerHTML = "<p style='color:red;'>분석 오류 발생. 네트워크 혹은 API 키를 확인하세요.</p>";
         }
     }
 
-    // [수정] 차트 크기 및 옵션 최적화
     function drawChart(data) {
         var chartData = google.visualization.arrayToDataTable([
             ['원인', '비율'],
             ['거주자 과습 생활 (환기부족)', data.ventilation],
             ['시공사 단열/기밀 불량 (하자)', data.insulation],
-            ['기타/자연적 요인', data.normal]
+            ['기타/자연적 요인', data.normal || 0]
         ]);
 
         var options = {
@@ -607,8 +687,8 @@
             },
             backgroundColor: 'transparent',
             fontSize: 12, 
-            chartArea: { width: '85%', height: '70%' }, 
-            legend: { position: 'bottom', maxLines: 2 } 
+            chartArea: { width: '90%', height: '75%' }, 
+            legend: { position: 'bottom' } 
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
