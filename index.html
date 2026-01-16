@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="app-title">결로진단 AI앱</title>
+    <title id="app-title">결로진단 AI앱 (Legal Safe)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -23,6 +23,7 @@
             --expert-gold: #ff6f00;        
             --moisture-blue: #0288d1;
             --sonic-purple: #7b1fa2;
+            --warning-red: #d32f2f; /* 법적 경고색 */
             --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
@@ -59,83 +60,51 @@
             overflow: hidden;
         }
 
-        /* [수정 1] 사실적인 물방울 디자인 (Real Water Drop CSS) */
+        /* 정적 물방울 디자인 (애니메이션 없음) */
         .water-drop {
             position: absolute;
-            background: rgba(255, 255, 255, 0.1); /* 반투명 배경 */
+            background: rgba(255, 255, 255, 0.1); 
             border-radius: 50%;
-            /* 입체감을 위한 그림자: 내부 그림자와 외부 그림자 조합 */
             box-shadow: 
-                inset 2px 2px 5px rgba(0, 0, 0, 0.2), /* 내부 어두움 */
-                inset -2px -2px 5px rgba(255, 255, 255, 0.5), /* 내부 밝음 (반사) */
-                2px 2px 5px rgba(0, 0, 0, 0.3); /* 외부 그림자 */
+                inset 2px 2px 5px rgba(0, 0, 0, 0.2), 
+                inset -2px -2px 5px rgba(255, 255, 255, 0.5), 
+                2px 2px 5px rgba(0, 0, 0, 0.3); 
             z-index: 0;
         }
-        
-        /* 물방울 하이라이트 (빛 반사) */
         .water-drop::after {
-            content: '';
-            position: absolute;
-            top: 20%;
-            left: 20%;
-            width: 25%;
-            height: 25%;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
-            filter: blur(1px);
+            content: ''; position: absolute; top: 20%; left: 20%; width: 25%; height: 25%;
+            border-radius: 50%; background: rgba(255, 255, 255, 0.9); filter: blur(1px);
         }
 
         .main-header h1 {
-            margin: 0;
-            font-size: 1.3rem; 
-            font-weight: 900;
+            margin: 0; font-size: 1.3rem; font-weight: 900;
             display: flex; align-items: center; justify-content: center;
-            line-height: 1.2;
-            margin-bottom: 0px;
-            position: relative;
-            z-index: 1; 
+            line-height: 1.2; margin-bottom: 0px;
+            position: relative; z-index: 1; 
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
 
         .version-badge {
-            position: absolute;
-            right: 15px;
-            bottom: 8px;
-            background-color: var(--expert-gold);
-            color: #fff;
-            padding: 2px 8px; 
-            border-radius: 10px;
-            font-size: 0.6rem; 
-            font-weight: 800;
+            position: absolute; right: 15px; bottom: 8px;
+            background-color: var(--expert-gold); color: #fff;
+            padding: 2px 8px; border-radius: 10px;
+            font-size: 0.6rem; font-weight: 800;
             border: 1px solid rgba(255,255,255,0.4);
-            line-height: 1.4;
-            display: flex; align-items: center;
+            line-height: 1.4; display: flex; align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            z-index: 2;
-            cursor: help;
+            z-index: 2; cursor: help;
         }
 
         .content { padding: 15px; background-color: #fff; }
-
         .section { margin-bottom: 25px; }
         
         .section-title {
-            font-weight: 800;
-            color: var(--primary-dark);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            font-size: 1.05rem;
-            border-left: 5px solid var(--accent-color);
-            padding-left: 10px;
-            background: #f5f5f5;
-            padding: 6px 10px;
-            border-radius: 0 8px 8px 0;
-            letter-spacing: -1px; 
-            white-space: nowrap; 
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-weight: 800; color: var(--primary-dark); margin-bottom: 12px;
+            display: flex; align-items: center; font-size: 1.05rem;
+            border-left: 5px solid var(--accent-color); padding-left: 10px;
+            background: #f5f5f5; padding: 6px 10px; border-radius: 0 8px 8px 0;
+            letter-spacing: -1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .section-title i { margin-right: 8px; color: var(--primary-main); font-size: 1.1rem; }
 
@@ -144,53 +113,28 @@
 
         input[type="text"], input[type="number"], textarea {
             width: 100%; padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px; background-color: #fafafa;
-            font-size: 0.85rem; box-sizing: border-box; 
-            color: var(--text-primary); font-weight: 500;
-            letter-spacing: -0.5px;
+            border: 1px solid var(--border-color); border-radius: 6px;
+            background-color: #fafafa; font-size: 0.85rem; box-sizing: border-box; 
+            color: var(--text-primary); font-weight: 500; letter-spacing: -0.5px;
         }
-
-        ::placeholder {
-            color: #b0bec5 !important;
-            opacity: 1;
-            font-weight: 400;
-            font-size: 0.8rem;
-        }
-
+        ::placeholder { color: #b0bec5 !important; opacity: 1; font-weight: 400; font-size: 0.8rem; }
         textarea { resize: none; height: 70px; width: 100%; margin-top: 8px; }
         
-        .info-grid-row {
-            display: grid;
-            grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; 
-            gap: 4px; 
-            align-items: end;
-        }
-        
-        .info-grid-row .input-label {
-            text-align: center;
-        }
+        .info-grid-row { display: grid; grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; gap: 4px; align-items: end; }
+        .info-grid-row .input-label { text-align: center; }
 
         .photo-stack { display: flex; flex-direction: column; gap: 15px; }
-        
         .upload-wrapper { 
-            border: 1px solid #eee; padding: 12px; 
-            border-radius: 10px; background: #fff; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
-            margin-bottom: 8px;
-            position: relative;
+            border: 1px solid #eee; padding: 12px; border-radius: 10px; 
+            background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+            margin-bottom: 8px; position: relative;
         }
-        
         .upload-box {
-            border: 2px dashed #b0bec5;
-            background-color: #fcfcfc;
-            border-radius: 10px;
-            width: 100%; 
-            aspect-ratio: 4 / 3; 
+            border: 2px dashed #b0bec5; background-color: #fcfcfc;
+            border-radius: 10px; width: 100%; aspect-ratio: 4 / 3; 
             text-align: center; color: #78909c; cursor: pointer;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            position: relative; overflow: hidden;
-            transition: all 0.2s;
+            position: relative; overflow: hidden; transition: all 0.2s;
         }
         .upload-box:hover { border-color: var(--accent-color); background: #e3f2fd; }
         .upload-icon { font-size: 1.8rem; margin-bottom: 8px; opacity: 0.7; }
@@ -198,54 +142,76 @@
         .file-input { display: none; }
 
         .add-photo-btn {
-            background-color: #f5f5f5;
-            color: var(--text-secondary);
-            border: 1px dashed var(--border-color);
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            margin-top: 4px;
-            transition: all 0.2s;
+            background-color: #f5f5f5; color: var(--text-secondary);
+            border: 1px dashed var(--border-color); padding: 6px 10px;
+            border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+            cursor: pointer; display: inline-flex; align-items: center;
+            margin-top: 4px; transition: all 0.2s;
         }
-        .add-photo-btn:hover {
-            background-color: #e3f2fd;
-            color: var(--primary-main);
-            border-color: var(--primary-main);
-        }
+        .add-photo-btn:hover { background-color: #e3f2fd; color: var(--primary-main); border-color: var(--primary-main); }
         .add-photo-btn i { margin-right: 4px; }
+
+        /* [신규] 법적 면책 동의 박스 스타일 */
+        .legal-disclaimer-box {
+            background-color: #fff8e1; /* 주의 환기용 노란색 계열 */
+            border: 1px solid #ffca28;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .legal-title { color: #d32f2f; font-weight: 900; font-size: 0.85rem; display: flex; align-items: center; margin-bottom: 5px;}
+        .legal-title i { margin-right: 5px; }
+        .legal-text { font-size: 0.75rem; color: #455a64; line-height: 1.4; text-align: justify; margin-bottom: 10px; letter-spacing: -0.5px;}
+        
+        .legal-check-wrapper {
+            display: flex; align-items: center; cursor: pointer; 
+            padding-top: 8px; border-top: 1px dashed #cfd8dc;
+        }
+        .legal-check-wrapper input { width: 18px; height: 18px; margin-right: 8px; cursor: pointer; accent-color: var(--primary-main); }
+        .legal-check-text { font-weight: 800; font-size: 0.8rem; color: var(--primary-dark); }
 
         .analyze-btn {
             width: 100%; padding: 14px;
-            background: linear-gradient(135deg, var(--primary-main), #000051);
-            color: white; border: none; border-radius: 10px;
-            font-size: 1.05rem; font-weight: 800; cursor: pointer;
+            background: linear-gradient(135deg, #78909c, #455a64); /* 비활성 색상 */
+            color: #eceff1; border: none; border-radius: 10px;
+            font-size: 1.05rem; font-weight: 800; cursor: not-allowed;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(13, 71, 161, 0.3); margin-top: 15px;
+            box-shadow: none; margin-top: 10px;
+            transition: all 0.3s;
+        }
+        /* 활성화 시 스타일 */
+        .analyze-btn.active { 
+            background: linear-gradient(135deg, var(--primary-main), #000051);
+            color: white; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(13, 71, 161, 0.3); 
         }
 
         #result-area {
             margin-top: 25px; padding: 20px;
             background-color: #ffffff; border-radius: 12px; 
-            border: 2px solid var(--primary-main);
-            display: none; 
+            border: 2px solid var(--primary-main); display: none; 
         }
 
-        .chart-container { 
-            position: relative; 
-            height: 300px; 
-            width: 100%; 
-            margin-top: 10px; 
+        /* [신규] 결과 보고서 내 강제 면책 조항 (워터마크 역할) */
+        .report-header-warning {
+            text-align: center; color: #d32f2f; font-size: 0.7rem; font-weight: 900;
+            border: 1px solid #d32f2f; padding: 5px; border-radius: 4px; margin-bottom: 15px;
+            background-color: #ffebee;
         }
+
+        .report-footer-disclaimer {
+            margin-top: 20px; padding: 10px;
+            background-color: #fafafa; border-top: 2px solid #bdbdbd;
+            color: #616161; font-size: 0.65rem; text-align: justify;
+            line-height: 1.4;
+        }
+
+        .chart-container { position: relative; height: 300px; width: 100%; margin-top: 10px; }
 
         .footer-btns { display: flex; gap: 6px; margin-top: 25px; }
         .footer-btn {
-            flex: 1; 
-            padding: 10px 0; 
-            border: none; border-radius: 8px;
+            flex: 1; padding: 10px 0; border: none; border-radius: 8px;
             font-size: 0.9rem; font-weight: 700; cursor: pointer; color: white;
             display: flex; justify-content: center; align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -256,12 +222,8 @@
         
         .main-footer {
             background-color: #eceff1; color: #90a4ae;
-            padding: 15px 10px; 
-            text-align: center; 
-            font-size: 0.7rem; 
-            border-top: 1px solid #cfd8dc;
-            word-break: keep-all; 
-            line-height: 1.4;
+            padding: 15px 10px; text-align: center; font-size: 0.7rem; 
+            border-top: 1px solid #cfd8dc; word-break: keep-all; line-height: 1.4;
         }
 
         .spinner { animation: rotate 2s linear infinite; font-size: 2.5rem; color: var(--primary-main); }
@@ -270,11 +232,10 @@
         @media print {
             body { background: white; padding: 0; display: block; }
             .mobile-container { max-width: 100%; width: 100%; box-shadow: none; margin: 0; border: none; }
-            .analyze-btn, .footer-btns, .file-input, .add-photo-btn { display: none !important; }
+            .analyze-btn, .footer-btns, .file-input, .add-photo-btn, .legal-disclaimer-box { display: none !important; }
             
             .upload-wrapper { display: none !important; }
             .upload-wrapper.filled { display: block !important; page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #ccc; }
-
             .upload-box { border: none !important; height: 300px !important; background: none !important; }
             .upload-box img.preview-img[src] { display: block !important; height: 100%; width: auto; margin: 0 auto; object-fit: contain; }
             .upload-box i, .upload-box span { display: none !important; } 
@@ -302,11 +263,9 @@
         <div class="water-drop" style="width: 25px; height: 25px; top: 15%; left: 10%; border-radius: 50% 50% 50% 50%;"></div>
         <div class="water-drop" style="width: 18px; height: 22px; top: 10%; left: 85%; border-radius: 60% 40% 60% 40%;"></div>
         <div class="water-drop" style="width: 30px; height: 28px; top: 60%; left: 80%; opacity: 0.9; border-radius: 45% 55% 50% 50%;"></div>
-        
         <div class="water-drop" style="width: 15px; height: 15px; top: 25%; left: 20%;"></div>
         <div class="water-drop" style="width: 12px; height: 16px; top: 70%; left: 15%; border-radius: 40% 60% 70% 30%;"></div>
         <div class="water-drop" style="width: 10px; height: 10px; top: 50%; left: 90%;"></div>
-        
         <div class="water-drop" style="width: 8px; height: 8px; top: 40%; left: 5%;"></div>
         <div class="water-drop" style="width: 6px; height: 6px; top: 80%; left: 25%;"></div>
         <div class="water-drop" style="width: 9px; height: 9px; top: 30%; left: 75%;"></div>
@@ -319,7 +278,6 @@
     <div class="content">
         <div class="section">
             <div class="section-title"><i class="fas fa-clipboard-list"></i> 기본 정보 (Basic Info)</div>
-            
             <div class="info-grid-row">
                 <div class="input-group">
                     <label class="input-label">동</label>
@@ -338,7 +296,6 @@
                     <input type="text" id="date" style="text-align:center; color:#546e7a; font-weight:bold; font-size:0.75rem; padding: 8px 2px; letter-spacing: -1px;">
                 </div>
             </div>
-
             <div class="input-group">
                 <textarea id="defect-content" placeholder="하자 증상 상세 (예: 벽지 젖음, 곰팡이 발생 등)"></textarea>
             </div>
@@ -377,7 +334,6 @@
         <div class="section">
             <div class="section-title"><i class="fas fa-camera-retro"></i> 현장 및 계측사진 (Photo Data)</div>
             <div class="photo-stack">
-                
                 <div id="group-general">
                     <div class="upload-wrapper" id="wrap-main">
                         <label class="input-label">1. 결로/곰팡이 메인 (필수)</label>
@@ -392,7 +348,6 @@
                         <i class="fas fa-plus-circle"></i> 일반 사진 추가
                     </button>
                 </div>
-
                 <div id="group-mr277" style="margin-top:20px;">
                     <div class="upload-wrapper" id="wrap-mr277">
                         <label class="input-label" style="color:#0d47a1;">■ FLIR MR 277 (VAP/MIX)</label>
@@ -408,7 +363,6 @@
                         <i class="fas fa-plus-circle"></i> 계측 사진 추가
                     </button>
                 </div>
-
                 <div id="group-probe" style="margin-top:20px;">
                     <div class="upload-wrapper">
                         <label class="input-label" style="color:var(--moisture-blue);">■ FLIR MR12 볼 프로브</label>
@@ -423,7 +377,6 @@
                         <i class="fas fa-plus-circle"></i> 프로브 사진 추가
                     </button>
                 </div>
-
                 <div id="group-moist" style="margin-top:20px;">
                     <div class="upload-wrapper">
                         <label class="input-label" style="color:var(--moisture-blue);">■ 핀 타입 수분측정기</label>
@@ -438,7 +391,6 @@
                         <i class="fas fa-plus-circle"></i> 수분계 사진 추가
                     </button>
                 </div>
-
                 <div id="group-thermal" style="margin-top:20px;">
                     <div class="upload-wrapper">
                         <label class="input-label" style="color:#d84315;">■ 열화상 카메라 (Thermal)</label>
@@ -453,7 +405,6 @@
                         <i class="fas fa-plus-circle"></i> 열화상 사진 추가
                     </button>
                 </div>
-
                 <div id="group-sonic" style="margin-top:20px;">
                     <div class="upload-wrapper">
                         <label class="input-label" style="color: var(--sonic-purple);">■ 초음파(Ultrasonic) 진단</label>
@@ -468,16 +419,35 @@
                         <i class="fas fa-plus-circle"></i> 초음파 사진 추가
                     </button>
                 </div>
-
             </div>
         </div>
 
-        <button class="analyze-btn" onclick="startAnalysis()">
+        <div class="legal-disclaimer-box">
+            <div class="legal-title"><i class="fas fa-exclamation-triangle"></i> 분석 시작 전 필수 동의</div>
+            <div class="legal-text">
+                본 앱의 진단 결과는 AI 알고리즘에 의한 <strong>단순 참고용 추정치</strong>입니다. 
+                <br><br>
+                청개구리샤시는 본 결과의 정확성을 보증하지 않으며, 이를 근거로 한 <strong>건설사와의 법적 분쟁 및 소송 결과에 대해 어떠한 법적 책임도 지지 않습니다.</strong>
+                <br><br>
+                법적 효력이 있는 공인 감정서가 필요하신 경우, 반드시 기술사 자격이 있는 전문 기관의 정밀 안전 진단을 별도로 받으셔야 합니다.
+            </div>
+            <label class="legal-check-wrapper">
+                <input type="checkbox" id="legal-agree" onchange="toggleAnalyzeBtn()">
+                <span class="legal-check-text">위 면책 조항을 모두 확인하였으며 동의합니다.</span>
+            </label>
+        </div>
+
+        <button class="analyze-btn" id="analyze-btn" onclick="startAnalysis()" disabled>
             <i class="fas fa-robot"></i> Premium AI 정밀 분석 시작
         </button>
 
         <div id="result-area">
             <div class="section-title"><i class="fas fa-file-contract"></i> 정밀 기술 소견서 (Report)</div>
+            
+            <div class="report-header-warning">
+                ※ 본 보고서는 AI 추정치로 법적 효력이 없습니다 (참고용) ※
+            </div>
+
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
                 <i class="fas fa-spinner spinner"></i>
                 <p id="loading-text" style="margin-top:15px; font-weight:bold; color:var(--primary-main);">
@@ -490,8 +460,12 @@
             <div id="chart-section" style="display:none; margin-top:30px; padding-top:20px; border-top:2px dashed #eee;">
                 <div class="section-title"><i class="fas fa-chart-pie"></i> 결로 원인 귀책 분석 (3D)</div>
                 <div id="chart_div" class="chart-container"></div>
-                <div style="text-align:center; font-size:0.8rem; color:#666; margin-top:10px; background:#f5f5f5; padding:10px; border-radius:8px;">
-                    * 본 분석은 ASHRAE 및 국내 건축 기준을 기반으로 AI가 산출한 결과입니다.
+                
+                <div class="report-footer-disclaimer">
+                    <strong>[면책 공고]</strong> 본 문서는 현장 상황을 AI가 분석한 비공식 소견서입니다. 
+                    계측 장비의 오차, 촬영 환경, 사용자 입력 값에 따라 실제 원인과 다를 수 있습니다. 
+                    본 문서는 법원 제출용 감정서가 아니며, 시공사/시행사를 상대로 한 소송의 증거 자료로 활용 시 발생하는 불이익에 대해 
+                    '청개구리샤시'는 일체의 책임을 지지 않음을 명시합니다.
                 </div>
             </div>
         </div>
@@ -524,12 +498,12 @@
     const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- [수정 3] 버전 정보 및 방화문 로직 업데이트 ---
+    // --- [수정] 버전 정보 및 법적 안전 조치 업데이트 ---
     const versionData = {
-        "version": "17.5",
-        "build": "20240526-06",
+        "version": "17.7",
+        "build": "20240526-LegalSafe",
         "last_updated": "2024. 05. 26.",
-        "changes": "방화문 결로 진단 로직(가스켓, 벤딩, 외풍 등) 강화 및 물방울 디자인 개선"
+        "changes": "법적 분쟁 예방을 위한 강제 면책 동의 및 경고 문구 추가"
     };
 
     function loadVersionInfo() {
@@ -548,6 +522,20 @@
         }
     }
 
+    // [신규] 법적 동의 체크 시에만 버튼 활성화
+    function toggleAnalyzeBtn() {
+        const checkbox = document.getElementById('legal-agree');
+        const btn = document.getElementById('analyze-btn');
+        if (checkbox.checked) {
+            btn.classList.add('active');
+            btn.disabled = false;
+            btn.style.cursor = 'pointer';
+        } else {
+            btn.classList.remove('active');
+            btn.disabled = true;
+            btn.style.cursor = 'not-allowed';
+        }
+    }
 
     function fetchWeather() {
         const tempOut = document.getElementById('temp-out');
@@ -668,10 +656,10 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
-        // [수정 2] 방화문 특화 진단 로직이 포함된 프롬프트
+        // [수정] AI에게 법적 책임 회피를 위한 말투 지시
         const prompt = `
-            당신은 건축 환경 공학 박사이자 결로/누수 진단 전문가입니다.
-            제공된 사진 데이터(일반, 열화상, 초음파, 수분계 등 포함)를 종합 분석하여 법적 효력이 있는 수준의 기술 소견서를 작성하세요.
+            당신은 '청개구리샤시'의 결로 진단 보조 AI입니다. 
+            **중요 지침:** 본 진단 결과는 법적 효력이 없는 '참고용'이므로, '확정적' 단어(예: 100% 하자, 명백한 부실시공 등)를 피하고 '가능성이 높음', '의심됨', '정밀 진단 권고' 등의 표현을 사용하십시오.
 
             [1. 진단 개요]
             - 위치: ${fullLocation}
@@ -680,24 +668,20 @@
 
             [2. 정밀 분석 (사진 기반)]
             * 제공된 모든 사진을 분석하여 다음을 수행:
-            A. 계측기(MR277, 수분계) 수치 판독: 
-               - MIX(절대습도)가 9.0g/kg 초과시 '과도한 생활 습기' 경고.
-               - 표면 수분함량 과다 시 누수/결로 판별.
-            B. 열화상/초음파 분석: 
-               - 단열 누락 부위(냉점) 및 기밀 파괴(누기) 지점 지적.
+            A. 계측기(MR277, 수분계) 수치 판독.
+            B. 열화상/초음파 분석.
 
-            [중요] **'방화문(현관문)' 또는 '대피공간' 진단 시 아래 원인을 우선적으로 검토하십시오:**
-            1. **가스켓 불량:** 방화문 가스켓의 노후화, 경화, 탈락으로 인한 외풍 유입 여부.
-            2. **문짝 휨(Bending):** 방화문이 휘어 문틀과 밀착되지 않아 발생하는 기밀 성능 저하 (Turning 방식 개폐의 취약점).
-            3. **단열/사춤 불량:** 문틀(Frame) 주위의 우레탄폼 충진 부족 및 단열재 시공 결함으로 인한 열교 현상.
-            4. **저층부 냉기 유입:** 1~2층 저층부의 경우, 공동현관을 통해 유입되는 강한 냉기와 연돌 효과에 의한 결로 가능성.
+            [중요] **'방화문(현관문)' 또는 '대피공간' 진단 시:**
+            1. 가스켓 불량 가능성
+            2. 문짝 휨(Bending)에 의한 기밀 저하 가능성
+            3. 단열/사춤 불량 의심 여부
+            4. 저층부 냉기 유입 영향성
 
-            [3. 결론 및 귀책]
-            - 사용자 과실(환기 부족) vs 시공 하자(단열/기밀 불량/자재 불량) 비율 산정.
+            [3. 결론 및 귀책 (추정)]
+            - 사용자 과실 vs 시공 하자 비율 산정 (단, '추정치'임을 명시할 것).
 
             [4. 조치 권고]
-            - 방화문일 경우: 가스켓 교체, 도어 힌지 조정, 문틀 주위 단열 보강 등 구체적 제안.
-            - 일반 결로일 경우: 생활 습관 개선 또는 단열 재시공 제안.
+            - 전문 기관의 정밀 진단 의뢰 권고 포함.
 
             [5. 필수 JSON]
             맨 마지막에:
@@ -763,7 +747,7 @@
         ]);
 
         var options = {
-            title: '결로 원인 귀책 분석 (AI 산출)',
+            title: '결로 원인 귀책 분석 (AI 산출 - 참고용)',
             is3D: true,
             slices: {
                 0: { color: '#FF9800' }, 
