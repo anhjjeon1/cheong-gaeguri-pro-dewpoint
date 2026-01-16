@@ -69,24 +69,25 @@
             z-index: 0;
         }
 
-        /* [수정] 물방울 스타일 개선: 크기 증가, 그라데이션 및 그림자 추가 */
+        /* [핵심 수정] left 속성 추가 및 스타일 개선 */
         .drop {
             position: absolute;
+            left: var(--left); /* 이 부분이 누락되어 왼쪽에 뭉쳤던 것 수정 */
             bottom: 100%;
-            width: 3px;
+            width: 2px;
             height: 10px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8));
             border-radius: 50%;
             opacity: 0;
             animation: fall var(--duration) linear var(--delay) infinite;
             transform: scale(var(--scale));
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
         }
 
         @keyframes fall {
             0% { bottom: 100%; opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
+            10% { opacity: 0.9; }
+            90% { opacity: 0.9; }
             100% { bottom: -10px; opacity: 0; }
         }
 
@@ -513,15 +514,16 @@
     const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- [수정] 1. 헤더 물방울 애니메이션 생성 함수 개선 ---
+    // --- [수정] 1. 헤더 물방울 애니메이션 생성 함수 ---
     function createRain() {
         const rainContainer = document.getElementById('rain-container');
-        const numDrops = 60; // [수정] 물방울 개수 증가
+        const numDrops = 60; 
 
         for (let i = 0; i < numDrops; i++) {
             const drop = document.createElement('div');
             drop.classList.add('drop');
             
+            // 랜덤 위치 배정 (전체 헤더 너비에 고르게 분포)
             drop.style.setProperty('--left', `${Math.random() * 100}%`);
             drop.style.setProperty('--duration', `${Math.random() * 1.5 + 0.8}s`); 
             drop.style.setProperty('--delay', `${Math.random() * 2}s`); 
@@ -531,13 +533,12 @@
         }
     }
 
-    // --- 2. 동적 버전 관리 시스템 ---
-    // [수정] 버전 정보 업데이트
+    // --- [수정] 2. 동적 버전 관리 ---
     const versionData = {
-        "version": "17.1",
-        "build": "20240526-02",
+        "version": "17.2",
+        "build": "20240526-03",
         "last_updated": "2024. 05. 26.",
-        "changes": "헤더 물방울 애니메이션 시인성 개선"
+        "changes": "물방울 애니메이션 위치 버그 수정 (전체 화면 적용)"
     };
 
     function loadVersionInfo() {
@@ -549,13 +550,11 @@
         versionBadge.title = `Build: ${versionData.build}\nLast Updated: ${versionData.last_updated}\nChanges: ${versionData.changes}`;
 
         const footer = document.getElementById('main-footer');
-        // 중복 추가 방지
         if (!footer.innerHTML.includes('Last Updated:')) {
              footer.innerHTML += `<br><span style="font-size: 0.65rem; color: #b0bec5; margin-top: 5px; display: inline-block;">
                                     Last Updated: ${versionData.last_updated} (v${versionData.version})
                                  </span>`;
         }
-       
     }
 
 
