@@ -23,7 +23,7 @@
             --expert-gold: #ff6f00;        
             --moisture-blue: #0288d1;
             --sonic-purple: #7b1fa2;
-            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
         body {
@@ -31,8 +31,8 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             margin: 0;
-            padding: 20px 0;
-            line-height: 1.6;
+            padding: 10px 0; /* 상하 여백 약간 축소 */
+            line-height: 1.5;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -45,108 +45,116 @@
             background-color: var(--card-bg);
             box-shadow: var(--shadow-soft);
             overflow: hidden;
-            border-radius: 20px;
-            margin: 0 10px;
+            border-radius: 15px;
+            /* [수정] 좌우 마진을 없애서 폰 화면 꽉 차게 공간 확보 */
+            margin: 0; 
             position: relative;
         }
 
         .main-header {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
             color: white;
-            padding: 20px 20px 35px 20px;
+            padding: 15px; /* 헤더 여백 축소 */
             text-align: center;
             position: relative;
         }
 
         .main-header h1 {
             margin: 0;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 900;
             display: flex; align-items: center; justify-content: center;
             line-height: 1.2;
             padding-bottom: 5px;
         }
-        .main-header h1 i { margin-right: 10px; color: #81d4fa; }
+        .main-header h1 i { margin-right: 8px; color: #81d4fa; }
 
         .version-badge {
             position: absolute;
-            right: 20px;
-            bottom: 10px;
+            right: 15px;
+            bottom: 8px;
             background-color: var(--expert-gold);
             color: #fff;
-            padding: 0px 8px;
-            border-radius: 10px;
-            font-size: 0.65rem;
+            padding: 0px 6px;
+            border-radius: 8px;
+            font-size: 0.6rem;
             font-weight: 800;
             border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             line-height: 1.5;
-            height: 18px;
+            height: 16px;
             display: flex; align-items: center;
         }
 
-        .content { padding: 24px; background-color: #fff; }
+        /* [수정] 내부 여백을 24px -> 15px로 줄여 가로 공간 확보 */
+        .content { padding: 15px; background-color: #fff; }
 
-        .section { margin-bottom: 35px; }
+        .section { margin-bottom: 25px; }
+        
         .section-title {
             font-weight: 800;
             color: var(--primary-dark);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            font-size: 1.1rem;
+            font-size: 1.05rem; /* 폰트 사이즈 미세 조정 */
             border-left: 5px solid var(--accent-color);
             padding-left: 10px;
             background: #f5f5f5;
-            padding: 8px 10px;
+            padding: 6px 10px;
             border-radius: 0 8px 8px 0;
+            /* [수정] 자간을 좁혀서 제목이 한 줄에 나오도록 함 */
+            letter-spacing: -1px; 
+            white-space: nowrap; /* 줄바꿈 방지 */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .section-title i { margin-right: 10px; color: var(--primary-main); font-size: 1.2rem; }
+        .section-title i { margin-right: 8px; color: var(--primary-main); font-size: 1.1rem; }
 
-        .input-group { margin-bottom: 0; } /* Grid 내부용 */
-        .input-label { display: block; font-weight: 700; margin-bottom: 6px; color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .input-group { margin-bottom: 0; }
+        .input-label { display: block; font-weight: 700; margin-bottom: 4px; color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; }
 
         input[type="text"], input[type="number"], textarea {
-            width: 100%; padding: 10px;
+            width: 100%; padding: 8px; /* 패딩 축소 */
             border: 1px solid var(--border-color);
-            border-radius: 8px; background-color: #fafafa;
-            font-size: 0.9rem; box-sizing: border-box; 
+            border-radius: 6px; background-color: #fafafa;
+            font-size: 0.85rem; box-sizing: border-box; 
             color: var(--text-primary); font-weight: 500;
+            letter-spacing: -0.5px; /* 숫자 잘림 방지용 자간 축소 */
         }
 
-        /* [수정 3] 플레이스홀더(입력 전 안내문구) 색상 연한 회색으로 변경 */
+        /* [수정] 플레이스홀더 스타일 */
         ::placeholder {
             color: #b0bec5 !important;
-            opacity: 1; /* 파이어폭스 대응 */
+            opacity: 1;
             font-weight: 400;
+            font-size: 0.8rem;
         }
 
-        textarea { resize: none; height: 80px; width: 100%; margin-top: 10px; }
+        textarea { resize: none; height: 70px; width: 100%; margin-top: 8px; }
         
-        /* [수정 1] 그리드 비율 조정: 동/호수 너비 확대, 진단장소 축소 */
+        /* [핵심 수정] 상단 입력칸 그리드 및 간격 재조정 */
         .info-grid-row {
             display: grid;
-            /* 이전: 0.6fr 0.6fr 1.8fr 1.2fr */
-            /* 수정: 1fr(동) 1fr(호) 1.5fr(장소) 1.3fr(날짜) -> 동, 호수 공간 확보 */
-            grid-template-columns: 1fr 1fr 1.5fr 1.3fr; 
-            gap: 6px;
+            /* 비율 조정: 동/호 확보, 장소 축소, 날짜 확보 */
+            grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; 
+            gap: 4px; /* 간격을 6px -> 4px로 줄여 공간 확보 */
             align-items: end;
         }
 
-        .photo-stack { display: flex; flex-direction: column; gap: 20px; }
+        .photo-stack { display: flex; flex-direction: column; gap: 15px; }
         
         .upload-wrapper { 
-            border: 1px solid #eee; padding: 15px; 
-            border-radius: 12px; background: #fff; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02); 
-            margin-bottom: 10px;
+            border: 1px solid #eee; padding: 12px; 
+            border-radius: 10px; background: #fff; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+            margin-bottom: 8px;
             position: relative;
         }
         
         .upload-box {
             border: 2px dashed #b0bec5;
             background-color: #fcfcfc;
-            border-radius: 12px;
+            border-radius: 10px;
             width: 100%; 
             aspect-ratio: 4 / 3; 
             text-align: center; color: #78909c; cursor: pointer;
@@ -155,7 +163,7 @@
             transition: all 0.2s;
         }
         .upload-box:hover { border-color: var(--accent-color); background: #e3f2fd; }
-        .upload-icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.7; }
+        .upload-icon { font-size: 1.8rem; margin-bottom: 8px; opacity: 0.7; }
         .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
         .file-input { display: none; }
 
@@ -163,14 +171,14 @@
             background-color: #f5f5f5;
             color: var(--text-secondary);
             border: 1px dashed var(--border-color);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            margin-top: 5px;
+            margin-top: 4px;
             transition: all 0.2s;
         }
         .add-photo-btn:hover {
@@ -178,50 +186,56 @@
             color: var(--primary-main);
             border-color: var(--primary-main);
         }
-        .add-photo-btn i { margin-right: 5px; }
+        .add-photo-btn i { margin-right: 4px; }
 
         .analyze-btn {
-            width: 100%; padding: 16px;
+            width: 100%; padding: 14px;
             background: linear-gradient(135deg, var(--primary-main), #000051);
-            color: white; border: none; border-radius: 12px;
-            font-size: 1.1rem; font-weight: 800; cursor: pointer;
+            color: white; border: none; border-radius: 10px;
+            font-size: 1.05rem; font-weight: 800; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 5px 15px rgba(13, 71, 161, 0.3); margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(13, 71, 161, 0.3); margin-top: 15px;
         }
 
         #result-area {
-            margin-top: 30px; padding: 25px;
-            background-color: #ffffff; border-radius: 16px; 
+            margin-top: 25px; padding: 20px;
+            background-color: #ffffff; border-radius: 12px; 
             border: 2px solid var(--primary-main);
             display: none; 
         }
 
         .chart-container { 
             position: relative; 
-            height: 350px; 
+            height: 300px; 
             width: 100%; 
             margin-top: 10px; 
         }
 
-        .footer-btns { display: flex; gap: 8px; margin-top: 30px; }
+        .footer-btns { display: flex; gap: 6px; margin-top: 25px; }
         .footer-btn {
             flex: 1; 
             padding: 10px 0; 
-            border: none; border-radius: 10px;
-            font-size: 0.95rem; font-weight: 700; cursor: pointer; color: white;
+            border: none; border-radius: 8px;
+            font-size: 0.9rem; font-weight: 700; cursor: pointer; color: white;
             display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .footer-btn i { margin-right: 6px; }
+        .footer-btn i { margin-right: 5px; }
         .call-btn { background: linear-gradient(to right, #2962ff, #0091ea); }
         .save-btn { background: linear-gradient(to right, #455a64, #263238); }
         
+        /* [수정] 푸터 2줄로 만들기: 패딩 줄이고 폰트 사이즈 조정 */
         .main-footer {
             background-color: #eceff1; color: #90a4ae;
-            padding: 20px; text-align: center; font-size: 0.7rem; border-top: 1px solid #cfd8dc;
+            padding: 15px 10px; /* 패딩 축소 */
+            text-align: center; 
+            font-size: 0.7rem; 
+            border-top: 1px solid #cfd8dc;
+            word-break: keep-all; /* 단어 단위 줄바꿈 */
+            line-height: 1.4;
         }
 
-        .spinner { animation: rotate 2s linear infinite; font-size: 3rem; color: var(--primary-main); }
+        .spinner { animation: rotate 2s linear infinite; font-size: 2.5rem; color: var(--primary-main); }
         @keyframes rotate { 100% { transform: rotate(360deg); } }
 
         @media print {
@@ -229,7 +243,6 @@
             .mobile-container { max-width: 100%; width: 100%; box-shadow: none; margin: 0; border: none; }
             .analyze-btn, .footer-btns, .file-input, .add-photo-btn { display: none !important; }
             
-            /* 빈 입력칸 숨김 처리 */
             .upload-wrapper { display: none !important; }
             .upload-wrapper.filled { display: block !important; page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #ccc; }
 
@@ -242,7 +255,6 @@
             #chart_div { width: 100% !important; height: 400px !important; page-break-inside: avoid; }
             
             input, textarea { border: none; background: transparent; padding: 0; font-weight: bold; }
-            /* 인쇄 시 플레이스홀더 안 보이게 */
             ::placeholder { color: transparent !important; }
             
             .section-title { background: none; border-left: 5px solid #000; color: #000; padding-left: 10px; }
@@ -280,7 +292,7 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label">진단 일자</label>
-                    <input type="text" id="date" style="text-align:center; color:#546e7a; font-weight:bold; font-size:0.8rem; padding: 11px 5px;">
+                    <input type="text" id="date" style="text-align:center; color:#546e7a; font-weight:bold; font-size:0.75rem; padding: 8px 2px; letter-spacing: -1px;">
                 </div>
             </div>
 
@@ -291,7 +303,7 @@
 
         <div class="section">
             <div class="section-title"><i class="fas fa-temperature-low"></i> 환경 데이터 (Environment)</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                 <div class="input-group">
                     <label class="input-label">실내온도 (°C)</label>
                     <input type="number" id="temp-in" placeholder="입력" oninput="calcDewPoint()">
@@ -307,17 +319,17 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label">실외온도 (°C)</label>
-                    <input type="text" id="temp-out" placeholder="위치 확인 중..." style="background-color: #eceff1;">
+                    <input type="text" id="temp-out" placeholder="확인 중.." style="background-color: #eceff1;">
                 </div>
                 <div class="input-group">
                     <label class="input-label">실외습도 (%)</label>
-                    <input type="text" id="humid-out" placeholder="위치 확인 중..." style="background-color: #eceff1;">
+                    <input type="text" id="humid-out" placeholder="확인 중.." style="background-color: #eceff1;">
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title"><i class="fas fa-camera-retro"></i> 현장 및 계측 사진 (Photo Data)</div>
+            <div class="section-title"><i class="fas fa-camera-retro"></i> 현장 및 계측사진 (Photo Data)</div>
             <div class="photo-stack">
                 
                 <div id="group-general">
@@ -338,7 +350,7 @@
                 <div id="group-mr277" style="margin-top:20px;">
                     <div class="upload-wrapper" id="wrap-mr277">
                         <label class="input-label" style="color:#0d47a1;">■ FLIR MR 277 (VAP/MIX)</label>
-                        <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">* 수증기압(kPa) 및 혼합비(g/kg)</div>
+                        <div style="font-size:0.75rem; color:#666; margin-bottom:5px;">* 수증기압(kPa) 및 혼합비(g/kg)</div>
                         <label for="img-mr277" class="upload-box">
                             <i class="fas fa-ruler-combined upload-icon" style="color:#0d47a1;"></i>
                             <span class="upload-text">계측기 화면 촬영</span>
