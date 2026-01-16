@@ -51,7 +51,8 @@
         }
 
         .main-header {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
+            /* 배경을 조금 더 어둡게 하여 물방울이 잘 보이게 함 */
+            background: linear-gradient(135deg, #001a57, var(--primary-main));
             color: white;
             padding: 20px 20px 35px 20px;
             text-align: center;
@@ -69,26 +70,59 @@
             z-index: 0;
         }
 
-        /* [핵심 수정] left 속성 추가 및 스타일 개선 */
+        /* [핵심 수정] 사실적인 결로 물방울 스타일 */
         .drop {
             position: absolute;
-            left: var(--left); /* 이 부분이 누락되어 왼쪽에 뭉쳤던 것 수정 */
-            bottom: 100%;
-            width: 2px;
-            height: 10px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8));
-            border-radius: 50%;
+            left: var(--left);
+            /* 크기 다양화: 기본 크기에 랜덤 스케일 적용 */
+            width: calc(var(--size) * 1px); 
+            height: calc(var(--size) * 1.2px + 5px); /* 약간 길쭉한 형태 */
+            
+            /* 유리창에 맺힌 물방울 느낌의 그라데이션 및 투명도 */
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.4) 60%, rgba(255, 255, 255, 0.1) 100%);
+            
+            /* 둥글고 불규칙한 모양 */
+            border-radius: 40% 60% 60% 40% / 60% 40% 40% 60%;
+            
             opacity: 0;
-            animation: fall var(--duration) linear var(--delay) infinite;
-            transform: scale(var(--scale));
-            box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+            /* 천천히 흐르는 애니메이션 적용 */
+            animation: flow var(--duration) cubic-bezier(0.4, 0.0, 0.2, 1) var(--delay) infinite;
+            
+            /* 입체감을 위한 은은한 그림자 */
+            box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.1), 1px 1px 3px rgba(255, 255, 255, 0.3);
+            
+            /* 위치 보정 */
+            top: -20px; 
         }
 
-        @keyframes fall {
-            0% { bottom: 100%; opacity: 0; }
-            10% { opacity: 0.9; }
-            90% { opacity: 0.9; }
-            100% { bottom: -10px; opacity: 0; }
+        /* [핵심 수정] 천천히 흘러내리고 뭉치는 듯한 애니메이션 */
+        @keyframes flow {
+            0% {
+                top: -20px; /* 시작점 */
+                opacity: 0;
+                transform: scale(1);
+            }
+            10% {
+                opacity: var(--opacity-start, 0.8); /* 나타날 때 투명도 */
+            }
+            /* 중간에 잠시 머무르거나 천천히 이동 (뭉치는 느낌) */
+            40% {
+                top: var(--mid-top, 30%); 
+                transform: scale(1.1) rotate(var(--rotate-start, 0deg));
+            }
+            /* 갑자기 빠르게 미끄러져 내림 */
+            60% {
+                top: var(--mid-top-2, 50%);
+                transform: scale(1) rotate(var(--rotate-end, 0deg));
+            }
+            90% {
+                opacity: var(--opacity-end, 0.6); /* 사라지기 전 투명도 */
+            }
+            100% {
+                top: 105%; /* 끝점 */
+                opacity: 0;
+                transform: scale(0.8);
+            }
         }
 
         .main-header h1 {
@@ -100,6 +134,7 @@
             margin-bottom: 0px;
             position: relative;
             z-index: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* 텍스트 가독성 위해 그림자 추가 */
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
 
@@ -514,20 +549,36 @@
     const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- [수정] 1. 헤더 물방울 애니메이션 생성 함수 ---
+    // --- [수정] 1. 사실적인 결로 물방울 생성 함수 ---
     function createRain() {
         const rainContainer = document.getElementById('rain-container');
-        const numDrops = 60; 
+        const numDrops = 50; // 물방울 개수 조절
 
         for (let i = 0; i < numDrops; i++) {
             const drop = document.createElement('div');
             drop.classList.add('drop');
             
-            // 랜덤 위치 배정 (전체 헤더 너비에 고르게 분포)
+            // 랜덤 위치 배정
             drop.style.setProperty('--left', `${Math.random() * 100}%`);
-            drop.style.setProperty('--duration', `${Math.random() * 1.5 + 0.8}s`); 
-            drop.style.setProperty('--delay', `${Math.random() * 2}s`); 
-            drop.style.setProperty('--scale', `${Math.random() * 0.6 + 0.4}`); 
+            
+            // [핵심] 크기 다양화 (아주 작은 것부터 큰 덩어리까지)
+            const size = Math.random() * 12 + 4; // 4px ~ 16px
+            drop.style.setProperty('--size', size);
+
+            // [핵심] 속도 다양화 (천천히 흐르도록)
+            const duration = Math.random() * 4 + 4; // 4s ~ 8s
+            drop.style.setProperty('--duration', `${duration}s`); 
+            
+            // [핵심] 지연 시간 및 중간 멈춤 지점 랜덤 설정
+            drop.style.setProperty('--delay', `${Math.random() * 5}s`);
+            drop.style.setProperty('--mid-top', `${Math.random() * 20 + 30}%`); // 30% ~ 50% 지점에서 뭉침
+            drop.style.setProperty('--mid-top-2', `${Math.random() * 20 + 60}%`); // 60% ~ 80% 지점
+            
+            // 투명도 및 회전 랜덤 설정
+            drop.style.setProperty('--opacity-start', `${Math.random() * 0.3 + 0.6}`);
+            drop.style.setProperty('--opacity-end', `${Math.random() * 0.3 + 0.3}`);
+            drop.style.setProperty('--rotate-start', `${Math.random() * 30 - 15}deg`);
+            drop.style.setProperty('--rotate-end', `${Math.random() * 30 - 15}deg`);
             
             rainContainer.appendChild(drop);
         }
@@ -535,10 +586,10 @@
 
     // --- [수정] 2. 동적 버전 관리 ---
     const versionData = {
-        "version": "17.2",
-        "build": "20240526-03",
+        "version": "17.3",
+        "build": "20240526-04",
         "last_updated": "2024. 05. 26.",
-        "changes": "물방울 애니메이션 위치 버그 수정 (전체 화면 적용)"
+        "changes": "사실적인 유리창 결로 흐름 효과 구현 (크기 다양화, 뭉침/미끄러짐 표현)"
     };
 
     function loadVersionInfo() {
