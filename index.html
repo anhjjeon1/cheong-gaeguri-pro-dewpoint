@@ -114,19 +114,27 @@
             color: var(--text-primary); font-weight: 500;
         }
 
+        /* [수정 3] 플레이스홀더(입력 전 안내문구) 색상 연한 회색으로 변경 */
+        ::placeholder {
+            color: #b0bec5 !important;
+            opacity: 1; /* 파이어폭스 대응 */
+            font-weight: 400;
+        }
+
         textarea { resize: none; height: 80px; width: 100%; margin-top: 10px; }
         
-        /* 1. 기본 정보 한 줄 레이아웃 (Grid) */
+        /* [수정 1] 그리드 비율 조정: 동/호수 너비 확대, 진단장소 축소 */
         .info-grid-row {
             display: grid;
-            grid-template-columns: 0.6fr 0.6fr 1.8fr 1.2fr; /* 동:호:장소:날짜 비율 */
+            /* 이전: 0.6fr 0.6fr 1.8fr 1.2fr */
+            /* 수정: 1fr(동) 1fr(호) 1.5fr(장소) 1.3fr(날짜) -> 동, 호수 공간 확보 */
+            grid-template-columns: 1fr 1fr 1.5fr 1.3fr; 
             gap: 6px;
             align-items: end;
         }
 
         .photo-stack { display: flex; flex-direction: column; gap: 20px; }
         
-        /* 사진 업로드 래퍼 */
         .upload-wrapper { 
             border: 1px solid #eee; padding: 15px; 
             border-radius: 12px; background: #fff; 
@@ -151,7 +159,6 @@
         .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
         .file-input { display: none; }
 
-        /* 2. 추가 사진 버튼 스타일 */
         .add-photo-btn {
             background-color: #f5f5f5;
             color: var(--text-secondary);
@@ -220,11 +227,9 @@
         @media print {
             body { background: white; padding: 0; display: block; }
             .mobile-container { max-width: 100%; width: 100%; box-shadow: none; margin: 0; border: none; }
-            
-            /* UI 요소 숨김 */
             .analyze-btn, .footer-btns, .file-input, .add-photo-btn { display: none !important; }
             
-            /* 3. 빈 사진 입력칸 숨김 (filled 클래스가 없는 .upload-wrapper 숨김) */
+            /* 빈 입력칸 숨김 처리 */
             .upload-wrapper { display: none !important; }
             .upload-wrapper.filled { display: block !important; page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #ccc; }
 
@@ -234,14 +239,12 @@
             
             .section { page-break-inside: avoid; }
             #result-area { display: block !important; border: 2px solid #000; margin-top: 20px; }
-            #chart_div { 
-                width: 100% !important; 
-                height: 400px !important;
-                page-break-inside: avoid; 
-            }
+            #chart_div { width: 100% !important; height: 400px !important; page-break-inside: avoid; }
             
-            /* 입력 필드 스타일 단순화 */
             input, textarea { border: none; background: transparent; padding: 0; font-weight: bold; }
+            /* 인쇄 시 플레이스홀더 안 보이게 */
+            ::placeholder { color: transparent !important; }
+            
             .section-title { background: none; border-left: 5px solid #000; color: #000; padding-left: 10px; }
             .main-header { background: #fff; color: #000; border-bottom: 2px solid #000; padding: 10px; }
             .main-header h1 { color: #000; justify-content: flex-start; }
@@ -265,15 +268,15 @@
             <div class="info-grid-row">
                 <div class="input-group">
                     <label class="input-label">동</label>
-                    <input type="text" id="dong" placeholder="101동" style="text-align:center;">
+                    <input type="text" id="dong" placeholder="101" style="text-align:center;">
                 </div>
                 <div class="input-group">
                     <label class="input-label">호</label>
-                    <input type="text" id="ho" placeholder="1204호" style="text-align:center;">
+                    <input type="text" id="ho" placeholder="1204" style="text-align:center;">
                 </div>
                 <div class="input-group">
                     <label class="input-label">진단 장소</label>
-                    <input type="text" id="location" placeholder="안방 드레스룸">
+                    <input type="text" id="location" placeholder="거실">
                 </div>
                 <div class="input-group">
                     <label class="input-label">진단 일자</label>
@@ -455,17 +458,14 @@
 <script>
     google.charts.load("current", {packages:["corechart"]});
 
-    // 1. 날짜 설정
     const today = new Date();
     document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
 
-    // 2. API 키 설정 (보안 주의)
     const keyPart1 = "AIzaSyCGtANQJNBEGSh"; 
     const keyPart2 = "9zCrTXMEnR-";     
     const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // 3. 날씨 API
     function fetchWeather() {
         const tempOut = document.getElementById('temp-out');
         const humidOut = document.getElementById('humid-out');
@@ -487,7 +487,6 @@
     }
     window.onload = function() { fetchWeather(); };
 
-    // 4. 이슬점 계산
     function calcDewPoint() {
         const temp = parseFloat(document.getElementById('temp-in').value);
         const humid = parseFloat(document.getElementById('humid-in').value);
@@ -502,7 +501,6 @@
         }
     }
 
-    // 5. 동적 사진 입력 필드 추가 함수
     let uniqueIdCounter = 0;
     function addPhotoInput(groupId, labelText, color = '#546e7a', bgColor = '#ffffff') {
         uniqueIdCounter++;
@@ -524,16 +522,13 @@
             <input type="file" id="img-${newId}" class="file-input" accept="image/*" onchange="handleImage(this)">
         `;
         
-        // 버튼 위에 삽입
         groupDiv.insertBefore(wrapper, btn);
     }
 
-    // 6. 이미지 미리보기 및 상태 관리 (PDF 출력용 클래스 제어)
     function handleImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                // 해당 input의 wrapper 찾기
                 const wrapper = input.closest('.upload-wrapper');
                 const img = wrapper.querySelector('.preview-img');
                 const box = wrapper.querySelector('.upload-box');
@@ -541,17 +536,14 @@
                 img.src = e.target.result;
                 img.style.display = 'block';
                 
-                // 아이콘 숨기기
                 box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
                 
-                // [중요] PDF 출력을 위해 'filled' 클래스 추가
                 wrapper.classList.add('filled');
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // 7. AI 분석 (동적 이미지 수집 로직 개선)
     async function startAnalysis() {
         const resultArea = document.getElementById('result-area');
         const loading = document.getElementById('loading-spinner');
@@ -568,7 +560,6 @@
         const humidIn = document.getElementById('humid-in').value;
         const dew = document.getElementById('dew-result').value;
 
-        // 이미지 수집 (동적으로 추가된 모든 이미지 포함)
         let imageParts = [];
         const allImages = document.querySelectorAll('.preview-img');
         
@@ -642,7 +633,6 @@
                     if(match) {
                         try {
                             let rawJson = match[0].replace(/___JSON_START___|___JSON_END___|```json|```/gi, "").trim();
-                            // {} 만 추출
                             const braceMatch = rawJson.match(/\{[\s\S]*\}/);
                             if(braceMatch) rawJson = braceMatch[0];
                             finalJson = JSON.parse(rawJson);
