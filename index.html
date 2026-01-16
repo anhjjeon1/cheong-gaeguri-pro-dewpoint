@@ -151,7 +151,7 @@
         .add-photo-btn:hover { background-color: #e3f2fd; color: var(--primary-main); border-color: var(--primary-main); }
         .add-photo-btn i { margin-right: 4px; }
 
-        /* 법적 면책 박스 */
+        /* 법적 면책 동의 박스 */
         .legal-disclaimer-box {
             background-color: #fff8e1; border: 1px solid #ffca28; border-radius: 8px;
             padding: 12px; margin-top: 25px; margin-bottom: 10px;
@@ -186,7 +186,6 @@
             border: 2px solid var(--primary-main); display: none; 
         }
 
-        /* 워터마크 스타일 */
         .report-header-warning {
             text-align: center; color: #d32f2f; font-size: 0.7rem; font-weight: 900;
             border: 1px solid #d32f2f; padding: 5px; border-radius: 4px; margin-bottom: 15px;
@@ -495,12 +494,12 @@
     const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- 버전 정보 및 로직 업데이트 ---
+    // --- 버전 정보 업데이트 ---
     const versionData = {
-        "version": "18.0",
-        "build": "20240526-ExpertLegal",
+        "version": "18.1",
+        "build": "20240526-VAP_Expert",
         "last_updated": "2024. 05. 26.",
-        "changes": "ASHRAE 기준 FLIR 데이터 분석 강화 및 강력한 법적 보호 장치 적용"
+        "changes": "ASHRAE 기준 VAP 초과율 분석 및 위험도 시각화(Red Alert) 추가"
     };
 
     function loadVersionInfo() {
@@ -644,32 +643,45 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
+        // [수정] ASHRAE VAP 기준 적용 및 미서기 창호 특성 반영
         const prompt = `
             당신은 '청개구리샤시'의 최고 권위 건축 환경 공학 박사(AI)입니다.
-            제공된 데이터를 정밀 분석하되, **법적 분쟁 방지를 위해 모든 소견은 '추정' 또는 '가능성'으로 표현**하십시오.
+            제공된 데이터를 정밀 분석하되, 법적 분쟁 방지를 위해 확정적 단어 대신 '기술적 소견', '추정' 등의 용어를 사용하십시오.
 
             [1. 진단 개요]
             - 위치: ${fullLocation} (진단일: ${new Date().toLocaleDateString()})
             - 환경: 실내 ${tempIn}°C / ${humidIn}% (이슬점: ${dew})
             - 증상: ${defect}
 
-            [2. 정밀 분석 (전문가 레벨)]
-            **A. FLIR MR277 계측 데이터 (MIX/VAP) 분석 - 핵심**
-            - ASHRAE(미국냉동공조협회) 겨울철 실내 절대습도 기준(약 7.0g/kg 이하)을 적용하여 원인을 1차 판별하십시오.
-            - MIX > 9.0g/kg: 환기 부족 등 생활 습관에 의한 과습 가능성 높음.
-            - MIX < 7.0g/kg 이면서 결로 발생: 단열 미흡 또는 구조적 열교 가능성 높음.
-            - 신축 아파트인 경우 콘크리트/마감재 양생 수분(Construction Moisture) 영향성도 언급하십시오.
+            [2. 정밀 계측 데이터 분석 (ASHRAE 기준)]
+            **A. VAP (수증기압) 정밀 분석 - 핵심 지표**
+            * **기준:** ASHRAE 및 국내 동절기 결로 방지 가이드라인에 따른 실내 적정 수증기압은 **1.20 kPa 이하**입니다.
+            * **분석 지침:** 사진(FLIR MR277)에 찍힌 VAP 수치를 판독하여 아래와 같이 계산하고 붉은색 강조를 적용하십시오.
+              
+              1. **수치 판독:** 이미지 내 VAP 값 (예: 1.5 kPa)
+              2. **초과율 계산:** ((측정값 - 1.2) / 1.2) * 100 = 초과 % (소수점 반올림)
+              3. **판정 및 출력 포맷 (HTML 태그 사용 필수):**
+                 - **1.2 kPa 이하:** <span style="color:green; font-weight:bold;">"✅ 정상 (적정 수준)"</span>
+                 - **1.2 ~ 1.4 kPa:** <span style="color:#f57c00; font-weight:bold;">"⚠️ 주의 (기준치 [초과율]% 초과)"</span>
+                 - **1.4 kPa 초과:** <span style="color:#d32f2f; font-weight:bold;">"🚨 심각 (기준치 [초과율]% 초과 - 과도한 수증기압)"</span>
 
-            **B. 열화상(Thermal) 및 초음파 이미지 분석**
-            - **[중요] 미서기(Sliding) 창호 특성 반영:** 창호가 미서기 방식일 경우, 레일 부위의 미세한 냉기 유입은 구조적 특성(Structural Limitation)일 수 있으므로 이를 무조건적인 '시공 하자'로 단정 짓지 마십시오. 온도 차이가 극심한 경우에만 '기밀재(모헤어 등) 점검 필요'로 기술하십시오.
-            - 단열재 끊김(열교) 의심 부위는 '추정'으로 표현하십시오.
+            * **[솔루션 제공] VAP가 높을 경우:** - "현재 공기 중 수증기 압력이 높아 벽체 내부로 습기가 침투하려는 힘(Vapor Drive)이 매우 강합니다. 
+              - 1) **강제 환기** 또는 **제습기 가동**을 통해 VAP를 1.2kPa 이하로 낮춰야 합니다.
+              - 2) 신축일 경우 콘크리트 양생 수분 배출을 위한 '베이크 아웃(Bake-out)'이 필요할 수 있습니다."
 
-            [3. 결론 및 귀책 (비공식 추정)]
-            - 사용자 관리 요인 vs 건물/창호 단열 요인의 비율을 논리적으로 추산하십시오.
+            **B. MIX (혼합비/절대습도) 분석**
+            - 기준: 7.0 g/kg 초과 시 환기 부족으로 인한 생활 과습 가능성 기술.
 
+            **C. 열화상(Thermal) 분석 (미서기 창호 특성 고려)**
+            - 미서기(Sliding) 창호의 레일/풍지판 부위 냉기는 구조적 특성(불가피한 틈새)임을 감안하여 분석하십시오. 
+            - 단, 주변 벽체와의 온도차가 5°C 이상 벌어지는 극심한 열교 현상은 <span style="color:#d32f2f;">"단열 결손 의심 구간"</span>으로 표시하십시오.
+
+            [3. 종합 결론 (귀책 분석)]
+            - VAP/MIX 수치가 기준치를 크게 초과함 -> **사용자 관리 요인(환기부족)** 비중 높음.
+            - VAP/MIX는 정상이나 특정 부위 온도만 낮음 -> **시공 하자(단열누락)** 비중 높음.
+            
             [4. 조치 권고]
-            - 생활 습관 개선(환기, 제습) 및 필요시 단열 보강 등 솔루션 제시.
-            - **"확정적 원인 규명을 위해 공인 기관의 정밀 진단을 권장합니다"**라는 문구 필수 포함.
+            - **"본 결과는 AI 분석에 의한 추정치이며, 법적 효력이 없습니다. 확정적 판단을 위해 공인 기관의 정밀 진단을 권장합니다."** 문구 필수 포함.
 
             [5. 필수 JSON]
             맨 마지막에:
@@ -707,7 +719,7 @@
                         } catch(e) { console.error("JSON Error", e); }
                     }
 
-                    const md = window.markdownit();
+                    const md = window.markdownit({ html: true }); // HTML 태그 허용
                     content.innerHTML = md.render(aiText);
                     loading.style.display = 'none';
                     content.style.display = 'block';
