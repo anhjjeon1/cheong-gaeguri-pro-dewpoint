@@ -31,7 +31,7 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             margin: 0;
-            padding: 10px 0; /* 상하 여백 약간 축소 */
+            padding: 10px 0;
             line-height: 1.5;
             display: flex;
             justify-content: center;
@@ -46,46 +46,49 @@
             box-shadow: var(--shadow-soft);
             overflow: hidden;
             border-radius: 15px;
-            /* [수정] 좌우 마진을 없애서 폰 화면 꽉 차게 공간 확보 */
             margin: 0; 
             position: relative;
         }
 
+        /* [수정] 헤더 스타일 변경 */
         .main-header {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
             color: white;
-            padding: 15px; /* 헤더 여백 축소 */
+            /* 세로 크기를 키우고(padding 늘림), 텍스트 간격을 위해 하단 여백 확보 */
+            padding: 30px 20px 50px 20px; 
             text-align: center;
             position: relative;
         }
 
         .main-header h1 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.3rem; /* 제목 크기 살짝 키움 */
             font-weight: 900;
             display: flex; align-items: center; justify-content: center;
             line-height: 1.2;
-            padding-bottom: 5px;
+            /* 제목을 위쪽으로 배치하여 배지와 겹치지 않게 함 */
+            margin-bottom: 5px; 
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
 
+        /* [수정] 버전 배지 스타일 변경 */
         .version-badge {
             position: absolute;
             right: 15px;
-            bottom: 8px;
+            bottom: 12px; /* 하단에서 약간 띄움 */
             background-color: var(--expert-gold);
             color: #fff;
-            padding: 0px 6px;
-            border-radius: 8px;
-            font-size: 0.6rem;
+            /* 배지 크기 축소: 패딩과 폰트 사이즈 줄임 */
+            padding: 2px 8px; 
+            border-radius: 10px;
+            font-size: 0.6rem; 
             font-weight: 800;
             border: 1px solid rgba(255,255,255,0.4);
-            line-height: 1.5;
-            height: 16px;
+            line-height: 1.4;
             display: flex; align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* [수정] 내부 여백을 24px -> 15px로 줄여 가로 공간 확보 */
         .content { padding: 15px; background-color: #fff; }
 
         .section { margin-bottom: 25px; }
@@ -96,15 +99,14 @@
             margin-bottom: 12px;
             display: flex;
             align-items: center;
-            font-size: 1.05rem; /* 폰트 사이즈 미세 조정 */
+            font-size: 1.05rem;
             border-left: 5px solid var(--accent-color);
             padding-left: 10px;
             background: #f5f5f5;
             padding: 6px 10px;
             border-radius: 0 8px 8px 0;
-            /* [수정] 자간을 좁혀서 제목이 한 줄에 나오도록 함 */
             letter-spacing: -1px; 
-            white-space: nowrap; /* 줄바꿈 방지 */
+            white-space: nowrap; 
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -114,15 +116,14 @@
         .input-label { display: block; font-weight: 700; margin-bottom: 4px; color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; }
 
         input[type="text"], input[type="number"], textarea {
-            width: 100%; padding: 8px; /* 패딩 축소 */
+            width: 100%; padding: 8px;
             border: 1px solid var(--border-color);
             border-radius: 6px; background-color: #fafafa;
             font-size: 0.85rem; box-sizing: border-box; 
             color: var(--text-primary); font-weight: 500;
-            letter-spacing: -0.5px; /* 숫자 잘림 방지용 자간 축소 */
+            letter-spacing: -0.5px;
         }
 
-        /* [수정] 플레이스홀더 스타일 */
         ::placeholder {
             color: #b0bec5 !important;
             opacity: 1;
@@ -132,12 +133,10 @@
 
         textarea { resize: none; height: 70px; width: 100%; margin-top: 8px; }
         
-        /* [핵심 수정] 상단 입력칸 그리드 및 간격 재조정 */
         .info-grid-row {
             display: grid;
-            /* 비율 조정: 동/호 확보, 장소 축소, 날짜 확보 */
             grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; 
-            gap: 4px; /* 간격을 6px -> 4px로 줄여 공간 확보 */
+            gap: 4px; 
             align-items: end;
         }
 
@@ -224,14 +223,13 @@
         .call-btn { background: linear-gradient(to right, #2962ff, #0091ea); }
         .save-btn { background: linear-gradient(to right, #455a64, #263238); }
         
-        /* [수정] 푸터 2줄로 만들기: 패딩 줄이고 폰트 사이즈 조정 */
         .main-footer {
             background-color: #eceff1; color: #90a4ae;
-            padding: 15px 10px; /* 패딩 축소 */
+            padding: 15px 10px; 
             text-align: center; 
             font-size: 0.7rem; 
             border-top: 1px solid #cfd8dc;
-            word-break: keep-all; /* 단어 단위 줄바꿈 */
+            word-break: keep-all; 
             line-height: 1.4;
         }
 
