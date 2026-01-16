@@ -50,45 +50,43 @@
             position: relative;
         }
 
-        /* [수정] 헤더 스타일 및 애니메이션 컨테이너 추가 */
         .main-header {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
             color: white;
-            padding: 20px 20px 35px 20px; /* 하단 패딩 약간 확보 */
+            padding: 20px 20px 35px 20px;
             text-align: center;
             position: relative;
-            overflow: hidden; /* 물방울이 헤더 밖으로 나가지 않게 */
+            overflow: hidden;
         }
 
-        /* [신규] 물방울 애니메이션 컨테이너 */
         .rain-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* 클릭 이벤트 통과 */
+            pointer-events: none;
             z-index: 0;
         }
 
-        /* [신규] 물방울 스타일 */
+        /* [수정] 물방울 스타일 개선: 크기 증가, 그라데이션 및 그림자 추가 */
         .drop {
             position: absolute;
             bottom: 100%;
-            width: 2px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.5);
+            width: 3px;
+            height: 10px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
             border-radius: 50%;
             opacity: 0;
             animation: fall var(--duration) linear var(--delay) infinite;
             transform: scale(var(--scale));
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        /* [신규] 물방울 떨어지는 애니메이션 */
         @keyframes fall {
             0% { bottom: 100%; opacity: 0; }
-            10% { opacity: 0.7; }
-            90% { opacity: 0.7; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
             100% { bottom: -10px; opacity: 0; }
         }
 
@@ -99,12 +97,11 @@
             display: flex; align-items: center; justify-content: center;
             line-height: 1.2;
             margin-bottom: 0px;
-            position: relative; /* z-index 적용을 위해 */
-            z-index: 1; /* 물방울 위에 표시 */
+            position: relative;
+            z-index: 1;
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
 
-        /* [수정] 버전 배지 ID 부여 및 스타일 */
         .version-badge {
             position: absolute;
             right: 15px;
@@ -119,8 +116,8 @@
             line-height: 1.4;
             display: flex; align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            z-index: 2; /* 가장 위에 표시 */
-            cursor: help; /* 마우스 오버 시 커서 변경 */
+            z-index: 2;
+            cursor: help;
         }
 
         .content { padding: 15px; background-color: #fff; }
@@ -298,7 +295,7 @@
             .main-header h1 { color: #000; justify-content: flex-start; }
             .main-header h1 i { color: #000; }
             .version-badge { border: 1px solid #000; color: #000; background: #fff; }
-            .rain-container { display: none; } /* 인쇄 시 애니메이션 숨김 */
+            .rain-container { display: none; } 
         }
     </style>
 </head>
@@ -516,50 +513,49 @@
     const keyPart3 = "PHxLlXtkw";     
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- [신규] 1. 헤더 물방울 애니메이션 생성 함수 ---
+    // --- [수정] 1. 헤더 물방울 애니메이션 생성 함수 개선 ---
     function createRain() {
         const rainContainer = document.getElementById('rain-container');
-        const numDrops = 40; // 물방울 개수 조절
+        const numDrops = 60; // [수정] 물방울 개수 증가
 
         for (let i = 0; i < numDrops; i++) {
             const drop = document.createElement('div');
             drop.classList.add('drop');
             
-            // 랜덤 스타일 적용 (위치, 속도, 지연시간, 크기)
             drop.style.setProperty('--left', `${Math.random() * 100}%`);
-            drop.style.setProperty('--duration', `${Math.random() * 1.5 + 0.8}s`); // 0.8~2.3초
-            drop.style.setProperty('--delay', `${Math.random() * 2}s`); // 0~2초 지연
-            drop.style.setProperty('--scale', `${Math.random() * 0.6 + 0.4}`); // 0.4~1배 크기
+            drop.style.setProperty('--duration', `${Math.random() * 1.5 + 0.8}s`); 
+            drop.style.setProperty('--delay', `${Math.random() * 2}s`); 
+            drop.style.setProperty('--scale', `${Math.random() * 0.6 + 0.4}`); 
             
             rainContainer.appendChild(drop);
         }
     }
 
-    // --- [신규] 2. 동적 버전 관리 시스템 ---
-    // 실제 운영 시에는 이 객체를 별도의 'version.json' 파일로 관리하고 fetch로 불러옵니다.
-    // 코드가 변경될 때마다 이 부분만 업데이트하면 됩니다.
+    // --- 2. 동적 버전 관리 시스템 ---
+    // [수정] 버전 정보 업데이트
     const versionData = {
-        "version": "17.0",
-        "build": "20240526-01",
+        "version": "17.1",
+        "build": "20240526-02",
         "last_updated": "2024. 05. 26.",
-        "changes": "헤더 결로 애니메이션 추가 및 동적 버전 관리 시스템 도입"
+        "changes": "헤더 물방울 애니메이션 시인성 개선"
     };
 
     function loadVersionInfo() {
-        // 1. 타이틀 및 배지 업데이트
         const versionString = `Ver ${versionData.version} PRO Expert`;
         document.getElementById('app-title').textContent = `결로진단 AI앱 (${versionString})`;
         
         const versionBadge = document.getElementById('version-badge');
         versionBadge.textContent = versionString;
-        // 툴팁으로 상세 정보 표시 (마우스 오버 시 확인 가능)
         versionBadge.title = `Build: ${versionData.build}\nLast Updated: ${versionData.last_updated}\nChanges: ${versionData.changes}`;
 
-        // 2. 푸터에 업데이트 정보 추가
         const footer = document.getElementById('main-footer');
-        footer.innerHTML += `<br><span style="font-size: 0.65rem; color: #b0bec5; margin-top: 5px; display: inline-block;">
-                                Last Updated: ${versionData.last_updated} (v${versionData.version})
-                             </span>`;
+        // 중복 추가 방지
+        if (!footer.innerHTML.includes('Last Updated:')) {
+             footer.innerHTML += `<br><span style="font-size: 0.65rem; color: #b0bec5; margin-top: 5px; display: inline-block;">
+                                    Last Updated: ${versionData.last_updated} (v${versionData.version})
+                                 </span>`;
+        }
+       
     }
 
 
@@ -583,11 +579,10 @@
         }
     }
     
-    // [수정] window.onload에 새로운 기능 초기화 추가
     window.onload = function() { 
         fetchWeather();
-        createRain(); // 물방울 애니메이션 시작
-        loadVersionInfo(); // 버전 정보 로드
+        createRain(); 
+        loadVersionInfo(); 
     };
 
     function calcDewPoint() {
