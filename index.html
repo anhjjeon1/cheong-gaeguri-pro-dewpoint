@@ -186,6 +186,26 @@
             border: 2px solid var(--primary-main); display: none; 
         }
 
+        /* [추가] 결과 보고서 내 기본 정보 요약 박스 스타일 */
+        .report-summary-box {
+            background-color: #f8f9fa;
+            border: 1px solid #cfd8dc;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+        .report-summary-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #e0e0e0;
+            padding: 6px 0;
+            color: var(--text-primary);
+        }
+        .report-summary-item:last-child { border-bottom: none; }
+        .report-summary-label { font-weight: 700; color: var(--text-secondary); }
+        .report-summary-value { font-weight: 800; color: var(--primary-dark); }
+
         .report-header-warning {
             text-align: center; color: #d32f2f; font-size: 0.7rem; font-weight: 900;
             border: 1px solid #d32f2f; padding: 5px; border-radius: 4px; margin-bottom: 15px;
@@ -226,18 +246,21 @@
             .mobile-container { max-width: 100%; width: 100%; box-shadow: none; margin: 0; border: none; }
             .analyze-btn, .footer-btns, .file-input, .add-photo-btn, .legal-disclaimer-box { display: none !important; }
             
+            /* 입력 폼 섹션 숨기기 (결과만 출력하기 위함) */
+            .section:not(:has(#result-area)) { display: none; } 
+
             .upload-wrapper { display: none !important; }
             .upload-wrapper.filled { display: block !important; page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #ccc; }
             .upload-box { border: none !important; height: 300px !important; background: none !important; }
             .upload-box img.preview-img[src] { display: block !important; height: 100%; width: auto; margin: 0 auto; object-fit: contain; }
             .upload-box i, .upload-box span { display: none !important; } 
             
-            .section { page-break-inside: avoid; }
-            #result-area { display: block !important; border: 2px solid #000; margin-top: 20px; }
-            #chart_div { width: 100% !important; height: 400px !important; page-break-inside: avoid; }
+            #result-area { display: block !important; border: 2px solid #000; margin-top: 20px; padding: 10px;}
+            /* 인쇄 시 요약 정보 박스 강조 */
+            .report-summary-box { border: 1px solid #000; background: #fff; }
+            .report-summary-item { border-bottom: 1px solid #ccc; }
             
-            input, textarea { border: none; background: transparent; padding: 0; font-weight: bold; }
-            ::placeholder { color: transparent !important; }
+            #chart_div { width: 100% !important; height: 400px !important; page-break-inside: avoid; }
             
             .section-title { background: none; border-left: 5px solid #000; color: #000; padding-left: 10px; }
             .main-header { background: #fff; color: #000; border-bottom: 2px solid #000; padding: 10px; }
@@ -442,6 +465,9 @@
                 ※ 본 보고서는 AI 추정치로 법적 효력이 없습니다 (참고용) ※
             </div>
 
+            <div id="report-summary-box" class="report-summary-box" style="display:none;">
+                </div>
+
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
                 <i class="fas fa-spinner spinner"></i>
                 <p id="loading-text" style="margin-top:15px; font-weight:bold; color:var(--primary-main);">
@@ -470,7 +496,7 @@
             <button class="footer-btn call-btn" onclick="window.location.href='tel:15997380'">
                 <i class="fas fa-headset"></i> 수리문의
             </button>
-            <button class="footer-btn save-btn" onclick="window.print()">
+            <button class="footer-btn save-btn" onclick="savePdf()">
                 <i class="fas fa-file-pdf"></i> PDF로 저장
             </button>
         </div>
@@ -490,8 +516,8 @@
     document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
 
     const keyPart1 = "AIzaSyCGtANQJNBEGSh"; 
-    const keyPart2 = "9zCrTXMEnR-";     
-    const keyPart3 = "PHxLlXtkw";     
+    const keyPart2 = "9zCrTXMEnR-";      
+    const keyPart3 = "PHxLlXtkw";      
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
     // --- 버전 정보 업데이트 ---
@@ -606,21 +632,56 @@
         }
     }
 
+    // [추가] PDF 저장 시 파일명 지정을 위한 함수
+    function savePdf() {
+        const dong = document.getElementById('dong').value || "000";
+        const ho = document.getElementById('ho').value || "0000";
+        const loc = document.getElementById('location').value || "장소미지정";
+        const dateRaw = document.getElementById('date').value;
+        // 날짜 포맷 정리 (YYYY-MM-DD)
+        const dateClean = dateRaw.replace(/[.\s]/g, '-').replace(/-$/, '');
+
+        // 페이지 타이틀 변경 (브라우저가 이를 기본 파일명으로 사용함)
+        document.title = `결로진단AI앱(PRO)_${dong}동_${ho}호_${loc}_${dateClean}`;
+        
+        window.print();
+    }
+
     async function startAnalysis() {
         const resultArea = document.getElementById('result-area');
         const loading = document.getElementById('loading-spinner');
         const content = document.getElementById('analysis-content');
         const chartSection = document.getElementById('chart-section');
+        const summaryBox = document.getElementById('report-summary-box');
         
         const dong = document.getElementById('dong').value;
         const ho = document.getElementById('ho').value;
         const location = document.getElementById('location').value;
-        const fullLocation = `${dong ? dong + ' ' : ''}${ho ? ho + ' ' : ''}${location || "미지정 장소"}`;
+        const date = document.getElementById('date').value;
+        const fullLocation = `${dong ? dong + '동 ' : ''}${ho ? ho + '호 ' : ''}${location || "미지정 장소"}`;
         
         const defect = document.getElementById('defect-content').value;
         const tempIn = document.getElementById('temp-in').value;
         const humidIn = document.getElementById('humid-in').value;
         const dew = document.getElementById('dew-result').value;
+
+        // [추가] 결과 보고서 상단에 기본 정보 요약 표시
+        summaryBox.innerHTML = `
+            <div class="report-summary-item">
+                <span class="report-summary-label">진단 일자</span>
+                <span class="report-summary-value">${date}</span>
+            </div>
+            <div class="report-summary-item">
+                <span class="report-summary-label">현장 위치</span>
+                <span class="report-summary-value">${dong ? dong+'동' : '-'} ${ho ? ho+'호' : '-'}</span>
+            </div>
+            <div class="report-summary-item">
+                <span class="report-summary-label">진단 장소</span>
+                <span class="report-summary-value">${location || '미지정'}</span>
+            </div>
+        `;
+        summaryBox.style.display = 'block';
+
 
         let imageParts = [];
         const allImages = document.querySelectorAll('.preview-img');
