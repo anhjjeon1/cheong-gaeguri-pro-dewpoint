@@ -186,7 +186,7 @@
             border: 2px solid var(--primary-main); display: none; 
         }
 
-        /* [추가] 결과 보고서 내 기본 정보 요약 박스 스타일 */
+        /* 결과 보고서 내 기본 정보 요약 박스 스타일 */
         .report-summary-box {
             background-color: #f8f9fa;
             border: 1px solid #cfd8dc;
@@ -632,16 +632,15 @@
         }
     }
 
-    // [추가] PDF 저장 시 파일명 지정을 위한 함수
+    // PDF 저장 시 파일명 지정을 위한 함수
     function savePdf() {
         const dong = document.getElementById('dong').value || "000";
         const ho = document.getElementById('ho').value || "0000";
         const loc = document.getElementById('location').value || "장소미지정";
         const dateRaw = document.getElementById('date').value;
-        // 날짜 포맷 정리 (YYYY-MM-DD)
         const dateClean = dateRaw.replace(/[.\s]/g, '-').replace(/-$/, '');
 
-        // 페이지 타이틀 변경 (브라우저가 이를 기본 파일명으로 사용함)
+        // 브라우저 타이틀 변경 (파일 이름 결정)
         document.title = `결로진단AI앱(PRO)_${dong}동_${ho}호_${loc}_${dateClean}`;
         
         window.print();
@@ -665,7 +664,7 @@
         const humidIn = document.getElementById('humid-in').value;
         const dew = document.getElementById('dew-result').value;
 
-        // [추가] 결과 보고서 상단에 기본 정보 요약 표시
+        // 결과 보고서 상단에 기본 정보 요약 표시
         summaryBox.innerHTML = `
             <div class="report-summary-item">
                 <span class="report-summary-label">진단 일자</span>
@@ -681,7 +680,6 @@
             </div>
         `;
         summaryBox.style.display = 'block';
-
 
         let imageParts = [];
         const allImages = document.querySelectorAll('.preview-img');
@@ -704,9 +702,9 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
-        // [수정] ASHRAE VAP 기준 적용 및 미서기 창호 특성 반영
+        // [수정] 박사 -> AI 전문 분석관(Expert Analyst)으로 변경
         const prompt = `
-            당신은 '청개구리샤시'의 최고 권위 건축 환경 공학 박사(AI)입니다.
+            당신은 '청개구리샤시'의 **건축 환경 진단 AI 전문 분석관(Expert Analyst)**입니다.
             제공된 데이터를 정밀 분석하되, 법적 분쟁 방지를 위해 확정적 단어 대신 '기술적 소견', '추정' 등의 용어를 사용하십시오.
 
             [1. 진단 개요]
@@ -743,6 +741,7 @@
             
             [4. 조치 권고]
             - **"본 결과는 AI 분석에 의한 추정치이며, 법적 효력이 없습니다. 확정적 판단을 위해 공인 기관의 정밀 진단을 권장합니다."** 문구 필수 포함.
+            - 보고서 상단 제목을 **"📑 AI 전문 분석관의 결로 정밀 진단 보고서"**로 출력하십시오.
 
             [5. 필수 JSON]
             맨 마지막에:
