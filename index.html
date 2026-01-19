@@ -12,19 +12,20 @@
 
     <style>
         :root {
-            --primary-dark: #002171;         
-            --primary-main: #0d47a1;         
-            --accent-color: #2962ff;         
+            --primary-dark: #002171;          
+            --primary-main: #0d47a1;          
+            --accent-color: #2962ff;          
             --bg-color: #eceff1;            
             --card-bg: #ffffff;             
-            --text-primary: #263238;         
-            --text-secondary: #546e7a;       
-            --border-color: #cfd8dc;         
-            --expert-gold: #ff6f00;         
+            --text-primary: #263238;          
+            --text-secondary: #546e7a;        
+            --border-color: #cfd8dc;          
+            --expert-gold: #ff6f00;          
             --moisture-blue: #0288d1;
             --sonic-purple: #7b1fa2;
             --warning-red: #d32f2f;
             --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --dev-color: #6200EA; /* 개발자 모드 색상 (보라색) */
         }
 
         body {
@@ -85,6 +86,7 @@
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
 
+        /* [수정] 히든 버튼 기능을 위해 스타일 강화 */
         .version-badge {
             position: absolute; right: 15px; bottom: 8px;
             background-color: var(--expert-gold); color: #fff;
@@ -93,7 +95,17 @@
             border: 1px solid rgba(255,255,255,0.4);
             line-height: 1.4; display: flex; align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            z-index: 2; cursor: help;
+            z-index: 2;
+            cursor: pointer; /* 클릭 가능 표시 */
+            user-select: none; /* 드래그 방지 */
+            transition: all 0.3s ease;
+        }
+        /* 개발자 모드 활성화 시 스타일 */
+        .version-badge.dev-active {
+            background-color: var(--dev-color) !important;
+            box-shadow: 0 0 10px rgba(98, 0, 234, 0.6);
+            transform: scale(1.1);
+            border-color: #B388FF;
         }
 
         .content { padding: 15px; background-color: #fff; }
@@ -289,7 +301,7 @@
         <div class="water-drop" style="width: 7px; height: 7px; top: 10%; left: 50%;"></div>
 
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" title="버전 정보를 불러오는 중...">Loading Ver...</span>
+        <span class="version-badge" id="version-badge" title="버전 정보를 불러오는 중..." onclick="checkDevMode()">Loading Ver...</span>
     </header>
 
     <div class="content">
@@ -516,8 +528,8 @@
     document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
 
     const keyPart1 = "AIzaSyCGtANQJNBEGSh"; 
-    const keyPart2 = "9zCrTXMEnR-";      
-    const keyPart3 = "PHxLlXtkw";      
+    const keyPart2 = "9zCrTXMEnR-";       
+    const keyPart3 = "PHxLlXtkw";       
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
     // --- 버전 정보 업데이트 ---
@@ -527,6 +539,71 @@
         "last_updated": "2024. 05. 26.",
         "changes": "ASHRAE 기준 VAP 초과율 분석 및 위험도 시각화(Red Alert) 추가"
     };
+
+    // [추가] 개발자 모드(치트키) 관련 변수
+    let clickCount = 0;
+    let clickTimer;
+    const DAILY_LIMIT = 100;
+
+    // [추가] 페이지 로드 시 개발자 모드 상태 확인하여 배지 스타일 적용
+    window.addEventListener('DOMContentLoaded', () => {
+        const isDev = localStorage.getItem('is_developer') === 'true';
+        if (isDev) {
+            document.getElementById('version-badge').classList.add('dev-active');
+        }
+    });
+
+    // [추가] 히든 버튼(치트키) 로직: 1초 내에 5번 클릭 시 모드 전환
+    function checkDevMode() {
+        clearTimeout(clickTimer); // 이전 타이머 초기화
+        clickCount++;
+
+        if (clickCount === 5) {
+            // 토글 로직
+            const isDev = localStorage.getItem('is_developer') === 'true';
+            localStorage.setItem('is_developer', !isDev);
+            
+            const badge = document.getElementById('version-badge');
+            
+            if (!isDev) {
+                alert("🐸 개발자 모드(무제한)가 활성화되었습니다!");
+                badge.classList.add('dev-active');
+            } else {
+                alert("개발자 모드가 해제되었습니다. (일일 100회 제한 적용)");
+                badge.classList.remove('dev-active');
+            }
+            clickCount = 0;
+        }
+
+        // 1초 뒤 클릭 횟수 초기화
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+        }, 1000);
+    }
+
+    // [추가] 일일 사용량 체크 함수
+    function checkDailyLimit() {
+        const isDev = localStorage.getItem('is_developer') === 'true';
+        if (isDev) return true; // 개발자는 무조건 통과
+
+        const today = new Date().toDateString(); // 예: "Mon Jan 19 2026"
+        let usageData = JSON.parse(localStorage.getItem('expert_app_usage') || '{}');
+
+        // 날짜가 다르면 초기화
+        if (usageData.date !== today) {
+            usageData = { date: today, count: 0 };
+        }
+
+        if (usageData.count >= DAILY_LIMIT) {
+            alert(`⚠️ 일일 무료 사용 한도(${DAILY_LIMIT}회)를 초과했습니다.\n내일 다시 이용해 주세요.`);
+            return false; // 차단
+        }
+        
+        // 통과 시 카운트 증가 저장
+        usageData.count++;
+        localStorage.setItem('expert_app_usage', JSON.stringify(usageData));
+        return true;
+    }
 
     function loadVersionInfo() {
         const versionString = `Ver ${versionData.version} PRO Expert`;
@@ -579,6 +656,11 @@
     window.onload = function() { 
         fetchWeather();
         loadVersionInfo(); 
+        // [추가] 초기 로드 시 배지 상태 동기화
+        const isDev = localStorage.getItem('is_developer') === 'true';
+        if (isDev) {
+            document.getElementById('version-badge').classList.add('dev-active');
+        }
     };
 
     function calcDewPoint() {
@@ -647,6 +729,11 @@
     }
 
     async function startAnalysis() {
+        // [추가] 분석 시작 시 일일 제한 확인
+        if (!checkDailyLimit()) {
+            return;
+        }
+
         const resultArea = document.getElementById('result-area');
         const loading = document.getElementById('loading-spinner');
         const content = document.getElementById('analysis-content');
@@ -702,7 +789,6 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
-        // [수정] 박사 -> AI 전문 분석관(Expert Analyst)으로 변경
         const prompt = `
             당신은 '청개구리샤시'의 **건축 환경 진단 AI 전문 분석관(Expert Analyst)**입니다.
             제공된 데이터를 정밀 분석하되, 법적 분쟁 방지를 위해 확정적 단어 대신 '기술적 소견', '추정' 등의 용어를 사용하십시오.
