@@ -12,17 +12,18 @@
 
     <style>
         :root {
-            --primary-dark: #002171;          
-            --primary-main: #0d47a1;          
-            --accent-color: #2962ff;          
-            --bg-color: #eceff1;            
-            --card-bg: #ffffff;             
-            --text-primary: #263238;          
-            --text-secondary: #546e7a;        
-            --border-color: #cfd8dc;          
-            --expert-gold: #ff6f00;          
+            --primary-dark: #002171;           
+            --primary-main: #0d47a1;           
+            --accent-color: #2962ff;           
+            --bg-color: #eceff1;             
+            --card-bg: #ffffff;              
+            --text-primary: #263238;           
+            --text-secondary: #546e7a;         
+            --border-color: #cfd8dc;           
+            --expert-gold: #ff6f00;           
             --moisture-blue: #0288d1;
             --sonic-purple: #7b1fa2;
+            --uv-violet: #6200ea; /* UV 전용 색상 추가 */
             --warning-red: #d32f2f;
             --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.08);
             --dev-color: #6200EA; /* 개발자 모드 색상 (보라색) */
@@ -377,6 +378,23 @@
                         <i class="fas fa-plus-circle"></i> 일반 사진 추가
                     </button>
                 </div>
+
+                <div id="group-uv" style="margin-top:20px;">
+                    <div class="upload-wrapper" id="wrap-uv">
+                        <label class="input-label" style="color:var(--uv-violet);">■ UV (자외선) 결로 흔적</label>
+                        <div style="font-size:0.75rem; color:#666; margin-bottom:5px;">* 물길(수맥) 자국 및 곰팡이 형광 반응 확인</div>
+                        <label for="img-uv" class="upload-box" style="background-color: #f3e5f5; border-color: var(--uv-violet);">
+                            <i class="fas fa-lightbulb upload-icon" style="color:var(--uv-violet);"></i>
+                            <span class="upload-text" style="color:var(--uv-violet);">UV 형광 촬영</span>
+                            <img id="view-uv" class="preview-img">
+                        </label>
+                        <input type="file" id="img-uv" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    </div>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-uv', 'UV 사진 추가', 'var(--uv-violet)', '#f3e5f5')">
+                        <i class="fas fa-plus-circle"></i> UV 사진 추가
+                    </button>
+                </div>
+
                 <div id="group-mr277" style="margin-top:20px;">
                     <div class="upload-wrapper" id="wrap-mr277">
                         <label class="input-label" style="color:#0d47a1;">■ FLIR MR 277 (VAP/MIX)</label>
@@ -483,7 +501,7 @@
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
                 <i class="fas fa-spinner spinner"></i>
                 <p id="loading-text" style="margin-top:15px; font-weight:bold; color:var(--primary-main);">
-                    동, 호수 및 환경 데이터를 기반으로<br>모든 계측 사진을 종합 정밀 분석 중입니다...
+                    동, 호수, UV 형광 반응 및 환경 데이터를 기반으로<br>모든 계측 사진을 종합 정밀 분석 중입니다...
                 </p>
             </div>
             
@@ -528,16 +546,16 @@
     document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
 
     const keyPart1 = "AIzaSyCGtANQJNBEGSh"; 
-    const keyPart2 = "9zCrTXMEnR-";       
-    const keyPart3 = "PHxLlXtkw";       
+    const keyPart2 = "9zCrTXMEnR-";        
+    const keyPart3 = "PHxLlXtkw";        
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
     // --- 버전 정보 업데이트 ---
     const versionData = {
-        "version": "18.1",
-        "build": "20240526-VAP_Expert",
-        "last_updated": "2024. 05. 26.",
-        "changes": "ASHRAE 기준 VAP 초과율 분석 및 위험도 시각화(Red Alert) 추가"
+        "version": "19.0",
+        "build": "20260120-UV_Expert",
+        "last_updated": "2026. 01. 20.",
+        "changes": "UV(자외선) 누수/곰팡이 형광 분석 알고리즘 추가"
     };
 
     // [추가] 개발자 모드(치트키) 관련 변수
@@ -614,8 +632,8 @@
         const footer = document.getElementById('main-footer');
         if (!footer.innerHTML.includes('Last Updated:')) {
              footer.innerHTML += `<br><span style="font-size: 0.65rem; color: #b0bec5; margin-top: 5px; display: inline-block;">
-                                    Last Updated: ${versionData.last_updated} (v${versionData.version})
-                                 </span>`;
+                                     Last Updated: ${versionData.last_updated} (v${versionData.version})
+                                  </span>`;
         }
     }
 
@@ -688,7 +706,7 @@
         wrapper.id = `wrap-${newId}`;
         wrapper.innerHTML = `
             <label class="input-label" style="color:${color};">${labelText} (추가)</label>
-            <label for="img-${newId}" class="upload-box" style="background-color: ${bgColor};">
+            <label for="img-${newId}" class="upload-box" style="background-color: ${bgColor}; border-color: ${color === 'var(--uv-violet)' ? 'var(--uv-violet)' : '#b0bec5'}">
                 <i class="fas fa-plus upload-icon" style="color:${color};"></i>
                 <span class="upload-text" style="color:${color};">추가 사진 촬영</span>
                 <img id="view-${newId}" class="preview-img">
@@ -789,6 +807,7 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
+        // [프롬프트 고도화] UV 분석 및 심층 결로 분석 명령 추가
         const prompt = `
             당신은 '청개구리샤시'의 **건축 환경 진단 AI 전문 분석관(Expert Analyst)**입니다.
             제공된 데이터를 정밀 분석하되, 법적 분쟁 방지를 위해 확정적 단어 대신 '기술적 소견', '추정' 등의 용어를 사용하십시오.
@@ -798,36 +817,44 @@
             - 환경: 실내 ${tempIn}°C / ${humidIn}% (이슬점: ${dew})
             - 증상: ${defect}
 
-            [2. 정밀 계측 데이터 분석 (ASHRAE 기준)]
-            **A. VAP (수증기압) 정밀 분석 - 핵심 지표**
+            [2. 이미지별 정밀 계측 데이터 분석 (ASHRAE 기준)]
+            업로드된 여러 사진 중 각 유형(FLIR MR277, UV, 열화상 등)을 시각적으로 식별하여 분석하십시오.
+
+            **A. UV(자외선) 형광 정밀 분석 (NEW Feature)**
+            * 사진 중 **보라색/파란색 조명**이 비춰진 사진을 찾으십시오.
+            * **분석 목표:** 육안으로 보이지 않는 '과거의 결로 흐름 자국(Water Stain)'이나 '초기 곰팡이 포자(Biological growth)'의 형광 반응을 판독합니다.
+            * **판정 기준:**
+              1. **물길 흔적(Water Trails):** 벽면을 타고 흐르는 세로 줄무늬 형광 반응이 선명한가? (-> 만성적인 누수/결로 이력 시사)
+              2. **생물학적 반응:** 점박이 형태의 밝은 형광 반응이 있는가? (-> 눈에 안 보이는 곰팡이 포자 번식)
+              3. **표백 반응:** 세제 사용 등으로 색이 바랜 흔적이 있는가?
+            * **출력:** UV 분석 결과를 별도 항목으로 상세히 기술하고, 잠재적 위험도(상/중/하)를 평가하십시오.
+
+            **B. VAP (수증기압) 정밀 분석 (MR277 계측)**
             * **기준:** ASHRAE 및 국내 동절기 결로 방지 가이드라인에 따른 실내 적정 수증기압은 **1.20 kPa 이하**입니다.
             * **분석 지침:** 사진(FLIR MR277)에 찍힌 VAP 수치를 판독하여 아래와 같이 계산하고 붉은색 강조를 적용하십시오.
-              
               1. **수치 판독:** 이미지 내 VAP 값 (예: 1.5 kPa)
               2. **초과율 계산:** ((측정값 - 1.2) / 1.2) * 100 = 초과 % (소수점 반올림)
               3. **판정 및 출력 포맷 (HTML 태그 사용 필수):**
                  - **1.2 kPa 이하:** <span style="color:green; font-weight:bold;">"✅ 정상 (적정 수준)"</span>
                  - **1.2 ~ 1.4 kPa:** <span style="color:#f57c00; font-weight:bold;">"⚠️ 주의 (기준치 [초과율]% 초과)"</span>
                  - **1.4 kPa 초과:** <span style="color:#d32f2f; font-weight:bold;">"🚨 심각 (기준치 [초과율]% 초과 - 과도한 수증기압)"</span>
+            * **[솔루션]:** VAP가 높을 경우, 강제 환기 및 베이크 아웃 필요성 강조.
 
-            * **[솔루션 제공] VAP가 높을 경우:** - "현재 공기 중 수증기 압력이 높아 벽체 내부로 습기가 침투하려는 힘(Vapor Drive)이 매우 강합니다. 
-              - 1) **강제 환기** 또는 **제습기 가동**을 통해 VAP를 1.2kPa 이하로 낮춰야 합니다.
-              - 2) 신축일 경우 콘크리트 양생 수분 배출을 위한 '베이크 아웃(Bake-out)'이 필요할 수 있습니다."
-
-            **B. MIX (혼합비/절대습도) 분석**
+            **C. MIX (혼합비/절대습도) 분석**
             - 기준: 7.0 g/kg 초과 시 환기 부족으로 인한 생활 과습 가능성 기술.
 
-            **C. 열화상(Thermal) 분석 (미서기 창호 특성 고려)**
+            **D. 열화상(Thermal) 분석 (미서기 창호 특성 고려)**
             - 미서기(Sliding) 창호의 레일/풍지판 부위 냉기는 구조적 특성(불가피한 틈새)임을 감안하여 분석하십시오. 
             - 단, 주변 벽체와의 온도차가 5°C 이상 벌어지는 극심한 열교 현상은 <span style="color:#d32f2f;">"단열 결손 의심 구간"</span>으로 표시하십시오.
 
             [3. 종합 결론 (귀책 분석)]
-            - VAP/MIX 수치가 기준치를 크게 초과함 -> **사용자 관리 요인(환기부족)** 비중 높음.
-            - VAP/MIX는 정상이나 특정 부위 온도만 낮음 -> **시공 하자(단열누락)** 비중 높음.
+            - **UV 형광 반응(과거 흔적)**과 **VAP 수치(현재 습도)**를 교차 검증하십시오.
+            - 예: VAP는 정상이나 UV상 물길 흔적이 뚜렷함 -> **"간헐적 누수 또는 외부 요인(크랙 등)"** 가능성 높음.
+            - 예: VAP가 매우 높고 곰팡이 형광 반응 있음 -> **"생활 습관에 의한 만성 결로"** 가능성 높음.
             
             [4. 조치 권고]
             - **"본 결과는 AI 분석에 의한 추정치이며, 법적 효력이 없습니다. 확정적 판단을 위해 공인 기관의 정밀 진단을 권장합니다."** 문구 필수 포함.
-            - 보고서 상단 제목을 **"📑 AI 전문 분석관의 결로 정밀 진단 보고서"**로 출력하십시오.
+            - 보고서 상단 제목을 **"📑 AI 전문 분석관의 결로 정밀 진단 보고서 (with UV Analysis)"**로 출력하십시오.
 
             [5. 필수 JSON]
             맨 마지막에:
