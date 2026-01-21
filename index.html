@@ -12,21 +12,21 @@
 
     <style>
         :root {
-            --primary-dark: #002171;           
-            --primary-main: #0d47a1;           
-            --accent-color: #2962ff;           
-            --bg-color: #eceff1;             
+            --primary-dark: #002171;            
+            --primary-main: #0d47a1;            
+            --accent-color: #2962ff;            
+            --bg-color: #eceff1;              
             --card-bg: #ffffff;              
-            --text-primary: #263238;           
-            --text-secondary: #546e7a;         
-            --border-color: #cfd8dc;           
-            --expert-gold: #ff6f00;           
+            --text-primary: #263238;            
+            --text-secondary: #546e7a;          
+            --border-color: #cfd8dc;            
+            --expert-gold: #ff6f00;            
             --moisture-blue: #0288d1;
             --sonic-purple: #7b1fa2;
-            --uv-violet: #6200ea; /* UV 전용 색상 추가 */
+            --uv-violet: #6200ea;
             --warning-red: #d32f2f;
             --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.08);
-            --dev-color: #6200EA; /* 개발자 모드 색상 (보라색) */
+            --dev-color: #6200EA;
         }
 
         body {
@@ -87,7 +87,6 @@
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
 
-        /* [수정] 히든 버튼 기능을 위해 스타일 강화 */
         .version-badge {
             position: absolute; right: 15px; bottom: 8px;
             background-color: var(--expert-gold); color: #fff;
@@ -97,11 +96,10 @@
             line-height: 1.4; display: flex; align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             z-index: 2;
-            cursor: pointer; /* 클릭 가능 표시 */
-            user-select: none; /* 드래그 방지 */
+            cursor: pointer;
+            user-select: none;
             transition: all 0.3s ease;
         }
-        /* 개발자 모드 활성화 시 스타일 */
         .version-badge.dev-active {
             background-color: var(--dev-color) !important;
             box-shadow: 0 0 10px rgba(98, 0, 234, 0.6);
@@ -124,7 +122,7 @@
         .input-group { margin-bottom: 0; }
         .input-label { display: block; font-weight: 700; margin-bottom: 4px; color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; }
 
-        input[type="text"], input[type="number"], textarea {
+        input[type="text"], input[type="number"], textarea, select {
             width: 100%; padding: 8px;
             border: 1px solid var(--border-color); border-radius: 6px;
             background-color: #fafafa; font-size: 0.85rem; box-sizing: border-box; 
@@ -133,8 +131,12 @@
         ::placeholder { color: #b0bec5 !important; opacity: 1; font-weight: 400; font-size: 0.8rem; }
         textarea { resize: none; height: 70px; width: 100%; margin-top: 8px; }
         
-        .info-grid-row { display: grid; grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; gap: 4px; align-items: end; }
+        /* 4열 그리드 (동, 호, 장소, 날짜) */
+        .info-grid-row { display: grid; grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; gap: 4px; align-items: end; margin-bottom: 8px; }
         .info-grid-row .input-label { text-align: center; }
+
+        /* 2열 그리드 (방향, 세대위치) */
+        .info-dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: end; margin-bottom: 8px; }
 
         .photo-stack { display: flex; flex-direction: column; gap: 15px; }
         .upload-wrapper { 
@@ -164,7 +166,6 @@
         .add-photo-btn:hover { background-color: #e3f2fd; color: var(--primary-main); border-color: var(--primary-main); }
         .add-photo-btn i { margin-right: 4px; }
 
-        /* 법적 면책 동의 박스 */
         .legal-disclaimer-box {
             background-color: #fff8e1; border: 1px solid #ffca28; border-radius: 8px;
             padding: 12px; margin-top: 25px; margin-bottom: 10px;
@@ -199,7 +200,6 @@
             border: 2px solid var(--primary-main); display: none; 
         }
 
-        /* 결과 보고서 내 기본 정보 요약 박스 스타일 */
         .report-summary-box {
             background-color: #f8f9fa;
             border: 1px solid #cfd8dc;
@@ -225,7 +225,6 @@
             background-color: #ffebee;
         }
 
-        /* 인쇄 전용 법적 문구 */
         .print-legal-footer {
             display: none; margin-top: 30px; border: 2px solid #000; padding: 15px; text-align: center;
         }
@@ -259,7 +258,6 @@
             .mobile-container { max-width: 100%; width: 100%; box-shadow: none; margin: 0; border: none; }
             .analyze-btn, .footer-btns, .file-input, .add-photo-btn, .legal-disclaimer-box { display: none !important; }
             
-            /* 입력 폼 섹션 숨기기 (결과만 출력하기 위함) */
             .section:not(:has(#result-area)) { display: none; } 
 
             .upload-wrapper { display: none !important; }
@@ -269,7 +267,6 @@
             .upload-box i, .upload-box span { display: none !important; } 
             
             #result-area { display: block !important; border: 2px solid #000; margin-top: 20px; padding: 10px;}
-            /* 인쇄 시 요약 정보 박스 강조 */
             .report-summary-box { border: 1px solid #000; background: #fff; }
             .report-summary-item { border-bottom: 1px solid #ccc; }
             
@@ -308,6 +305,7 @@
     <div class="content">
         <div class="section">
             <div class="section-title"><i class="fas fa-clipboard-list"></i> 기본 정보 (Basic Info)</div>
+            
             <div class="info-grid-row">
                 <div class="input-group">
                     <label class="input-label">동</label>
@@ -319,13 +317,39 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label">진단 장소</label>
-                    <input type="text" id="location" placeholder="거실">
+                    <input type="text" id="location" placeholder="거실, 안방">
                 </div>
                 <div class="input-group">
                     <label class="input-label">진단 일자</label>
                     <input type="text" id="date" style="text-align:center; color:#546e7a; font-weight:bold; font-size:0.75rem; padding: 8px 2px; letter-spacing: -1px;">
                 </div>
             </div>
+
+            <div class="info-dual-row">
+                <div class="input-group">
+                    <label class="input-label">방향 (Direction)</label>
+                    <select id="direction">
+                        <option value="정남향">정남향 (채광 최우수)</option>
+                        <option value="동남향">동남향 (오전 채광 양호)</option>
+                        <option value="남서향">남서향 (오후 채광 양호)</option>
+                        <option value="정동향">정동향 (아침 해)</option>
+                        <option value="정서향">정서향 (저녁 해)</option>
+                        <option value="서북향">서북향 (취약/채광 부족)</option>
+                        <option value="북동향">북동향 (취약/채광 부족)</option>
+                        <option value="북향">북향 (취약/일조량 없음)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">세대 위치 (Position)</label>
+                    <select id="house-type">
+                        <option value="기준층(중간)">기준층 (일반 중간층)</option>
+                        <option value="탑층">탑층 (최상층, 지붕)</option>
+                        <option value="필로티">필로티 (1층 하부개방)</option>
+                        <option value="끝라인">끝라인 (외벽 코너세대)</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="input-group">
                 <textarea id="defect-content" placeholder="하자 증상 상세 (예: 벽지 젖음, 곰팡이 발생 등)"></textarea>
             </div>
@@ -501,7 +525,7 @@
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
                 <i class="fas fa-spinner spinner"></i>
                 <p id="loading-text" style="margin-top:15px; font-weight:bold; color:var(--primary-main);">
-                    동, 호수, UV 형광 반응 및 환경 데이터를 기반으로<br>모든 계측 사진을 종합 정밀 분석 중입니다...
+                    방향/세대위치 구조 분석 및 UV 형광 반응을 포함하여<br>종합 정밀 분석 중입니다...
                 </p>
             </div>
             
@@ -552,18 +576,17 @@
 
     // --- 버전 정보 업데이트 ---
     const versionData = {
-        "version": "19.0",
-        "build": "20260120-UV_Expert",
-        "last_updated": "2026. 01. 20.",
-        "changes": "UV(자외선) 누수/곰팡이 형광 분석 알고리즘 추가"
+        "version": "19.5",
+        "build": "20260122-Direction_Logic",
+        "last_updated": "2026. 01. 22.",
+        "changes": "방향(북향 등) 및 세대위치(탑층 등)에 따른 구조적 결로 진단 알고리즘 탑재"
     };
 
-    // [추가] 개발자 모드(치트키) 관련 변수
+    // [개발자 모드 관련]
     let clickCount = 0;
     let clickTimer;
     const DAILY_LIMIT = 100;
 
-    // [추가] 페이지 로드 시 개발자 모드 상태 확인하여 배지 스타일 적용
     window.addEventListener('DOMContentLoaded', () => {
         const isDev = localStorage.getItem('is_developer') === 'true';
         if (isDev) {
@@ -571,13 +594,11 @@
         }
     });
 
-    // [추가] 히든 버튼(치트키) 로직: 1초 내에 5번 클릭 시 모드 전환
     function checkDevMode() {
-        clearTimeout(clickTimer); // 이전 타이머 초기화
+        clearTimeout(clickTimer); 
         clickCount++;
 
         if (clickCount === 5) {
-            // 토글 로직
             const isDev = localStorage.getItem('is_developer') === 'true';
             localStorage.setItem('is_developer', !isDev);
             
@@ -593,31 +614,27 @@
             clickCount = 0;
         }
 
-        // 1초 뒤 클릭 횟수 초기화
         clickTimer = setTimeout(() => {
             clickCount = 0;
         }, 1000);
     }
 
-    // [추가] 일일 사용량 체크 함수
     function checkDailyLimit() {
         const isDev = localStorage.getItem('is_developer') === 'true';
-        if (isDev) return true; // 개발자는 무조건 통과
+        if (isDev) return true; 
 
-        const today = new Date().toDateString(); // 예: "Mon Jan 19 2026"
+        const today = new Date().toDateString(); 
         let usageData = JSON.parse(localStorage.getItem('expert_app_usage') || '{}');
 
-        // 날짜가 다르면 초기화
         if (usageData.date !== today) {
             usageData = { date: today, count: 0 };
         }
 
         if (usageData.count >= DAILY_LIMIT) {
             alert(`⚠️ 일일 무료 사용 한도(${DAILY_LIMIT}회)를 초과했습니다.\n내일 다시 이용해 주세요.`);
-            return false; // 차단
+            return false; 
         }
         
-        // 통과 시 카운트 증가 저장
         usageData.count++;
         localStorage.setItem('expert_app_usage', JSON.stringify(usageData));
         return true;
@@ -674,7 +691,6 @@
     window.onload = function() { 
         fetchWeather();
         loadVersionInfo(); 
-        // [추가] 초기 로드 시 배지 상태 동기화
         const isDev = localStorage.getItem('is_developer') === 'true';
         if (isDev) {
             document.getElementById('version-badge').classList.add('dev-active');
@@ -732,7 +748,6 @@
         }
     }
 
-    // PDF 저장 시 파일명 지정을 위한 함수
     function savePdf() {
         const dong = document.getElementById('dong').value || "000";
         const ho = document.getElementById('ho').value || "0000";
@@ -740,14 +755,12 @@
         const dateRaw = document.getElementById('date').value;
         const dateClean = dateRaw.replace(/[.\s]/g, '-').replace(/-$/, '');
 
-        // 브라우저 타이틀 변경 (파일 이름 결정)
         document.title = `결로진단AI앱(PRO)_${dong}동_${ho}호_${loc}_${dateClean}`;
         
         window.print();
     }
 
     async function startAnalysis() {
-        // [추가] 분석 시작 시 일일 제한 확인
         if (!checkDailyLimit()) {
             return;
         }
@@ -762,6 +775,11 @@
         const ho = document.getElementById('ho').value;
         const location = document.getElementById('location').value;
         const date = document.getElementById('date').value;
+        
+        // [수정] 방향 및 세대 위치 값 가져오기
+        const direction = document.getElementById('direction').value;
+        const houseType = document.getElementById('house-type').value;
+
         const fullLocation = `${dong ? dong + '동 ' : ''}${ho ? ho + '호 ' : ''}${location || "미지정 장소"}`;
         
         const defect = document.getElementById('defect-content').value;
@@ -769,7 +787,7 @@
         const humidIn = document.getElementById('humid-in').value;
         const dew = document.getElementById('dew-result').value;
 
-        // 결과 보고서 상단에 기본 정보 요약 표시
+        // [수정] 결과 요약 박스에 방향/위치 정보 추가
         summaryBox.innerHTML = `
             <div class="report-summary-item">
                 <span class="report-summary-label">진단 일자</span>
@@ -780,8 +798,8 @@
                 <span class="report-summary-value">${dong ? dong+'동' : '-'} ${ho ? ho+'호' : '-'}</span>
             </div>
             <div class="report-summary-item">
-                <span class="report-summary-label">진단 장소</span>
-                <span class="report-summary-value">${location || '미지정'}</span>
+                <span class="report-summary-label">구조 특성</span>
+                <span class="report-summary-value" style="color:var(--expert-gold);">${direction} / ${houseType}</span>
             </div>
         `;
         summaryBox.style.display = 'block';
@@ -807,56 +825,55 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
-        // [프롬프트 고도화] UV 분석 및 심층 결로 분석 명령 추가
+        // [프롬프트 고도화] 방향(Direction) 및 세대위치(Position) 논리 반영
         const prompt = `
             당신은 '청개구리샤시'의 **건축 환경 진단 AI 전문 분석관(Expert Analyst)**입니다.
             제공된 데이터를 정밀 분석하되, 법적 분쟁 방지를 위해 확정적 단어 대신 '기술적 소견', '추정' 등의 용어를 사용하십시오.
 
             [1. 진단 개요]
             - 위치: ${fullLocation} (진단일: ${new Date().toLocaleDateString()})
+            - **구조적 특성(매우중요): ${direction} / ${houseType}**
             - 환경: 실내 ${tempIn}°C / ${humidIn}% (이슬점: ${dew})
             - 증상: ${defect}
 
-            [2. 이미지별 정밀 계측 데이터 분석 (ASHRAE 기준)]
+            [2. 구조적 취약점 정밀 분석 (Direction & Logic)]
+            **반드시 아래 논리를 분석 결과에 반영하십시오:**
+            * **방향(${direction}) 분석:**
+              - '북향/북동향/서북향'인 경우: -> "일조량 부족으로 외벽 온도가 상시 낮음. 단열재가 있어도 결로 임계점이 낮아 취약함." (구조적 요인 강조)
+              - '정남향/남서향/동남향'인 경우: -> "일조량이 풍부함. 그럼에도 결로가 발생했다면 '환기 부족'이거나 '심각한 단열 결손(Thermal Bridge)'임."
+            
+            * **세대 위치(${houseType}) 분석:**
+              - '탑층': -> "천장(지붕)을 통한 열손실(Heat Loss) 가능성 고려. 상부 코너 결로는 옥상 방수/단열 문제와 연관될 수 있음."
+              - '필로티': -> "바닥 하부 냉기 유입으로 인한 하단부 결로 가능성 높음."
+              - '끝라인(측벽)': -> "외기에 접하는 면적이 3면 이상으로 단열 취약 부위(T-zone) 발생 확률 매우 높음." (구조적 요인 가중치 ↑)
+
+            [3. 이미지별 정밀 계측 데이터 분석 (ASHRAE 기준)]
             업로드된 여러 사진 중 각 유형(FLIR MR277, UV, 열화상 등)을 시각적으로 식별하여 분석하십시오.
 
-            **A. UV(자외선) 형광 정밀 분석 (NEW Feature)**
-            * 사진 중 **보라색/파란색 조명**이 비춰진 사진을 찾으십시오.
-            * **분석 목표:** 육안으로 보이지 않는 '과거의 결로 흐름 자국(Water Stain)'이나 '초기 곰팡이 포자(Biological growth)'의 형광 반응을 판독합니다.
-            * **판정 기준:**
-              1. **물길 흔적(Water Trails):** 벽면을 타고 흐르는 세로 줄무늬 형광 반응이 선명한가? (-> 만성적인 누수/결로 이력 시사)
-              2. **생물학적 반응:** 점박이 형태의 밝은 형광 반응이 있는가? (-> 눈에 안 보이는 곰팡이 포자 번식)
-              3. **표백 반응:** 세제 사용 등으로 색이 바랜 흔적이 있는가?
-            * **출력:** UV 분석 결과를 별도 항목으로 상세히 기술하고, 잠재적 위험도(상/중/하)를 평가하십시오.
+            **A. UV(자외선) 형광 정밀 분석**
+            * **분석 목표:** 육안으로 보이지 않는 '과거의 결로 흐름 자국(Water Stain)'이나 '초기 곰팡이 포자' 판독.
+            * **물길 흔적:** 세로 줄무늬 형광 반응이 선명한가? (-> 누수/결로 이력)
+            * **생물학적 반응:** 점박이 형태의 밝은 형광 반응? (-> 곰팡이 포자)
 
             **B. VAP (수증기압) 정밀 분석 (MR277 계측)**
-            * **기준:** ASHRAE 및 국내 동절기 결로 방지 가이드라인에 따른 실내 적정 수증기압은 **1.20 kPa 이하**입니다.
-            * **분석 지침:** 사진(FLIR MR277)에 찍힌 VAP 수치를 판독하여 아래와 같이 계산하고 붉은색 강조를 적용하십시오.
-              1. **수치 판독:** 이미지 내 VAP 값 (예: 1.5 kPa)
-              2. **초과율 계산:** ((측정값 - 1.2) / 1.2) * 100 = 초과 % (소수점 반올림)
-              3. **판정 및 출력 포맷 (HTML 태그 사용 필수):**
-                 - **1.2 kPa 이하:** <span style="color:green; font-weight:bold;">"✅ 정상 (적정 수준)"</span>
-                 - **1.2 ~ 1.4 kPa:** <span style="color:#f57c00; font-weight:bold;">"⚠️ 주의 (기준치 [초과율]% 초과)"</span>
-                 - **1.4 kPa 초과:** <span style="color:#d32f2f; font-weight:bold;">"🚨 심각 (기준치 [초과율]% 초과 - 과도한 수증기압)"</span>
-            * **[솔루션]:** VAP가 높을 경우, 강제 환기 및 베이크 아웃 필요성 강조.
+            * **기준:** 실내 적정 수증기압 **1.20 kPa 이하**.
+            * 1.2 kPa 이하: <span style="color:green; font-weight:bold;">"✅ 정상"</span>
+            * 1.2 ~ 1.4 kPa: <span style="color:#f57c00; font-weight:bold;">"⚠️ 주의 (기준치 [초과율]% 초과)"</span>
+            * 1.4 kPa 초과: <span style="color:#d32f2f; font-weight:bold;">"🚨 심각 (기준치 [초과율]% 초과)"</span>
 
-            **C. MIX (혼합비/절대습도) 분석**
-            - 기준: 7.0 g/kg 초과 시 환기 부족으로 인한 생활 과습 가능성 기술.
+            **D. 열화상(Thermal) 분석**
+            - 주변 벽체와의 온도차가 5°C 이상 벌어지는 극심한 열교 현상은 <span style="color:#d32f2f;">"단열 결손 의심 구간"</span>으로 표시.
 
-            **D. 열화상(Thermal) 분석 (미서기 창호 특성 고려)**
-            - 미서기(Sliding) 창호의 레일/풍지판 부위 냉기는 구조적 특성(불가피한 틈새)임을 감안하여 분석하십시오. 
-            - 단, 주변 벽체와의 온도차가 5°C 이상 벌어지는 극심한 열교 현상은 <span style="color:#d32f2f;">"단열 결손 의심 구간"</span>으로 표시하십시오.
-
-            [3. 종합 결론 (귀책 분석)]
-            - **UV 형광 반응(과거 흔적)**과 **VAP 수치(현재 습도)**를 교차 검증하십시오.
-            - 예: VAP는 정상이나 UV상 물길 흔적이 뚜렷함 -> **"간헐적 누수 또는 외부 요인(크랙 등)"** 가능성 높음.
-            - 예: VAP가 매우 높고 곰팡이 형광 반응 있음 -> **"생활 습관에 의한 만성 결로"** 가능성 높음.
+            [4. 종합 결론 (귀책 분석)]
+            - **구조적 특성(${direction}, ${houseType})**과 **VAP 수치(생활습관)**를 교차 검증하여 원인 비율을 산정하십시오.
+            - 예: **북향/북동향 + 끝라인/탑층**인 경우 -> 자연적/구조적 불리함이 크므로 **"단열 부족(시공사)" 비율을 높게(50~70%)** 잡으십시오. (VAP가 아주 높지 않다면)
+            - 예: **남향 + 기준층**인데 결로 발생 -> 구조적으로 유리한데 발생했으므로 **"환기 부족(거주자)" 비율을 높게** 잡으십시오. (VAP가 높다면 더욱 확실)
             
-            [4. 조치 권고]
-            - **"본 결과는 AI 분석에 의한 추정치이며, 법적 효력이 없습니다. 확정적 판단을 위해 공인 기관의 정밀 진단을 권장합니다."** 문구 필수 포함.
-            - 보고서 상단 제목을 **"📑 AI 전문 분석관의 결로 정밀 진단 보고서 (with UV Analysis)"**로 출력하십시오.
+            [5. 조치 권고]
+            - 보고서 제목: "📑 AI 전문 분석관의 결로 정밀 진단 보고서 (구조/방향 분석 포함)"
+            - "본 결과는 AI 추정치이며 법적 효력이 없습니다" 문구 필수.
 
-            [5. 필수 JSON]
+            [6. 필수 JSON]
             맨 마지막에:
             ___JSON_START___
             {"ventilation": (0~100), "insulation": (0~100), "normal": (0~20)}
@@ -892,7 +909,7 @@
                         } catch(e) { console.error("JSON Error", e); }
                     }
 
-                    const md = window.markdownit({ html: true }); // HTML 태그 허용
+                    const md = window.markdownit({ html: true }); 
                     content.innerHTML = md.render(aiText);
                     loading.style.display = 'none';
                     content.style.display = 'block';
