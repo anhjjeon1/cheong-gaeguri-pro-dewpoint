@@ -357,31 +357,35 @@
 
         <div class="section">
             <div class="section-title"><i class="fas fa-temperature-low"></i> 환경 데이터 (Environment)</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 6px; margin-bottom: 8px;">
                 <div class="input-group">
-                    <label class="input-label">실내온도 (°C)</label>
-                    <input type="number" id="temp-in" placeholder="입력" oninput="calcDewPoint()">
+                    <label class="input-label">실내온도</label>
+                    <input type="number" id="temp-in" placeholder="°C" oninput="calcDewPoint()" style="text-align:center;">
                 </div>
                 <div class="input-group">
-                    <label class="input-label">실내습도 (%)</label>
-                    <input type="number" id="humid-in" placeholder="입력" oninput="calcDewPoint()">
+                    <label class="input-label">실내습도</label>
+                    <input type="number" id="humid-in" placeholder="%" oninput="calcDewPoint()" style="text-align:center;">
                 </div>
-                <div class="input-group" style="grid-column: span 2;">
-                    <label class="input-label" style="color:#d32f2f;">🔥 결로 이슬점 (Dew Point)</label>
-                    <input type="text" id="dew-result" placeholder="자동 계산됨" readonly 
+                <div class="input-group">
+                    <label class="input-label" style="color:#d32f2f;">🔥 이슬점</label>
+                    <input type="text" id="dew-result" placeholder="자동계산" readonly 
                            style="background-color:#ffebee; color:#b71c1c; font-weight:bold; text-align:center;">
                 </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                 <div class="input-group">
                     <label class="input-label">실외온도 (°C)</label>
-                    <input type="text" id="temp-out" placeholder="확인 중.." style="background-color: #eceff1;">
+                    <input type="text" id="temp-out" placeholder="확인 중.." style="background-color: #eceff1; text-align:center;">
                 </div>
                 <div class="input-group">
                     <label class="input-label">실외습도 (%)</label>
-                    <input type="text" id="humid-out" placeholder="확인 중.." style="background-color: #eceff1;">
-                    <div style="font-size:0.6rem; color:#cfd8dc; line-height:1.2; margin-top:2px; text-align:center; letter-spacing: -0.5px;">
-                        (GPS수신에 자동으로 입력되므로<br>오류발생 시 수동입력)
-                    </div>
+                    <input type="text" id="humid-out" placeholder="확인 중.." style="background-color: #eceff1; text-align:center;">
                 </div>
+            </div>
+            <div style="font-size:0.6rem; color:#cfd8dc; line-height:1.2; margin-top:4px; text-align:center; letter-spacing: -0.5px;">
+                (GPS 수신하여 자동 입력 / 오류 시 수동 입력)
             </div>
         </div>
 
@@ -576,10 +580,10 @@
 
     // --- 버전 정보 업데이트 ---
     const versionData = {
-        "version": "19.5",
-        "build": "20260122-Direction_Logic",
+        "version": "19.6",
+        "build": "20260122-UI_Improvement",
         "last_updated": "2026. 01. 22.",
-        "changes": "방향(북향 등) 및 세대위치(탑층 등)에 따른 구조적 결로 진단 알고리즘 탑재"
+        "changes": "환경 데이터 입력창 시인성 개선 (실내온도/습도/이슬점 1열 배치)"
     };
 
     // [개발자 모드 관련]
@@ -776,7 +780,7 @@
         const location = document.getElementById('location').value;
         const date = document.getElementById('date').value;
         
-        // [수정] 방향 및 세대 위치 값 가져오기
+        // 방향 및 세대 위치 값 가져오기
         const direction = document.getElementById('direction').value;
         const houseType = document.getElementById('house-type').value;
 
@@ -787,7 +791,7 @@
         const humidIn = document.getElementById('humid-in').value;
         const dew = document.getElementById('dew-result').value;
 
-        // [수정] 결과 요약 박스에 방향/위치 정보 추가
+        // 결과 요약 박스에 방향/위치 정보 추가
         summaryBox.innerHTML = `
             <div class="report-summary-item">
                 <span class="report-summary-label">진단 일자</span>
