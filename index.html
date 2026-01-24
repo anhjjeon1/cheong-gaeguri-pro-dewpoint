@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v23.0 Expert)</title>
+    <title>청개구리 결로진단 AI (v24.0 Expert Pure)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -11,7 +11,7 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <style>
-        /* --- [디자인 시스템: v22.1 유지] --- */
+        /* --- [디자인 시스템] --- */
         :root {
             --primary-dark: #002171;            
             --primary-main: #0d47a1;            
@@ -42,7 +42,7 @@
             margin: 0; padding: 10px 0;
             line-height: 1.5;
             display: flex; justify-content: center; align-items: flex-start;
-            min-height: 100vh; padding-bottom: 80px;
+            min-height: 100vh; padding-bottom: 50px;
         }
 
         .mobile-container {
@@ -109,7 +109,7 @@
         .info-grid-row .input-label { text-align: center; }
         .info-dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: end; margin-bottom: 8px; }
 
-        /* 사진 업로드 */
+        /* 사진 업로드 스타일 */
         .photo-stack { display: flex; flex-direction: column; gap: 15px; }
         .upload-wrapper { 
             border: 1px solid #eee; padding: 12px; border-radius: 10px; 
@@ -137,6 +137,7 @@
         }
         .add-photo-btn:hover { background-color: #e3f2fd; color: var(--primary-main); }
 
+        /* 면책 조항 */
         .legal-disclaimer-box { background-color: #fff8e1; border: 1px solid #ffca28; border-radius: 8px; padding: 12px; margin-top: 25px; margin-bottom: 10px; }
         .legal-title { color: #d32f2f; font-weight: 900; font-size: 0.85rem; margin-bottom: 5px;}
         .legal-text { font-size: 0.75rem; color: #455a64; line-height: 1.4; text-align: justify; margin-bottom: 10px; }
@@ -164,33 +165,28 @@
         .print-legal-footer { display: none; margin-top: 30px; border: 2px solid #000; padding: 15px; text-align: center; }
         .chart-container { position: relative; height: 300px; width: 100%; margin-top: 10px; }
 
-        .footer-btns { display: flex; gap: 6px; margin-top: 25px; }
+        /* 하단 버튼 (2개로 변경됨) */
+        .footer-btns { display: flex; gap: 8px; margin-top: 25px; }
         .footer-btn {
-            flex: 1; padding: 10px 0; border: none; border-radius: 8px;
-            font-size: 0.9rem; font-weight: 700; cursor: pointer; color: white;
+            flex: 1; padding: 14px 0; border: none; border-radius: 8px;
+            font-size: 0.95rem; font-weight: 800; cursor: pointer; color: white;
             display: flex; justify-content: center; align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        .footer-btn i { margin-right: 6px; }
         .call-btn { background: linear-gradient(to right, #2962ff, #0091ea); }
         .save-btn { background: linear-gradient(to right, #455a64, #263238); }
+        
         .main-footer { background-color: #eceff1; color: #90a4ae; padding: 15px 10px; text-align: center; font-size: 0.7rem; border-top: 1px solid #cfd8dc; }
+        .spinner { animation: rotate 2s linear infinite; font-size: 2.5rem; color: var(--primary-main); }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
 
-        /* 챗봇 스타일 */
-        .chat-float-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, #00b09b, #96c93d); border-radius: 50%; box-shadow: 0 5px 20px rgba(0, 176, 155, 0.4); display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; font-weight: 800; cursor: pointer; z-index: 999; }
-        .chat-window { position: fixed; bottom: 90px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 1000; display: none; flex-direction: column; overflow: hidden; border: 2px solid #00b09b; animation: slideUp 0.3s ease-out; }
-        .chat-header { background: #00b09b; color: white; padding: 15px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
-        .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f0f4f8; display: flex; flex-direction: column; gap: 10px; }
-        .chat-bubble { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .chat-bot { background: white; align-self: flex-start; border: 1px solid #eee; } .chat-user { background: #00b09b; color: white; align-self: flex-end; }
-        .chat-options { padding: 10px; background: white; border-top: 1px solid #eee; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .chat-option-btn { background: #eefbf3; border: 1px solid #00b09b; color: #00b09b; padding: 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-align: center; }
-
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @media print {
             body { background: white; padding: 0; display: block; }
             .mobile-container { max-width: 100%; box-shadow: none; border: none; }
-            .analyze-btn, .footer-btns, .file-input, .add-photo-btn, .chat-float-btn, .chat-window, .legal-disclaimer-box { display: none !important; } 
-            .upload-wrapper { border: none !important; display: none !important; }
+            .analyze-btn, .footer-btns, .file-input, .add-photo-btn, .legal-disclaimer-box { display: none !important; }
+            .section:not(:has(#result-area)) { display: none; } 
+            .upload-wrapper { display: none !important; }
             .upload-wrapper.filled { display: block !important; page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #ccc !important; }
             .upload-box { border: none !important; height: 300px !important; }
             .upload-box i, .upload-box span { display: none !important; } 
@@ -206,9 +202,8 @@
     <header class="main-header">
         <div class="water-drop" style="width: 25px; height: 25px; top: 15%; left: 10%;"></div>
         <div class="water-drop" style="width: 15px; height: 15px; top: 25%; left: 80%;"></div>
-        <div class="water-drop" style="width: 10px; height: 10px; top: 60%; left: 20%;"></div>
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v23.0 Expert</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v24.0 Expert Pure</span>
     </header>
 
     <div class="content">
@@ -250,7 +245,7 @@
         </div>
 
         <div class="section">
-            <div class="section-title"><i class="fas fa-temperature-low"></i> 환경 데이터 (TDR & 공기질)</div>
+            <div class="section-title"><i class="fas fa-temperature-low"></i> 환경 데이터 (TDR 정밀분석)</div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 6px; margin-bottom: 8px;">
                 <div class="input-group">
@@ -278,7 +273,7 @@
                 </div>
             </div>
             <div style="font-size:0.7rem; color:#d32f2f; margin-top:5px; text-align:center;">
-                * 표면온도 입력 시 TDR 자동 계산 및 하자 판정 수행
+                * 표면온도 입력 시 TDR(온도차이비율) 자동 계산 및 하자 판정 수행
             </div>
         </div>
 
@@ -323,7 +318,7 @@
                 <div id="group-mr277" style="margin-top:20px;">
                     <div class="upload-wrapper" id="wrap-mr277" style="border-color:var(--primary-main);">
                         <label class="input-label" style="color:var(--primary-main);">■ FLIR MR 277 (Abs. Humidity)</label>
-                        <div style="font-size:0.75rem; color:#666;">* 수증기압(VAP) 및 절대습도(MIX) 분석용</div>
+                        <div style="font-size:0.75rem; color:#666;">* 수증기압(kPa) 및 절대습도(g/kg)</div>
                         <label for="img-mr277" class="upload-box">
                             <i class="fas fa-ruler-combined upload-icon" style="color:var(--primary-main);"></i><img id="view-mr277" class="preview-img">
                         </label>
@@ -346,8 +341,7 @@
 
                 <div id="group-sonic" style="margin-top:20px;">
                     <div class="upload-wrapper" id="wrap-sonic" style="border-color:var(--sonic-purple);">
-                        <label class="input-label" style="color: var(--sonic-purple);">■ 초음파/음향 카메라 (Acoustic)</label>
-                        <div style="font-size:0.75rem; color:#666;">* 기밀성 저하 및 공기 누설(Draft) 확인</div>
+                        <label class="input-label" style="color: var(--sonic-purple);">■ 초음파(Ultrasonic) 진단</label>
                         <label for="img-sonic" class="upload-box" style="background-color: #f3e5f5;">
                             <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i><img id="view-sonic" class="preview-img">
                         </label>
@@ -375,7 +369,7 @@
 
         <div id="result-area">
             <div class="section-title"><i class="fas fa-file-contract"></i> 정밀 기술 소견서 (Report)</div>
-            <div class="report-header-warning">※ 본 보고서는 AI 추정치이며, 원인 규명(생활습관 vs 시공하자)을 위한 참고 자료입니다 ※</div>
+            <div class="report-header-warning">※ 본 보고서는 AI 추정치이며, 국토부 TDR 기준을 적용한 참고 자료입니다 ※</div>
             <div id="report-summary-box" class="report-summary-box" style="display:none;"></div>
 
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
@@ -408,21 +402,6 @@
         전화 1599-7380 | COPYRIGHT ⓒ 2026 Cheong-gaeguri Corp.
     </footer>
 
-</div>
-
-<div class="chat-float-btn" onclick="window.toggleChat()">챗봇</div>
-<div class="chat-window" id="chatWindow">
-    <div class="chat-header">
-        <span>🐸 청개구리 챗봇 (기술지원)</span>
-        <span style="cursor:pointer;" onclick="window.toggleChat()"><i class="fa-solid fa-xmark"></i></span>
-    </div>
-    <div class="chat-body" id="chatBody">
-        <div class="chat-bubble chat-bot">안녕하세요! 기술 지원 조교입니다.<br>무엇을 도와드릴까요?</div>
-    </div>
-    <div class="chat-options">
-        <div class="chat-option-btn" onclick="window.askBot('tdr')">📉 TDR 기준이란?</div>
-        <div class="chat-option-btn" onclick="window.askBot('photo')">📸 촬영 가이드</div>
-    </div>
 </div>
 
 <script type="module">
@@ -526,47 +505,13 @@
         else { btn.classList.remove('active'); btn.style.cursor='not-allowed'; }
     }
 
-    window.savePdf = function() { window.print(); }
-
-    window.toggleChat = function() {
-        const el = document.getElementById('chatWindow');
-        el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+    window.savePdf = function() {
+        const dong = document.getElementById('dong').value || "000";
+        const ho = document.getElementById('ho').value || "0000";
+        document.title = `청개구리_결로진단_${dong}동${ho}호`;
+        window.print();
     };
 
-    window.askBot = function(type) {
-        const body = document.getElementById('chatBody');
-        let user = "", bot = "";
-        if(type === 'tdr') {
-            user = "TDR 기준이 무엇인가요?";
-            bot = "📉 **[TDR (온도차이비율)]**<br>실내외 온도차 대비 벽체 표면 온도가 얼마나 떨어지는지 나타내는 지표입니다.<br><br><strong>* 국토부 기준: 0.28 이하</strong><br><br>이 수치를 초과하면 아무리 환기를 잘해도 결로가 생기는 **'단열 불량'**입니다.";
-        } else if(type === 'photo') {
-            user = "촬영 가이드";
-            bot = "📸 1. 열화상으로 가장 파란(차가운) 곳을 찍으세요.<br>2. 물방울이 맺힌 곳을 가까이서 찍으세요.";
-        }
-        body.innerHTML += `<div class="chat-bubble chat-user">${user}</div>`;
-        setTimeout(() => {
-            body.innerHTML += `<div class="chat-bubble chat-bot">${bot}</div>`;
-            body.scrollTop = body.scrollHeight;
-        }, 300);
-    }
-
-    function drawChart(data) {
-        var d = google.visualization.arrayToDataTable([
-            ['원인', '비율'],
-            ['거주자 과습 생활 (환기부족)', data.ventilation],
-            ['시공사 단열/기밀 불량 (하자)', data.insulation],
-            ['기타/자연적 요인', data.normal || 0]
-        ]);
-        var options = {
-            title: '결로 원인 귀책 분석 (AI 산출)', is3D: true,
-            slices: { 0: { color: '#FF9800' }, 1: { color: '#D32F2F', offset: 0.1 }, 2: { color: '#4CAF50' } },
-            backgroundColor: 'transparent', fontSize: 12, chartArea: { width: '90%', height: '75%' }, legend: { position: 'bottom' } 
-        };
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(chartData, options);
-    }
-
-    // --- [v23.0 핵심 로직] ---
     window.startAnalysis = async function() {
         const resultArea = document.getElementById('result-area');
         const loading = document.getElementById('loading-spinner');
@@ -698,6 +643,22 @@
             content.style.display = 'block';
             content.innerHTML = "<p style='color:red;'>분석 오류 발생.</p>";
         }
+    }
+
+    function drawChart(data) {
+        var chartData = google.visualization.arrayToDataTable([
+            ['원인', '비율'],
+            ['거주자 과습 생활 (환기부족)', data.ventilation],
+            ['시공사 단열/기밀 불량 (하자)', data.insulation],
+            ['기타/자연적 요인', data.normal || 0]
+        ]);
+        var options = {
+            title: '결로 원인 귀책 분석 (AI 산출)', is3D: true,
+            slices: { 0: { color: '#FF9800' }, 1: { color: '#D32F2F', offset: 0.1 }, 2: { color: '#4CAF50' } },
+            backgroundColor: 'transparent', fontSize: 12, chartArea: { width: '90%', height: '75%' }, legend: { position: 'bottom' } 
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(chartData, options);
     }
 </script>
 </body>
