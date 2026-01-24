@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="app-title">결로진단 AI앱 (Expert Analysis)</title>
+    <title id="app-title">청개구리 결로진단 AI (PRO Expert)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -15,8 +15,8 @@
             --primary-dark: #002171;            
             --primary-main: #0d47a1;            
             --accent-color: #2962ff;            
-            --bg-color: #eceff1;              
-            --card-bg: #ffffff;              
+            --bg-color: #eceff1;               
+            --card-bg: #ffffff;               
             --text-primary: #263238;            
             --text-secondary: #546e7a;          
             --border-color: #cfd8dc;            
@@ -62,7 +62,6 @@
             overflow: hidden;
         }
 
-        /* 정적 물방울 디자인 */
         .water-drop {
             position: absolute;
             background: rgba(255, 255, 255, 0.1); 
@@ -131,11 +130,8 @@
         ::placeholder { color: #b0bec5 !important; opacity: 1; font-weight: 400; font-size: 0.8rem; }
         textarea { resize: none; height: 70px; width: 100%; margin-top: 8px; }
         
-        /* 4열 그리드 (동, 호, 장소, 날짜) */
         .info-grid-row { display: grid; grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; gap: 4px; align-items: end; margin-bottom: 8px; }
         .info-grid-row .input-label { text-align: center; }
-
-        /* 2열 그리드 (방향, 세대위치) */
         .info-dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: end; margin-bottom: 8px; }
 
         .photo-stack { display: flex; flex-direction: column; gap: 15px; }
@@ -425,8 +421,8 @@
 
                 <div id="group-mr277" style="margin-top:20px;">
                     <div class="upload-wrapper" id="wrap-mr277">
-                        <label class="input-label" style="color:#0d47a1;">■ FLIR MR 277 (VAP/MIX)</label>
-                        <div style="font-size:0.75rem; color:#666; margin-bottom:5px;">* 수증기압(kPa) 및 혼합비(g/kg)</div>
+                        <label class="input-label" style="color:#0d47a1;">■ FLIR MR 277 (VAP/Abs. Humidity)</label>
+                        <div style="font-size:0.75rem; color:#666; margin-bottom:5px;">* 수증기압(kPa) 및 절대습도(g/kg)</div>
                         <label for="img-mr277" class="upload-box">
                             <i class="fas fa-ruler-combined upload-icon" style="color:#0d47a1;"></i>
                             <span class="upload-text">계측기 화면 촬영</span>
@@ -440,10 +436,11 @@
                 </div>
                 <div id="group-probe" style="margin-top:20px;">
                     <div class="upload-wrapper">
-                        <label class="input-label" style="color:var(--moisture-blue);">■ FLIR MR12 볼 프로브</label>
+                        <label class="input-label" style="color:var(--moisture-blue);">■ FLIR MR12 (Moisture Content)</label>
+                        <div style="font-size:0.75rem; color:#666; margin-bottom:5px;">* 표면 수분 함수율(%) 측정</div>
                         <label for="img-probe" class="upload-box" style="background-color: #e1f5fe;">
                             <i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i>
-                            <span class="upload-text">볼 프로브 촬영</span>
+                            <span class="upload-text">볼 프로브/수분계 촬영</span>
                             <img id="view-probe" class="preview-img">
                         </label>
                         <input type="file" id="img-probe" class="file-input" accept="image/*" onchange="handleImage(this)">
@@ -452,20 +449,7 @@
                         <i class="fas fa-plus-circle"></i> 프로브 사진 추가
                     </button>
                 </div>
-                <div id="group-moist" style="margin-top:20px;">
-                    <div class="upload-wrapper">
-                        <label class="input-label" style="color:var(--moisture-blue);">■ 핀 타입 수분측정기</label>
-                        <label for="img-moist" class="upload-box" style="background-color: #e1f5fe;">
-                            <i class="fas fa-tint upload-icon" style="color:var(--moisture-blue);"></i>
-                            <span class="upload-text">수분계 촬영</span>
-                            <img id="view-moist" class="preview-img">
-                        </label>
-                        <input type="file" id="img-moist" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-moist', '수분계 추가', 'var(--moisture-blue)', '#e1f5fe')">
-                        <i class="fas fa-plus-circle"></i> 수분계 사진 추가
-                    </button>
-                </div>
+                
                 <div id="group-thermal" style="margin-top:20px;">
                     <div class="upload-wrapper">
                         <label class="input-label" style="color:#d84315;">■ 열화상 카메라 (Thermal)</label>
@@ -578,15 +562,14 @@
     const keyPart3 = "PHxLlXtkw";        
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- 버전 정보 업데이트 ---
+    // --- 버전 정보 업데이트 (v20.0 Expert Logic) ---
     const versionData = {
-        "version": "19.6",
-        "build": "20260122-UI_Improvement",
-        "last_updated": "2026. 01. 22.",
-        "changes": "환경 데이터 입력창 시인성 개선 (실내온도/습도/이슬점 1열 배치)"
+        "version": "20.0",
+        "build": "20260124-ExpertLogic",
+        "last_updated": "2026. 01. 24.",
+        "changes": "전문 용어(MIX->절대습도, MR12->함수율) 수정 및 국토부 기준 반영, TDR 논리 알고리즘 탑재"
     };
 
-    // [개발자 모드 관련]
     let clickCount = 0;
     let clickTimer;
     const DAILY_LIMIT = 100;
@@ -780,7 +763,6 @@
         const location = document.getElementById('location').value;
         const date = document.getElementById('date').value;
         
-        // 방향 및 세대 위치 값 가져오기
         const direction = document.getElementById('direction').value;
         const houseType = document.getElementById('house-type').value;
 
@@ -791,7 +773,6 @@
         const humidIn = document.getElementById('humid-in').value;
         const dew = document.getElementById('dew-result').value;
 
-        // 결과 요약 박스에 방향/위치 정보 추가
         summaryBox.innerHTML = `
             <div class="report-summary-item">
                 <span class="report-summary-label">진단 일자</span>
@@ -829,54 +810,35 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
-        // [프롬프트 고도화] 방향(Direction) 및 세대위치(Position) 논리 반영
+        // [프롬프트 수정] A업체 반박 수용 및 논리 강화 (TDR)
         const prompt = `
             당신은 '청개구리샤시'의 **건축 환경 진단 AI 전문 분석관(Expert Analyst)**입니다.
-            제공된 데이터를 정밀 분석하되, 법적 분쟁 방지를 위해 확정적 단어 대신 '기술적 소견', '추정' 등의 용어를 사용하십시오.
+            제공된 데이터를 정밀 분석하되, **국토교통부 공동주택 결로 방지 설계기준**에 의거하여 논리적으로 판단하십시오.
 
             [1. 진단 개요]
             - 위치: ${fullLocation} (진단일: ${new Date().toLocaleDateString()})
-            - **구조적 특성(매우중요): ${direction} / ${houseType}**
+            - 구조: ${direction} / ${houseType}
             - 환경: 실내 ${tempIn}°C / ${humidIn}% (이슬점: ${dew})
             - 증상: ${defect}
 
-            [2. 구조적 취약점 정밀 분석 (Direction & Logic)]
-            **반드시 아래 논리를 분석 결과에 반영하십시오:**
-            * **방향(${direction}) 분석:**
-              - '북향/북동향/서북향'인 경우: -> "일조량 부족으로 외벽 온도가 상시 낮음. 단열재가 있어도 결로 임계점이 낮아 취약함." (구조적 요인 강조)
-              - '정남향/남서향/동남향'인 경우: -> "일조량이 풍부함. 그럼에도 결로가 발생했다면 '환기 부족'이거나 '심각한 단열 결손(Thermal Bridge)'임."
+            [2. 전문 용어 및 기준 적용 (필수)]
+            - **'절대습도(g/kg)'**와 **'수증기압(kPa)'** 용어를 사용하여 공기 상태를 설명할 것 (MIX X).
+            - 재료의 수분 상태는 **'함수율(%)'** 또는 '표면 수분량'으로 표현할 것 (MR12 X).
+            - 결로 판단 기준: **국토교통부 공동주택 결로 방지 설계기준** 인용.
+            - **사용자 안내:** 일반인을 위해 "실내 적정 습도 40~50% 유지 권장"을 쉽게 풀어서 설명하되, 상세 분석에서는 전문 용어 사용.
+
+            [3. 핵심 논리: TDR (온도차이비율) 적용]
+            - **매우 중요:** 현재 실내 습도가 높더라도(예: 50% 초과), **해당 결로 부위의 표면 온도가 국토부 TDR 기준(지역별 0.26~0.28 이하)을 만족하지 못할 정도로 낮다면**, 이는 습도 문제가 아니라 **'단열 결손' 또는 '열교(Thermal Bridge)'에 의한 하자**임을 강력히 시사할 것.
+            - "습하게 살아서 생긴 것"이라는 주장에 대해, **"정상적인 단열 시공이 되었다면 이 정도 환경에서도 결로가 생기지 않아야 함"**을 논리적으로 반박하는 톤 유지.
+
+            [4. 이미지 정밀 분석]
+            - **UV 형광:** 물길(Water Stain) 및 곰팡이 포자 식별 -> 누수/결로 이력 추적.
+            - **열화상:** 주변부와 3도 이상 온도차가 나는 **'냉점(Cold Spot)'** 식별 -> 단열재 끊김, 채움 부족 의심.
+
+            [5. 종합 결론 (귀책 분석)]
+            - 구조적 특성(${direction}, ${houseType})과 계측값(VAP, 함수율)을 교차 검증.
+            - **방향/위치상 취약점**이 있는데다 **열화상 냉점**이 뚜렷하다면 -> **시공 하자(단열 부족)** 비율을 높게 책정.
             
-            * **세대 위치(${houseType}) 분석:**
-              - '탑층': -> "천장(지붕)을 통한 열손실(Heat Loss) 가능성 고려. 상부 코너 결로는 옥상 방수/단열 문제와 연관될 수 있음."
-              - '필로티': -> "바닥 하부 냉기 유입으로 인한 하단부 결로 가능성 높음."
-              - '끝라인(측벽)': -> "외기에 접하는 면적이 3면 이상으로 단열 취약 부위(T-zone) 발생 확률 매우 높음." (구조적 요인 가중치 ↑)
-
-            [3. 이미지별 정밀 계측 데이터 분석 (ASHRAE 기준)]
-            업로드된 여러 사진 중 각 유형(FLIR MR277, UV, 열화상 등)을 시각적으로 식별하여 분석하십시오.
-
-            **A. UV(자외선) 형광 정밀 분석**
-            * **분석 목표:** 육안으로 보이지 않는 '과거의 결로 흐름 자국(Water Stain)'이나 '초기 곰팡이 포자' 판독.
-            * **물길 흔적:** 세로 줄무늬 형광 반응이 선명한가? (-> 누수/결로 이력)
-            * **생물학적 반응:** 점박이 형태의 밝은 형광 반응? (-> 곰팡이 포자)
-
-            **B. VAP (수증기압) 정밀 분석 (MR277 계측)**
-            * **기준:** 실내 적정 수증기압 **1.20 kPa 이하**.
-            * 1.2 kPa 이하: <span style="color:green; font-weight:bold;">"✅ 정상"</span>
-            * 1.2 ~ 1.4 kPa: <span style="color:#f57c00; font-weight:bold;">"⚠️ 주의 (기준치 [초과율]% 초과)"</span>
-            * 1.4 kPa 초과: <span style="color:#d32f2f; font-weight:bold;">"🚨 심각 (기준치 [초과율]% 초과)"</span>
-
-            **D. 열화상(Thermal) 분석**
-            - 주변 벽체와의 온도차가 5°C 이상 벌어지는 극심한 열교 현상은 <span style="color:#d32f2f;">"단열 결손 의심 구간"</span>으로 표시.
-
-            [4. 종합 결론 (귀책 분석)]
-            - **구조적 특성(${direction}, ${houseType})**과 **VAP 수치(생활습관)**를 교차 검증하여 원인 비율을 산정하십시오.
-            - 예: **북향/북동향 + 끝라인/탑층**인 경우 -> 자연적/구조적 불리함이 크므로 **"단열 부족(시공사)" 비율을 높게(50~70%)** 잡으십시오. (VAP가 아주 높지 않다면)
-            - 예: **남향 + 기준층**인데 결로 발생 -> 구조적으로 유리한데 발생했으므로 **"환기 부족(거주자)" 비율을 높게** 잡으십시오. (VAP가 높다면 더욱 확실)
-            
-            [5. 조치 권고]
-            - 보고서 제목: "📑 AI 전문 분석관의 결로 정밀 진단 보고서 (구조/방향 분석 포함)"
-            - "본 결과는 AI 추정치이며 법적 효력이 없습니다" 문구 필수.
-
             [6. 필수 JSON]
             맨 마지막에:
             ___JSON_START___
