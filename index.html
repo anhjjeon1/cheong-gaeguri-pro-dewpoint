@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v24.0 Expert Pure)</title>
+    <title>청개구리 결로진단 AI (v24.2 Ultimate)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -11,7 +11,7 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <style>
-        /* --- [디자인 시스템] --- */
+        /* --- [v24.2 디자인 시스템: Full Detail] --- */
         :root {
             --primary-dark: #002171;            
             --primary-main: #0d47a1;            
@@ -23,7 +23,7 @@
             --border-color: #cfd8dc;            
             --expert-gold: #ff6f00;            
             
-            /* 장비별 고유 컬러 */
+            /* 장비별 전용 컬러 (HTML에 직접 적용됨) */
             --moisture-blue: #0288d1;
             --sonic-purple: #7b1fa2;
             --uv-violet: #6200ea;
@@ -42,7 +42,7 @@
             margin: 0; padding: 10px 0;
             line-height: 1.5;
             display: flex; justify-content: center; align-items: flex-start;
-            min-height: 100vh; padding-bottom: 50px;
+            min-height: 100vh; padding-bottom: 80px;
         }
 
         .mobile-container {
@@ -53,7 +53,7 @@
             margin: 0; position: relative;
         }
 
-        /* 헤더 */
+        /* 헤더 & 물방울 애니메이션 (삭제 없이 유지) */
         .main-header {
             background: linear-gradient(135deg, #001a57, var(--primary-main));
             color: white; padding: 20px 20px 35px 20px;
@@ -71,7 +71,6 @@
             line-height: 1.2; position: relative; z-index: 1; 
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .main-header h1 i { margin-right: 8px; color: #81d4fa; }
         .version-badge {
             position: absolute; right: 15px; bottom: 8px;
             background-color: var(--expert-gold); color: #fff;
@@ -91,108 +90,105 @@
         }
         .section-title i { margin-right: 8px; color: var(--primary-main); font-size: 1.1rem; }
 
-        .input-group { margin-bottom: 0; }
-        .input-label { display: block; font-weight: 700; margin-bottom: 4px; color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; }
-
-        input[type="text"], input[type="number"], textarea, select {
-            width: 100%; padding: 8px;
-            border: 1px solid var(--border-color); border-radius: 6px;
-            background-color: #fafafa; font-size: 0.85rem; box-sizing: border-box; 
+        .input-group { margin-bottom: 5px; }
+        .input-label { display: block; font-weight: 700; margin-bottom: 4px; color: var(--text-secondary); font-size: 0.8rem; }
+        
+        input, select, textarea {
+            width: 100%; padding: 10px;
+            border: 1px solid var(--border-color); border-radius: 8px;
+            background-color: #fafafa; font-size: 0.9rem; box-sizing: border-box; 
             color: var(--text-primary); font-weight: 500;
         }
-        textarea { resize: none; height: 70px; width: 100%; margin-top: 8px; }
+        textarea { resize: none; height: 70px; margin-top: 5px; }
         
-        /* TDR 입력 강조 */
-        .tdr-input { background-color: #fff8e1 !important; border: 1px solid #ffca28 !important; color: #d32f2f !important; font-weight: bold; }
-
-        .info-grid-row { display: grid; grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; gap: 4px; align-items: end; margin-bottom: 8px; }
-        .info-grid-row .input-label { text-align: center; }
+        /* 그리드 레이아웃 */
+        .info-grid-row { display: grid; grid-template-columns: 0.8fr 0.8fr 1.4fr 1.5fr; gap: 5px; align-items: end; margin-bottom: 8px; }
         .info-dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: end; margin-bottom: 8px; }
 
-        /* 사진 업로드 스타일 */
+        /* [중요] TDR 및 VAP 입력 강조 스타일 */
+        .tdr-input { background-color: #fff8e1 !important; border: 1px solid #ffca28 !important; color: #d32f2f !important; font-weight: bold; }
+        .vap-input { background-color: #e3f2fd !important; border: 1px solid #2196f3 !important; color: #0d47a1 !important; font-weight: bold; }
+
+        /* 사진 업로드 스타일 (전체 복원) */
         .photo-stack { display: flex; flex-direction: column; gap: 15px; }
         .upload-wrapper { 
-            border: 1px solid #eee; padding: 12px; border-radius: 10px; 
+            border: 1px solid #eee; padding: 12px; border-radius: 12px; 
             background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
-            margin-bottom: 8px; position: relative;
+            position: relative;
         }
         .upload-box {
             border: 2px dashed #b0bec5; background-color: #fcfcfc;
             border-radius: 10px; width: 100%; aspect-ratio: 4 / 3; 
             text-align: center; color: #78909c; cursor: pointer;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            position: relative; overflow: hidden; transition: all 0.2s;
+            overflow: hidden; transition: all 0.2s;
         }
-        .upload-box:hover { border-color: var(--accent-color); background: #e3f2fd; }
-        .upload-icon { font-size: 1.8rem; margin-bottom: 8px; opacity: 0.7; }
+        .upload-icon { font-size: 2rem; margin-bottom: 8px; opacity: 0.8; }
         .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
         .file-input { display: none; }
-
         .add-photo-btn {
             background-color: #f5f5f5; color: var(--text-secondary);
-            border: 1px dashed var(--border-color); padding: 6px 10px;
-            border-radius: 6px; font-size: 0.75rem; font-weight: 700;
-            cursor: pointer; display: inline-flex; align-items: center;
-            margin-top: 4px;
+            border: 1px dashed var(--border-color); padding: 8px;
+            border-radius: 6px; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; width: 100%; margin-top: 8px; text-align: center;
         }
         .add-photo-btn:hover { background-color: #e3f2fd; color: var(--primary-main); }
 
         /* 면책 조항 */
-        .legal-disclaimer-box { background-color: #fff8e1; border: 1px solid #ffca28; border-radius: 8px; padding: 12px; margin-top: 25px; margin-bottom: 10px; }
-        .legal-title { color: #d32f2f; font-weight: 900; font-size: 0.85rem; margin-bottom: 5px;}
+        .legal-disclaimer-box { background-color: #fff8e1; border: 1px solid #ffca28; border-radius: 8px; padding: 12px; margin-top: 20px; }
+        .legal-title { color: #d32f2f; font-weight: 900; font-size: 0.85rem; margin-bottom: 5px; }
         .legal-text { font-size: 0.75rem; color: #455a64; line-height: 1.4; text-align: justify; margin-bottom: 10px; }
-        .legal-check-wrapper { display: flex; align-items: center; cursor: pointer; padding-top: 8px; border-top: 1px dashed #cfd8dc; }
+        .legal-check-wrapper { display: flex; align-items: center; cursor: pointer; border-top: 1px dashed #ccc; padding-top: 8px; }
         .legal-check-wrapper input { width: 18px; height: 18px; margin-right: 8px; }
 
+        /* 분석 버튼 */
         .analyze-btn {
-            width: 100%; padding: 14px;
+            width: 100%; padding: 15px;
             background: linear-gradient(135deg, #78909c, #455a64);
-            color: #eceff1; border: none; border-radius: 10px;
-            font-size: 1.05rem; font-weight: 800; cursor: not-allowed;
+            color: #eceff1; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 800; cursor: not-allowed;
             display: flex; align-items: center; justify-content: center;
-            margin-top: 10px; transition: all 0.3s;
+            margin-top: 20px; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .analyze-btn.active { 
             background: linear-gradient(135deg, var(--primary-main), #000051);
             color: white; cursor: pointer;
-            box-shadow: 0 4px 10px rgba(13, 71, 161, 0.3); 
+            box-shadow: 0 4px 15px rgba(13, 71, 161, 0.4); 
         }
 
-        #result-area { margin-top: 25px; padding: 20px; background-color: #ffffff; border-radius: 12px; border: 2px solid var(--primary-main); display: none; }
+        /* 결과 리포트 */
+        #result-area { margin-top: 25px; padding: 20px; background-color: #fff; border-radius: 12px; border: 2px solid var(--primary-main); display: none; }
+        .report-header-warning { text-align: center; color: #d32f2f; font-size: 0.75rem; font-weight: 900; background-color: #ffebee; padding: 8px; border-radius: 4px; margin-bottom: 15px; border: 1px solid #ffcdd2; }
         .report-summary-box { background-color: #f8f9fa; border: 1px solid #cfd8dc; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem; }
-        .report-summary-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #e0e0e0; padding: 6px 0; color: var(--text-primary); }
-        .report-header-warning { text-align: center; color: #d32f2f; font-size: 0.7rem; font-weight: 900; background-color: #ffebee; padding: 5px; border-radius: 4px; margin-bottom: 15px; }
-        .print-legal-footer { display: none; margin-top: 30px; border: 2px solid #000; padding: 15px; text-align: center; }
-        .chart-container { position: relative; height: 300px; width: 100%; margin-top: 10px; }
+        .report-summary-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #e0e0e0; padding: 6px 0; }
+        .chart-container { position: relative; height: 300px; width: 100%; margin-top: 20px; }
 
-        /* 하단 버튼 (2개로 변경됨) */
+        /* 하단 버튼 (2개 유지) */
         .footer-btns { display: flex; gap: 8px; margin-top: 25px; }
         .footer-btn {
-            flex: 1; padding: 14px 0; border: none; border-radius: 8px;
-            font-size: 0.95rem; font-weight: 800; cursor: pointer; color: white;
+            flex: 1; padding: 12px 0; border: none; border-radius: 10px;
+            font-size: 0.9rem; font-weight: 700; cursor: pointer; color: white;
             display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15); transition: transform 0.1s;
         }
-        .footer-btn i { margin-right: 6px; }
-        .call-btn { background: linear-gradient(to right, #2962ff, #0091ea); }
-        .save-btn { background: linear-gradient(to right, #455a64, #263238); }
-        
-        .main-footer { background-color: #eceff1; color: #90a4ae; padding: 15px 10px; text-align: center; font-size: 0.7rem; border-top: 1px solid #cfd8dc; }
-        .spinner { animation: rotate 2s linear infinite; font-size: 2.5rem; color: var(--primary-main); }
-        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        .footer-btn:active { transform: translateY(3px); }
+        .btn-pdf { background: linear-gradient(to right, #2ecc71, #27ae60); }
+        .btn-reserve { background: linear-gradient(to right, #9b59b6, #8e44ad); }
+
+        .footer-info { text-align: center; padding: 20px; color: #b2bec3; font-size: 0.7rem; border-top: 1px solid #dfe6e9; background: #fff; margin-top: 20px; }
+        .footer-bold { font-weight: 800; color: #636e72; }
 
         @media print {
             body { background: white; padding: 0; display: block; }
             .mobile-container { max-width: 100%; box-shadow: none; border: none; }
-            .analyze-btn, .footer-btns, .file-input, .add-photo-btn, .legal-disclaimer-box { display: none !important; }
-            .section:not(:has(#result-area)) { display: none; } 
-            .upload-wrapper { display: none !important; }
+            .analyze-btn, .footer-btns, .file-input, .add-photo-btn, .legal-disclaimer-box { display: none !important; } 
+            .upload-wrapper { border: none !important; display: none !important; }
             .upload-wrapper.filled { display: block !important; page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #ccc !important; }
             .upload-box { border: none !important; height: 300px !important; }
-            .upload-box i, .upload-box span { display: none !important; } 
+            .upload-box i, .upload-box span { display: none !important; }
             .preview-img { display: block !important; width: auto; height: 100%; margin: 0 auto; object-fit: contain; }
             #result-area { display: block !important; border: 2px solid #000; margin-top: 0; }
-            .print-legal-footer { display: block !important; page-break-inside: avoid; }
+            #chart_div { width: 100% !important; height: 350px !important; }
         }
     </style>
 </head>
@@ -201,9 +197,11 @@
 <div class="mobile-container">
     <header class="main-header">
         <div class="water-drop" style="width: 25px; height: 25px; top: 15%; left: 10%;"></div>
-        <div class="water-drop" style="width: 15px; height: 15px; top: 25%; left: 80%;"></div>
+        <div class="water-drop" style="width: 18px; height: 22px; top: 10%; left: 85%;"></div>
+        <div class="water-drop" style="width: 30px; height: 28px; top: 60%; left: 80%;"></div>
+        <div class="water-drop" style="width: 15px; height: 15px; top: 25%; left: 20%;"></div>
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v24.0 Expert Pure</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v24.2 Ultimate</span>
     </header>
 
     <div class="content">
@@ -212,7 +210,7 @@
             <div class="info-grid-row">
                 <div class="input-group"><label class="input-label">동</label><input type="text" id="dong" placeholder="101" style="text-align:center;"></div>
                 <div class="input-group"><label class="input-label">호</label><input type="text" id="ho" placeholder="1204" style="text-align:center;"></div>
-                <div class="input-group"><label class="input-label">진단 장소</label><input type="text" id="location" placeholder="거실"></div>
+                <div class="input-group"><label class="input-label">진단 장소</label><input type="text" id="location" placeholder="거실, 안방"></div>
                 <div class="input-group"><label class="input-label">진단 일자</label><input type="text" id="date" style="text-align:center; color:#546e7a; font-weight:bold;"></div>
             </div>
             
@@ -241,27 +239,18 @@
                     </select>
                 </div>
             </div>
-            <textarea id="defect-content" placeholder="하자 증상 상세 (예: 벽지 젖음, 곰팡이 발생 등)"></textarea>
+            <textarea id="defect-content" placeholder="하자 증상 상세 (예: 벽지 젖음, 곰팡이, 미서기 창호 레일 틈새 바람 등)"></textarea>
         </div>
 
         <div class="section">
-            <div class="section-title"><i class="fas fa-temperature-low"></i> 환경 데이터 (TDR 정밀분석)</div>
+            <div class="section-title"><i class="fas fa-temperature-low"></i> 환경 데이터 (TDR & VAP)</div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 6px; margin-bottom: 8px;">
-                <div class="input-group">
-                    <label class="input-label">실내온도</label>
-                    <input type="number" id="temp-in" placeholder="°C" oninput="calcDewPoint()" style="text-align:center;">
-                </div>
-                <div class="input-group">
-                    <label class="input-label">실내습도</label>
-                    <input type="number" id="humid-in" placeholder="%" oninput="calcDewPoint()" style="text-align:center;">
-                </div>
-                <div class="input-group">
-                    <label class="input-label" style="color:#d32f2f;">🔥 이슬점</label>
-                    <input type="text" id="dew-result" placeholder="자동" readonly style="background-color:#ffebee; color:#b71c1c; font-weight:bold; text-align:center;">
-                </div>
+                <div class="input-group"><label class="input-label">실내온도</label><input type="number" id="temp-in" placeholder="°C" oninput="calcDewPoint()" style="text-align:center;"></div>
+                <div class="input-group"><label class="input-label">실내습도</label><input type="number" id="humid-in" placeholder="%" oninput="calcDewPoint()" style="text-align:center;"></div>
+                <div class="input-group"><label class="input-label" style="color:#d32f2f;">🔥 이슬점</label><input type="text" id="dew-result" placeholder="자동" readonly style="background-color:#ffebee; color:#b71c1c; font-weight:bold; text-align:center;"></div>
             </div>
-
+            
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                 <div class="input-group">
                     <label class="input-label">실외온도 (°C)</label>
@@ -269,93 +258,90 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label" style="color:#d32f2f; font-weight:900;">📉 표면온도 (Cold Spot)</label>
-                    <input type="number" id="temp-surf" class="tdr-input" placeholder="열화상 최저" style="text-align:center;">
+                    <input type="number" id="temp-surf" class="tdr-input" placeholder="열화상 최저값" style="text-align:center;">
                 </div>
             </div>
-            <div style="font-size:0.7rem; color:#d32f2f; margin-top:5px; text-align:center;">
-                * 표면온도 입력 시 TDR(온도차이비율) 자동 계산 및 하자 판정 수행
+
+            <div class="input-group" style="margin-top:8px;">
+                <label class="input-label" style="color:#0d47a1; font-weight:900;">💧 측정 VAP (수증기압)</label>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <input type="number" id="vap-val" class="vap-input" placeholder="MR277 kPa값" step="0.01" style="text-align:center;">
+                    <span style="font-size:0.8rem; color:#666; width:120px;">* 동절기 기준:<br>1.17 kPa 이하</span>
+                </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title"><i class="fas fa-camera-retro"></i> 현장 및 계측사진 (Photo Data)</div>
+            <div class="section-title"><i class="fas fa-camera-retro"></i> 현장 및 계측사진 (6종)</div>
             <div class="photo-stack">
                 
-                <div id="group-general">
-                    <div class="upload-wrapper" id="wrap-main">
-                        <label class="input-label">1. 결로/곰팡이 메인 (필수)</label>
-                        <label for="img-main" class="upload-box">
-                            <i class="fas fa-camera upload-icon" style="color:#b0bec5;"></i><span style="font-size:0.8rem; color:#b0bec5;">터치하여 촬영</span>
-                            <img id="view-main" class="preview-img">
-                        </label>
-                        <input type="file" id="img-main" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-general', '일반 추가')"><i class="fas fa-plus-circle"></i> 추가</button>
+                <div class="upload-wrapper" id="wrap-main">
+                    <label class="input-label">1. 결로/곰팡이 메인 (필수)</label>
+                    <label for="img-main" class="upload-box">
+                        <i class="fas fa-camera upload-icon" style="color:#90a4ae;"></i>
+                        <span style="font-size:0.8rem; color:#90a4ae;">터치하여 촬영</span>
+                        <img id="view-main" class="preview-img">
+                    </label>
+                    <input type="file" id="img-main" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    <button class="add-photo-btn" onclick="addPhotoInput('wrap-main', '일반 추가')"><i class="fas fa-plus"></i> 추가</button>
                 </div>
 
-                <div id="group-uv" style="margin-top:20px;">
-                    <div class="upload-wrapper" id="wrap-uv" style="border-color:var(--uv-violet);">
-                        <label class="input-label" style="color:var(--uv-violet);">■ UV (자외선) 결로 흔적</label>
-                        <label for="img-uv" class="upload-box" style="background-color: #f3e5f5;">
-                            <i class="fas fa-lightbulb upload-icon" style="color:var(--uv-violet);"></i><img id="view-uv" class="preview-img">
-                        </label>
-                        <input type="file" id="img-uv" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-uv', 'UV 추가', 'var(--uv-violet)', '#f3e5f5')"><i class="fas fa-plus-circle"></i> 추가</button>
+                <div class="upload-wrapper" id="wrap-uv" style="border-color:var(--uv-violet); margin-top:15px;">
+                    <label class="input-label" style="color:var(--uv-violet);">2. UV (자외선) 형광 촬영</label>
+                    <label for="img-uv" class="upload-box" style="background:#f3e5f5;">
+                        <i class="fas fa-lightbulb upload-icon" style="color:var(--uv-violet);"></i>
+                        <span style="font-size:0.8rem; color:var(--uv-violet);">UV 형광 촬영</span>
+                        <img id="view-uv" class="preview-img">
+                    </label>
+                    <input type="file" id="img-uv" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    <button class="add-photo-btn" onclick="addPhotoInput('wrap-uv', 'UV 추가', 'var(--uv-violet)')"><i class="fas fa-plus"></i> 추가</button>
                 </div>
 
-                <div id="group-thermal" style="margin-top:20px;">
-                    <div class="upload-wrapper" id="wrap-thermal" style="border-color:var(--thermal-orange);">
-                        <label class="input-label" style="color:var(--thermal-orange);">■ 열화상 카메라 (Thermal)</label>
-                        <label for="img-thermal" class="upload-box" style="background-color: #fffbe6;">
-                            <i class="fas fa-temperature-high upload-icon" style="color:var(--thermal-orange);"></i><img id="view-thermal" class="preview-img">
-                        </label>
-                        <input type="file" id="img-thermal" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-thermal', '열화상 추가', 'var(--thermal-orange)', '#fffbe6')"><i class="fas fa-plus-circle"></i> 추가</button>
+                <div class="upload-wrapper" id="wrap-thermal" style="border-color:var(--thermal-orange); margin-top:15px;">
+                    <label class="input-label" style="color:var(--thermal-orange);">3. 열화상 (Thermal) 촬영</label>
+                    <label for="img-thermal" class="upload-box" style="background:#fffbe6;">
+                        <i class="fas fa-temperature-high upload-icon" style="color:var(--thermal-orange);"></i>
+                        <span style="font-size:0.8rem; color:var(--thermal-orange);">열화상 이미지</span>
+                        <img id="view-thermal" class="preview-img">
+                    </label>
+                    <input type="file" id="img-thermal" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    <button class="add-photo-btn" onclick="addPhotoInput('wrap-thermal', '열화상 추가', 'var(--thermal-orange)')"><i class="fas fa-plus"></i> 추가</button>
                 </div>
 
-                <div id="group-mr277" style="margin-top:20px;">
-                    <div class="upload-wrapper" id="wrap-mr277" style="border-color:var(--primary-main);">
-                        <label class="input-label" style="color:var(--primary-main);">■ FLIR MR 277 (Abs. Humidity)</label>
-                        <div style="font-size:0.75rem; color:#666;">* 수증기압(kPa) 및 절대습도(g/kg)</div>
-                        <label for="img-mr277" class="upload-box">
-                            <i class="fas fa-ruler-combined upload-icon" style="color:var(--primary-main);"></i><img id="view-mr277" class="preview-img">
-                        </label>
-                        <input type="file" id="img-mr277" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-mr277', 'MR277 추가', 'var(--primary-main)')"><i class="fas fa-plus-circle"></i> 추가</button>
+                <div class="upload-wrapper" id="wrap-mr277" style="border-color:var(--primary-main); margin-top:15px;">
+                    <label class="input-label" style="color:var(--primary-main);">4. FLIR MR277 (Abs. Humidity)</label>
+                    <div style="font-size:0.75rem; color:#666;">* VAP(수증기압)/MIX(절대습도) 계측</div>
+                    <label for="img-mr277" class="upload-box">
+                        <i class="fas fa-ruler-combined upload-icon" style="color:var(--primary-main);"></i><img id="view-mr277" class="preview-img">
+                    </label>
+                    <input type="file" id="img-mr277" class="file-input" accept="image/*" onchange="handleImage(this)">
                 </div>
 
-                <div id="group-probe" style="margin-top:20px;">
-                    <div class="upload-wrapper" id="wrap-probe" style="border-color:var(--moisture-blue);">
-                        <label class="input-label" style="color:var(--moisture-blue);">■ FLIR MR12 (Moisture Content)</label>
-                        <div style="font-size:0.75rem; color:#666;">* 표면 수분 함수율(%) 측정</div>
-                        <label for="img-probe" class="upload-box" style="background-color: #e1f5fe;">
-                            <i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i><img id="view-probe" class="preview-img">
-                        </label>
-                        <input type="file" id="img-probe" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-probe', '볼 프로브 추가', 'var(--moisture-blue)', '#e1f5fe')"><i class="fas fa-plus-circle"></i> 추가</button>
+                <div class="upload-wrapper" id="wrap-probe" style="border-color:var(--moisture-blue); margin-top:15px;">
+                    <label class="input-label" style="color:var(--moisture-blue);">5. FLIR MR12 (Moisture Content)</label>
+                    <div style="font-size:0.75rem; color:#666;">* 표면 수분 함수율(%) 측정</div>
+                    <label for="img-probe" class="upload-box" style="background:#e1f5fe;">
+                        <i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i><img id="view-probe" class="preview-img">
+                    </label>
+                    <input type="file" id="img-probe" class="file-input" accept="image/*" onchange="handleImage(this)">
                 </div>
 
-                <div id="group-sonic" style="margin-top:20px;">
-                    <div class="upload-wrapper" id="wrap-sonic" style="border-color:var(--sonic-purple);">
-                        <label class="input-label" style="color: var(--sonic-purple);">■ 초음파(Ultrasonic) 진단</label>
-                        <label for="img-sonic" class="upload-box" style="background-color: #f3e5f5;">
-                            <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i><img id="view-sonic" class="preview-img">
-                        </label>
-                        <input type="file" id="img-sonic" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-sonic', '초음파 추가', 'var(--sonic-purple)', '#f3e5f5')"><i class="fas fa-plus-circle"></i> 추가</button>
+                <div class="upload-wrapper" id="wrap-sonic" style="border-color:var(--sonic-purple); margin-top:15px;">
+                    <label class="input-label" style="color:var(--sonic-purple);">6. 초음파 (Ultrasonic) 진단</label>
+                    <div style="font-size:0.75rem; color:#666;">* 미서기 창호 기밀성/공기 누설 확인</div>
+                    <label for="img-sonic" class="upload-box" style="background:#f3e5f5;">
+                        <i class="fas fa-wave-square upload-icon" style="color:var(--sonic-purple);"></i><img id="view-sonic" class="preview-img">
+                    </label>
+                    <input type="file" id="img-sonic" class="file-input" accept="image/*" onchange="handleImage(this)">
                 </div>
+
             </div>
         </div>
 
         <div class="legal-disclaimer-box">
             <div class="legal-title"><i class="fas fa-exclamation-triangle"></i> 분석 시작 전 필수 동의</div>
             <div class="legal-text">
-                본 앱의 진단 결과는 AI 알고리즘에 의한 <strong>단순 참고용 추정치</strong>입니다. 청개구리샤시는 법적 책임을 지지 않으며, 공인 감정서는 전문 기관에 의뢰하십시오.
+                본 앱의 진단 결과는 AI 알고리즘에 의한 <strong>단순 참고용 추정치</strong>입니다. 법적 효력이 있는 공인 감정서는 기술사 등 전문 기관에 의뢰하십시오.
             </div>
             <label class="legal-check-wrapper">
                 <input type="checkbox" id="legal-agree" onchange="toggleAnalyzeBtn()">
@@ -373,9 +359,9 @@
             <div id="report-summary-box" class="report-summary-box" style="display:none;"></div>
 
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
-                <i class="fas fa-spinner fa-spin spinner"></i>
-                <p id="loading-text" style="margin-top:15px; font-weight:bold; color:var(--primary-main);">
-                    TDR/VAP/열화상/초음파 데이터를<br>종합 분석 중입니다...
+                <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--primary-main)"></i>
+                <p style="margin-top:15px; font-weight:bold; color:var(--primary-main);">
+                    TDR 산출 및 VAP 정밀 분석 중입니다...
                 </p>
             </div>
             
@@ -384,282 +370,269 @@
             <div id="chart-section" style="display:none; margin-top:30px; padding-top:20px; border-top:2px dashed #eee;">
                 <div class="section-title"><i class="fas fa-chart-pie"></i> 결로 원인 귀책 분석 (3D)</div>
                 <div id="chart_div" class="chart-container"></div>
-                <div class="print-legal-footer">
-                    <div class="print-legal-title">※ 법적 면책 고지 (Legal Disclaimer) ※</div>
-                    <div class="print-legal-content">본 문서는 참고용이며 법적 효력이 없습니다. 정확한 진단은 기술사에게 의뢰하세요.</div>
+                <div style="font-size:0.7rem; text-align:center; color:#999; margin-top:10px;">
+                    * 귀책 비율은 TDR, VAP, 이미지 데이터를 종합하여 AI가 추정한 값입니다.
                 </div>
             </div>
         </div>
 
         <div class="footer-btns">
-            <button class="footer-btn call-btn" onclick="window.location.href='tel:01023220949'"><i class="fas fa-headset"></i> 수리문의</button>
-            <button class="footer-btn save-btn" onclick="savePdf()"><i class="fas fa-file-pdf"></i> PDF 저장</button>
+            <button class="footer-btn btn-reserve" onclick="window.location.href='tel:01023220949'"><i class="fas fa-headset"></i> 수리문의</button>
+            <button class="footer-btn btn-pdf" onclick="savePdf()"><i class="fas fa-file-pdf"></i> PDF 저장</button>
         </div>
-    </div> 
-    
-    <footer class="main-footer" id="main-footer">
-        청개구리샤시 | 사업자등록번호 : 123-36-31426 | 대표 : 전영웅<br>
-        전화 1599-7380 | COPYRIGHT ⓒ 2026 Cheong-gaeguri Corp.
-    </footer>
 
-</div>
+        <div class="footer-info">
+            <p><span class="footer-bold">청개구리샤시</span> | 📞 010-2322-0949</p>
+            <p>COPYRIGHT ⓒ 2026 Cheong-gaeguri Corp.</p>
+        </div>
+    </div>
 
-<script type="module">
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-    google.charts.load("current", {packages:["corechart"]});
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+        google.charts.load("current", {packages:["corechart"]});
 
-    const API_KEY = "AIzaSyCGtANQJNBEGSh" + "9zCrTXMEnR-" + "PHxLlXtkw"; 
-    const today = new Date();
-    document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
+        const API_KEY = "AIzaSyCGtANQJNBEGSh" + "9zCrTXMEnR-" + "PHxLlXtkw"; 
+        const today = new Date();
+        document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
 
-    let currentFile = null;
-    let clickCount = 0; let clickTimer;
+        let currentFile = null;
+        let clickCount = 0; let clickTimer;
 
-    // 개발자 모드
-    window.checkDevMode = function() {
-        clearTimeout(clickTimer); clickCount++;
-        if (clickCount === 5) {
-            const badge = document.getElementById('version-badge');
-            if(badge.classList.contains('dev-active')) {
-                badge.classList.remove('dev-active'); alert("개발자 모드 해제");
-            } else {
-                badge.classList.add('dev-active'); alert("🐸 개발자 모드 활성화!");
-            }
-            clickCount = 0;
-        }
-        clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
-    };
-
-    // 이슬점 계산
-    window.calcDewPoint = function() {
-        const temp = parseFloat(document.getElementById('temp-in').value);
-        const humid = parseFloat(document.getElementById('humid-in').value);
-        const resultBox = document.getElementById('dew-result');
-        if (!isNaN(temp) && !isNaN(humid)) {
-            const a = 17.27; const b = 237.7;
-            const alpha = ((a * temp) / (b + temp)) + Math.log(humid / 100.0);
-            const dewPoint = (b * alpha) / (a - alpha);
-            resultBox.value = dewPoint.toFixed(1) + "°C";
-        }
-    };
-
-    // 날씨 API
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&current=temperature_2m,relative_humidity_2m&timezone=auto`;
-                const response = await fetch(url);
-                if(response.ok) {
-                    const data = await response.json();
-                    document.getElementById('temp-out').value = data.current.temperature_2m.toFixed(1);
+        // 개발자 모드
+        window.checkDevMode = function() {
+            clearTimeout(clickTimer); clickCount++;
+            if (clickCount === 5) {
+                const badge = document.getElementById('version-badge');
+                if(badge.classList.contains('dev-active')) {
+                    badge.classList.remove('dev-active'); alert("개발자 모드 해제");
+                } else {
+                    badge.classList.add('dev-active'); alert("🐸 개발자 모드 활성화!");
                 }
-            } catch (e) { console.error(e); }
-        });
-    }
-
-    // 사진 추가 (동적 ID 생성)
-    let uniqueIdCounter = 0;
-    window.addPhotoInput = function(groupId, labelText, color = '#546e7a', bgColor = '#ffffff') {
-        uniqueIdCounter++;
-        const newId = `added-${uniqueIdCounter}`;
-        const groupDiv = document.getElementById(groupId);
-        const btn = groupDiv.querySelector('.add-photo-btn');
-        const wrapper = document.createElement('div');
-        wrapper.className = 'upload-wrapper';
-        wrapper.id = `wrap-${newId}`;
-        wrapper.style.marginTop = "10px";
-        if(color !== '#546e7a') wrapper.style.borderColor = color;
-        
-        wrapper.innerHTML = `
-            <label class="input-label" style="color:${color};">${labelText} (추가)</label>
-            <label for="img-${newId}" class="upload-box" style="background-color: ${bgColor}; border-color: ${color === '#546e7a' ? '#b0bec5' : color}">
-                <i class="fas fa-plus upload-icon" style="color:${color};"></i>
-                <img id="view-${newId}" class="preview-img">
-            </label>
-            <input type="file" id="img-${newId}" class="file-input" accept="image/*" onchange="handleImage(this)">
-        `;
-        groupDiv.insertBefore(wrapper, btn);
-    }
-
-    window.handleImage = function(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const wrapper = input.closest('.upload-wrapper');
-                const img = wrapper.querySelector('.preview-img');
-                const box = wrapper.querySelector('.upload-box');
-                img.src = e.target.result;
-                img.style.display = 'block';
-                box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
-                wrapper.classList.add('filled');
+                clickCount = 0;
             }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
+            clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+        };
 
-    window.toggleAnalyzeBtn = function() {
-        const checkbox = document.getElementById('legal-agree');
-        const btn = document.getElementById('analyze-btn');
-        btn.disabled = !checkbox.checked;
-        if(checkbox.checked) { btn.classList.add('active'); btn.style.cursor='pointer'; }
-        else { btn.classList.remove('active'); btn.style.cursor='not-allowed'; }
-    }
+        // 이슬점 계산
+        window.calcDewPoint = function() {
+            const temp = parseFloat(document.getElementById('temp-in').value);
+            const humid = parseFloat(document.getElementById('humid-in').value);
+            const resultBox = document.getElementById('dew-result');
+            if (!isNaN(temp) && !isNaN(humid)) {
+                const a = 17.27; const b = 237.7;
+                const alpha = ((a * temp) / (b + temp)) + Math.log(humid / 100.0);
+                const dewPoint = (b * alpha) / (a - alpha);
+                resultBox.value = dewPoint.toFixed(1) + "°C";
+            }
+        };
 
-    window.savePdf = function() {
-        const dong = document.getElementById('dong').value || "000";
-        const ho = document.getElementById('ho').value || "0000";
-        document.title = `청개구리_결로진단_${dong}동${ho}호`;
-        window.print();
-    };
-
-    window.startAnalysis = async function() {
-        const resultArea = document.getElementById('result-area');
-        const loading = document.getElementById('loading-spinner');
-        const content = document.getElementById('analysis-content');
-        const chartSection = document.getElementById('chart-section');
-        const summaryBox = document.getElementById('report-summary-box');
-        
-        // 입력값 수집
-        const dong = document.getElementById('dong').value;
-        const ho = document.getElementById('ho').value;
-        const location = document.getElementById('location').value;
-        const date = document.getElementById('date').value;
-        const windowType = document.getElementById('window-type').value;
-        const direction = document.getElementById('direction').value;
-        const houseType = document.getElementById('house-type').value;
-        const defect = document.getElementById('defect-content').value;
-        
-        const tempIn = parseFloat(document.getElementById('temp-in').value);
-        const tempOut = parseFloat(document.getElementById('temp-out').value);
-        const tempSurf = parseFloat(document.getElementById('temp-surf').value); 
-        const dew = document.getElementById('dew-result').value;
-
-        // TDR 계산 및 논리 구성 (중립적 진단용)
-        let tdrMsg = "계산 불가";
-        let tdrVal = 0;
-        let calcDisplay = "";
-        
-        if (!isNaN(tempSurf) && !isNaN(tempIn) && !isNaN(tempOut)) {
-             let denominator = tempIn - tempOut;
-             if(denominator === 0) denominator = 1; 
-             tdrVal = (tempIn - tempSurf) / denominator;
-             tdrVal = tdrVal.toFixed(2);
-             calcDisplay = `(${tempIn} - ${tempSurf}) / (${tempIn} - (${tempOut})) = ${tdrVal}`;
-             
-             if(tdrVal > 0.28) {
-                 tdrMsg = `🚨 **[TDR 기준 초과 (단열 성능 미달)]** (값: ${tdrVal})\n이 수치는 법적 단열 기준(0.28)을 초과한 것으로, 구조체의 단열 성능이 부족함을 의미합니다.`;
-             } else {
-                 tdrMsg = `✅ **[TDR 기준 만족 (단열 성능 양호)]** (값: ${tdrVal})\n단열 성능은 정상이므로, 환기 부족 등 생활 습관이 원인일 가능성이 높습니다.`;
-             }
+        // 날씨 API
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                try {
+                    const url = `https://api.open-meteo.com/v1/forecast?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&current=temperature_2m,relative_humidity_2m&timezone=auto`;
+                    const response = await fetch(url);
+                    if(response.ok) {
+                        const data = await response.json();
+                        document.getElementById('temp-out').value = data.current.temperature_2m.toFixed(1);
+                    }
+                } catch (e) { console.error(e); }
+            });
         }
 
-        summaryBox.innerHTML = `
-            <div class="report-summary-item"><span class="report-summary-label">진단 일자</span><span class="report-summary-value">${date}</span></div>
-            <div class="report-summary-item"><span class="report-summary-label">현장 위치</span><span class="report-summary-value">${dong}동 ${ho}호</span></div>
-            <div class="report-summary-item"><span class="report-summary-label">구조/창호</span><span class="report-summary-value" style="color:var(--expert-gold);">${direction} / ${houseType} / ${windowType}</span></div>
-        `;
-        summaryBox.style.display = 'block';
+        // 사진 추가 (동적 ID 생성)
+        let uniqueIdCounter = 0;
+        window.addPhotoInput = function(targetId, labelText, color='#546e7a') {
+            uniqueIdCounter++;
+            const newId = `added-${uniqueIdCounter}`;
+            const targetDiv = document.getElementById(targetId).parentNode; // 부모 컨테이너
+            const btn = document.getElementById(targetId).parentNode.querySelector('.add-photo-btn');
+            
+            const div = document.createElement('div');
+            div.className = 'upload-wrapper';
+            div.style.marginTop = '10px';
+            if(color !== '#546e7a') div.style.borderColor = color;
+            
+            div.innerHTML = `
+                <label class="input-label" style="color:${color}">${labelText} (추가)</label>
+                <label for="img-${newId}" class="upload-box" style="${color !== '#546e7a' ? 'border-color:'+color : ''}">
+                    <i class="fas fa-plus upload-icon" style="color:${color}"></i>
+                    <img id="view-${newId}" class="preview-img">
+                </label>
+                <input type="file" id="img-${newId}" class="file-input" accept="image/*" onchange="handleImage(this)">
+            `;
+            targetDiv.insertBefore(div, btn);
+        };
 
-        // 이미지 수집
-        let imageParts = [];
-        const allImages = document.querySelectorAll('.preview-img');
-        allImages.forEach((img) => {
-            if(img.src && img.src.startsWith('data:image')) {
-                const base64Data = img.src.split(',')[1];
-                imageParts.push({ inline_data: { mime_type: "image/jpeg", data: base64Data } });
+        window.handleImage = function(input) {
+            if(input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const wrapper = input.closest('.upload-wrapper');
+                    const img = wrapper.querySelector('.preview-img');
+                    const box = wrapper.querySelector('.upload-box');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
+                    wrapper.classList.add('filled');
+                };
+                reader.readAsDataURL(input.files[0]);
             }
-        });
+        };
 
-        if(imageParts.length === 0) { alert("최소 1장 이상의 사진을 등록해주세요."); return; }
+        window.toggleAnalyzeBtn = function() {
+            const chk = document.getElementById('legal-agree');
+            const btn = document.getElementById('analyze-btn');
+            btn.disabled = !chk.checked;
+            if(chk.checked) { btn.classList.add('active'); btn.style.cursor='pointer'; }
+            else { btn.classList.remove('active'); btn.style.cursor='not-allowed'; }
+        };
 
-        resultArea.style.display = 'block';
-        loading.style.display = 'block';
-        content.style.display = 'none';
-        chartSection.style.display = 'none';
-        resultArea.scrollIntoView({behavior: "smooth"});
+        window.savePdf = function() {
+            const dong = document.getElementById('dong').value || "000";
+            const ho = document.getElementById('ho').value || "0000";
+            document.title = `청개구리_결로진단_${dong}동${ho}호`;
+            window.print();
+        };
 
-        // [프롬프트 v23.0: 종합 진단 & 균형 잡힌 시각]
-        const prompt = `
-            당신은 '청개구리샤시'의 **건축 결로 진단 전문가(Expert Analyst)**입니다.
-            제공된 데이터(TDR, VAP, 이미지)를 종합 분석하여, 결로의 원인이 **'입주민 생활환경(환기부족)'**인지 **'건설사 시공하자(단열미흡)'**인지 명확히 규명하는 객관적인 보고서를 작성하십시오.
+        // --- [v24.2 핵심 로직: TDR + VAP 분석] ---
+        window.startAnalysis = async function() {
+            const contentDiv = document.getElementById('analysis-content');
+            const resultArea = document.getElementById('result-area');
+            const loading = document.getElementById('loading-spinner');
+            const summaryBox = document.getElementById('report-summary-box');
+            
+            // 입력값
+            const tempIn = parseFloat(document.getElementById('temp-in').value) || 20;
+            const tempOut = parseFloat(document.getElementById('temp-out').value) || -5;
+            const tempSurf = parseFloat(document.getElementById('temp-surf').value);
+            const vapInput = parseFloat(document.getElementById('vap-val').value); // VAP
+            
+            const windowType = document.getElementById('window-type').value;
+            const direction = document.getElementById('direction').value;
+            const houseType = document.getElementById('house-type').value;
+            const defect = document.getElementById('defect-content').value;
+            const date = document.getElementById('date').value;
+            const dew = document.getElementById('dew-result').value || "계산불가";
 
-            [1. 진단 개요]
-            - 창호: ${windowType} / 구조: ${direction}, ${houseType}
-            - 환경: 실내 ${tempIn}°C / 실외 ${tempOut}°C / **표면 ${tempSurf}°C** (이슬점: ${dew})
-            - 증상: ${defect}
-            - **핵심 TDR 분석:** ${tdrMsg}
-            - **계산식:** ${calcDisplay}
+            // 1. TDR 계산
+            let tdrMsg = "데이터 부족";
+            let tdrVal = 0;
+            let calcDisplay = "";
+            let standard = 0.28; 
 
-            [2. 작성 지침 (종합 분석)]
-            - **TDR 분석 (Hardware):** 계산된 TDR 값(${tdrVal})을 언급하며, 0.28을 초과하면 "단열 시공 미흡" 비중을 높게, 이하라면 낮게 평가하십시오.
-            - **공기질 분석 (Software):** 사진 속 계측기(VAP, 절대습도) 값을 확인하거나 실내 습도를 토대로, 사용자의 과습 생활 여부를 판단하십시오. (VAP > 1.4 kPa면 과습 경고)
-            - **이미지 포렌식:** - 열화상: 냉점(Cold Spot)이 뚜렷하면 단열 끊김 지적.
-              - 초음파/음향: 기밀성 저하(바람 새는 소리) 지적.
-              - UV: 물길 자국이 보이면 누수/결로 이력 지적.
-            - **결론:** "A건설사 책임"이라는 공격적 표현보다는, **"데이터 분석 결과 시공 하자(단열) 요인이 XX%, 생활 습관 요인이 YY%로 추정됩니다"**라는 식의 합리적 결론을 내리세요.
+            if (!isNaN(tempSurf)) {
+                let denominator = tempIn - tempOut;
+                if(denominator === 0) denominator = 1; 
+                tdrVal = (tempIn - tempSurf) / denominator;
+                tdrVal = tdrVal.toFixed(2);
+                calcDisplay = `(${tempIn} - ${tempSurf}) / (${tempIn} - (${tempOut})) = ${tdrVal}`;
+                
+                if (tdrVal > standard) {
+                    tdrMsg = `🚨 **[TDR 기준 초과 (시공 하자 유력)]**\n* 산출값: **${tdrVal}** (기준 0.28 초과)\n* 의미: 법적 단열 성능을 만족하지 못해 표면 온도가 과도하게 낮아진 상태입니다.`;
+                } else {
+                    tdrMsg = `✅ **[TDR 기준 만족 (단열 양호)]**\n* 산출값: **${tdrVal}** (기준 0.28 이내)\n* 의미: 단열 성능은 정상 범위입니다.`;
+                }
+            }
 
-            [3. 출력 형식]
-            Markdown 형식으로 작성. 맨 마지막에 JSON 데이터 포함:
-            ___JSON_START___
-            {"ventilation": ${tdrVal > 0.28 ? 20 : 80}, "insulation": ${tdrVal > 0.28 ? 80 : 20}, "normal": 0}
-            ___JSON_END___
-        `;
+            // 2. VAP 분석 (겨울철 기준 1.17 kPa)
+            let vapMsg = "입력 안됨";
+            const STD_VAP = 1.17; 
+            if (!isNaN(vapInput)) {
+                let pct = ((vapInput / STD_VAP) * 100).toFixed(0);
+                if (vapInput > STD_VAP) {
+                    vapMsg = `⚠️ **기준치 ${pct}% 수준 (과습 주의)**\n동절기 권장치(1.17kPa)를 초과하여 결로 위험이 높은 환경입니다.`;
+                } else {
+                    vapMsg = `✅ **기준치 이내 (${pct}%)**\n실내 공기질(수분량)은 적정 수준입니다.`;
+                }
+            }
 
-        let parts = [{ text: prompt }, ...imageParts];
-        const modelName = "gemini-2.0-flash-exp"; 
+            // 요약 박스 표시
+            summaryBox.innerHTML = `
+                <div class="report-summary-item"><span class="report-summary-label">진단 일자</span><span class="report-summary-value">${date}</span></div>
+                <div class="report-summary-item"><span class="report-summary-label">구조/창호</span><span class="report-summary-value" style="color:var(--expert-gold);">${direction} / ${houseType}</span></div>
+            `;
+            summaryBox.style.display = 'block';
 
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: parts }] })
+            // 이미지 수집
+            let imageParts = [];
+            document.querySelectorAll('.preview-img').forEach(img => {
+                if(img.src.startsWith('data:image')) {
+                    imageParts.push({ inline_data: { mime_type: "image/jpeg", data: img.src.split(',')[1] } });
+                }
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                if (data.candidates && data.candidates.length > 0) {
-                    let aiText = data.candidates[0].content.parts[0].text;
-                    let finalJson = null;
-                    let match = aiText.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
-                    if(match) {
-                        try {
-                            let rawJson = match[0].replace(/___JSON_START___|___JSON_END___|```json|```/gi, "").trim();
-                            finalJson = JSON.parse(rawJson);
-                            aiText = aiText.replace(match[0], ""); 
-                        } catch(e) {}
-                    }
-                    const md = window.markdownit({ html: true }); 
-                    content.innerHTML = md.render(aiText);
-                    loading.style.display = 'none';
-                    content.style.display = 'block';
-                    if (finalJson) {
-                        chartSection.style.display = 'block';
-                        drawChart(finalJson);
-                    }
-                }
-            } else { throw new Error("API Error"); }
-        } catch (error) { 
-            console.error(error);
-            loading.style.display = 'none';
-            content.style.display = 'block';
-            content.innerHTML = "<p style='color:red;'>분석 오류 발생.</p>";
-        }
-    }
+            if(imageParts.length === 0) { alert("최소 1장 이상의 사진을 등록해주세요."); return; }
 
-    function drawChart(data) {
-        var chartData = google.visualization.arrayToDataTable([
-            ['원인', '비율'],
-            ['거주자 과습 생활 (환기부족)', data.ventilation],
-            ['시공사 단열/기밀 불량 (하자)', data.insulation],
-            ['기타/자연적 요인', data.normal || 0]
-        ]);
-        var options = {
-            title: '결로 원인 귀책 분석 (AI 산출)', is3D: true,
-            slices: { 0: { color: '#FF9800' }, 1: { color: '#D32F2F', offset: 0.1 }, 2: { color: '#4CAF50' } },
-            backgroundColor: 'transparent', fontSize: 12, chartArea: { width: '90%', height: '75%' }, legend: { position: 'bottom' } 
+            resultArea.style.display = 'block';
+            loading.style.display = 'block';
+            contentDiv.style.display = 'none';
+            document.getElementById('chart_div').style.display = 'none';
+            resultArea.scrollIntoView({behavior: "smooth"});
+
+            try {
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+
+                const prompt = `
+                    당신은 '청개구리샤시'의 **건축 결로 진단 전문가(Expert Analyst)**입니다.
+                    제공된 데이터(TDR, VAP, 이미지)를 종합 분석하여, 결로의 원인이 '사용자 생활습관'인지 '시공 하자'인지 규명하는 보고서를 작성하십시오.
+
+                    [입력 데이터]
+                    - 위치: ${direction}, ${houseType} / 창호: ${windowType}
+                    - 환경: 실내 ${tempIn}°C / 실외 ${tempOut}°C / **표면 ${tempSurf}°C**
+                    - 증상: ${defect}
+                    - **핵심 TDR 분석:** ${tdrMsg} (계산식: ${calcDisplay})
+                    - **공기질 VAP 분석:** ${vapMsg}
+
+                    [작성 지침 - Deep Science]
+                    1. **TDR 논리:** TDR 값(${tdrVal})이 0.28을 초과했다면, "설령 실내 습도가 다소 높더라도(VAP 초과), 법적 단열 기준을 만족하지 못한 구조적 결함이 주원인임"을 강조하십시오.
+                    2. **VAP 기준:** 동절기 실내 적정 VAP는 1.17 kPa(20도, 50%)입니다. 측정값(${vapInput} kPa)이 이를 얼마나 초과했는지 언급하고, 이로 인한 이슬점 상승 효과를 설명하십시오.
+                    3. **미서기 창호:** 미서기 창호라면 구조적 기밀성 한계(레일 틈새)를 지적하십시오.
+                    4. **결론 도출:** 위 데이터를 종합하여 시공 하자 vs 사용자 과실 비율을 산정하십시오.
+
+                    [출력 형식]
+                    Markdown 형식. 마지막에 JSON 데이터 포함:
+                    ___JSON_START___
+                    {"ventilation": ${tdrVal > 0.28 ? 20 : 80}, "insulation": ${tdrVal > 0.28 ? 80 : 20}, "normal": 0}
+                    ___JSON_END___
+                `;
+
+                let parts = [{ text: prompt }, ...imageParts];
+                const result = await model.generateContent({ contents: [{ parts: parts }] });
+                const response = await result.response;
+                let text = response.text();
+                
+                let jsonMatch = text.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
+                if(jsonMatch) {
+                    const jsonData = JSON.parse(jsonMatch[1]);
+                    drawChart(jsonData);
+                    text = text.replace(jsonMatch[0], "");
+                    document.getElementById('chart_div').style.display = 'block';
+                }
+
+                const md = window.markdownit();
+                contentDiv.innerHTML = md.render(text);
+                loading.style.display = 'none';
+                contentDiv.style.display = 'block';
+
+            } catch (e) {
+                loading.style.display = 'none';
+                contentDiv.innerHTML = "분석 중 오류가 발생했습니다. (네트워크 확인 필요)";
+                console.error(e);
+            }
         };
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(chartData, options);
-    }
-</script>
+
+        function drawChart(data) {
+            var d = google.visualization.arrayToDataTable([
+                ['원인', '비율'],
+                ['사용자 습관(환기부족)', data.ventilation],
+                ['시공 하자(단열미흡)', data.insulation],
+                ['기타 요인', data.normal]
+            ]);
+            var c = new google.visualization.PieChart(document.getElementById('chart_div'));
+            c.draw(d, { title: '결로 귀책 사유 분석', is3D: true, slices: { 0: { color: '#FF9800' }, 1: { color: '#D32F2F', offset: 0.1 }, 2: { color: '#4CAF50' } }, backgroundColor: 'transparent', fontSize: 12, chartArea: { width: '90%', height: '75%' }, legend: { position: 'bottom' } });
+        }
+    </script>
 </body>
 </html>
