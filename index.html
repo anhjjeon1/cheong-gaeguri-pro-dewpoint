@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v22.0 Final)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="app-title">청개구리 결로진단 AI (v20.1)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -11,74 +11,100 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <style>
-        /* --- v20.1의 풍부한 디자인 시스템 유지 --- */
         :root {
             --primary-dark: #002171;            
             --primary-main: #0d47a1;            
             --accent-color: #2962ff;            
-            --bg-color: #eceff1;                
-            --card-bg: #ffffff;                
+            --bg-color: #eceff1;               
+            --card-bg: #ffffff;               
             --text-primary: #263238;            
             --text-secondary: #546e7a;          
             --border-color: #cfd8dc;            
             --expert-gold: #ff6f00;            
-            
-            /* 장비별 고유 컬러 복원 */
             --moisture-blue: #0288d1;
             --sonic-purple: #7b1fa2;
             --uv-violet: #6200ea;
-            --thermal-orange: #d84315; 
             --warning-red: #d32f2f;
-            
             --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.08);
             --dev-color: #6200EA;
-            --container-max-width: 600px;
         }
 
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-primary);
-            margin: 0; padding: 10px 0;
+            margin: 0;
+            padding: 10px 0;
             line-height: 1.5;
-            display: flex; justify-content: center; align-items: flex-start;
-            min-height: 100vh; padding-bottom: 80px; /* 하단 버튼 여백 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
 
         .mobile-container {
-            width: 100%; max-width: var(--container-max-width);
+            width: 100%;
+            max-width: 500px;
             background-color: var(--card-bg);
             box-shadow: var(--shadow-soft);
-            overflow: hidden; border-radius: 15px;
-            margin: 0; position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            margin: 0; 
+            position: relative;
         }
 
-        /* 헤더 & 물방울 효과 (복원) */
         .main-header {
             background: linear-gradient(135deg, #001a57, var(--primary-main));
-            color: white; padding: 20px 20px 35px 20px;
-            text-align: center; position: relative; overflow: hidden;
+            color: white;
+            padding: 20px 20px 35px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
+
         .water-drop {
-            position: absolute; background: rgba(255, 255, 255, 0.1); 
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1); 
             border-radius: 50%;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2), inset -2px -2px 5px rgba(255,255,255,0.5); 
+            box-shadow: 
+                inset 2px 2px 5px rgba(0, 0, 0, 0.2), 
+                inset -2px -2px 5px rgba(255, 255, 255, 0.5), 
+                2px 2px 5px rgba(0, 0, 0, 0.3); 
             z-index: 0;
         }
+        .water-drop::after {
+            content: ''; position: absolute; top: 20%; left: 20%; width: 25%; height: 25%;
+            border-radius: 50%; background: rgba(255, 255, 255, 0.9); filter: blur(1px);
+        }
+
         .main-header h1 {
             margin: 0; font-size: 1.3rem; font-weight: 900;
             display: flex; align-items: center; justify-content: center;
-            line-height: 1.2; position: relative; z-index: 1; 
+            line-height: 1.2; margin-bottom: 0px;
+            position: relative; z-index: 1; 
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .main-header h1 i { margin-right: 8px; color: #81d4fa; }
+
         .version-badge {
             position: absolute; right: 15px; bottom: 8px;
             background-color: var(--expert-gold); color: #fff;
-            padding: 2px 8px; border-radius: 10px; font-size: 0.6rem; font-weight: 800;
-            border: 1px solid rgba(255,255,255,0.4); cursor: pointer; z-index: 2;
+            padding: 2px 8px; border-radius: 10px;
+            font-size: 0.6rem; font-weight: 800;
+            border: 1px solid rgba(255,255,255,0.4);
+            line-height: 1.4; display: flex; align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 2;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
         }
-        .version-badge.dev-active { background: var(--dev-color) !important; transform: scale(1.1); }
+        .version-badge.dev-active {
+            background-color: var(--dev-color) !important;
+            box-shadow: 0 0 10px rgba(98, 0, 234, 0.6);
+            transform: scale(1.1);
+            border-color: #B388FF;
+        }
 
         .content { padding: 15px; background-color: #fff; }
         .section { margin-bottom: 25px; }
@@ -88,6 +114,7 @@
             display: flex; align-items: center; font-size: 1.05rem;
             border-left: 5px solid var(--accent-color); padding-left: 10px;
             background: #f5f5f5; padding: 6px 10px; border-radius: 0 8px 8px 0;
+            letter-spacing: -1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .section-title i { margin-right: 8px; color: var(--primary-main); font-size: 1.1rem; }
 
@@ -98,18 +125,15 @@
             width: 100%; padding: 8px;
             border: 1px solid var(--border-color); border-radius: 6px;
             background-color: #fafafa; font-size: 0.85rem; box-sizing: border-box; 
-            color: var(--text-primary); font-weight: 500;
+            color: var(--text-primary); font-weight: 500; letter-spacing: -0.5px;
         }
+        ::placeholder { color: #b0bec5 !important; opacity: 1; font-weight: 400; font-size: 0.8rem; }
         textarea { resize: none; height: 70px; width: 100%; margin-top: 8px; }
         
-        /* TDR 입력창 강조 (추가) */
-        .tdr-input { background-color: #fff8e1 !important; border: 1px solid #ffca28 !important; color: #d32f2f !important; font-weight: bold; }
-
         .info-grid-row { display: grid; grid-template-columns: 0.9fr 0.9fr 1.4fr 1.5fr; gap: 4px; align-items: end; margin-bottom: 8px; }
         .info-grid-row .input-label { text-align: center; }
         .info-dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: end; margin-bottom: 8px; }
 
-        /* 사진 업로드 스타일 (v20.1 유지) */
         .photo-stack { display: flex; flex-direction: column; gap: 15px; }
         .upload-wrapper { 
             border: 1px solid #eee; padding: 12px; border-radius: 10px; 
@@ -135,23 +159,30 @@
             cursor: pointer; display: inline-flex; align-items: center;
             margin-top: 4px; transition: all 0.2s;
         }
-        .add-photo-btn:hover { background-color: #e3f2fd; color: var(--primary-main); }
+        .add-photo-btn:hover { background-color: #e3f2fd; color: var(--primary-main); border-color: var(--primary-main); }
+        .add-photo-btn i { margin-right: 4px; }
 
-        /* 면책 조항 */
-        .legal-disclaimer-box { background-color: #fff8e1; border: 1px solid #ffca28; border-radius: 8px; padding: 12px; margin-top: 25px; margin-bottom: 10px; }
-        .legal-title { color: #d32f2f; font-weight: 900; font-size: 0.85rem; margin-bottom: 5px;}
-        .legal-text { font-size: 0.75rem; color: #455a64; line-height: 1.4; text-align: justify; margin-bottom: 10px; }
-        .legal-check-wrapper { display: flex; align-items: center; cursor: pointer; padding-top: 8px; border-top: 1px dashed #cfd8dc; }
-        .legal-check-wrapper input { width: 18px; height: 18px; margin-right: 8px; }
+        .legal-disclaimer-box {
+            background-color: #fff8e1; border: 1px solid #ffca28; border-radius: 8px;
+            padding: 12px; margin-top: 25px; margin-bottom: 10px;
+        }
+        .legal-title { color: #d32f2f; font-weight: 900; font-size: 0.85rem; display: flex; align-items: center; margin-bottom: 5px;}
+        .legal-text { font-size: 0.75rem; color: #455a64; line-height: 1.4; text-align: justify; margin-bottom: 10px; letter-spacing: -0.5px;}
+        .legal-check-wrapper {
+            display: flex; align-items: center; cursor: pointer; 
+            padding-top: 8px; border-top: 1px dashed #cfd8dc;
+        }
+        .legal-check-wrapper input { width: 18px; height: 18px; margin-right: 8px; cursor: pointer; accent-color: var(--primary-main); }
+        .legal-check-text { font-weight: 800; font-size: 0.8rem; color: var(--primary-dark); }
 
-        /* 분석 버튼 */
         .analyze-btn {
             width: 100%; padding: 14px;
             background: linear-gradient(135deg, #78909c, #455a64);
             color: #eceff1; border: none; border-radius: 10px;
             font-size: 1.05rem; font-weight: 800; cursor: not-allowed;
             display: flex; align-items: center; justify-content: center;
-            margin-top: 10px; transition: all 0.3s;
+            box-shadow: none; margin-top: 10px;
+            transition: all 0.3s;
         }
         .analyze-btn.active { 
             background: linear-gradient(135deg, var(--primary-main), #000051);
@@ -159,13 +190,45 @@
             box-shadow: 0 4px 10px rgba(13, 71, 161, 0.3); 
         }
 
-        #result-area { margin-top: 25px; padding: 20px; background-color: #fff; border-radius: 12px; border: 2px solid var(--primary-main); display: none; }
-        .report-summary-box { background-color: #f8f9fa; border: 1px solid #cfd8dc; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem; }
-        .report-summary-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #e0e0e0; padding: 6px 0; }
-        .report-header-warning { text-align: center; color: #d32f2f; font-size: 0.7rem; font-weight: 900; border: 1px solid #d32f2f; padding: 5px; border-radius: 4px; margin-bottom: 15px; background-color: #ffebee; }
+        #result-area {
+            margin-top: 25px; padding: 20px;
+            background-color: #ffffff; border-radius: 12px; 
+            border: 2px solid var(--primary-main); display: none; 
+        }
+
+        .report-summary-box {
+            background-color: #f8f9fa;
+            border: 1px solid #cfd8dc;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+        .report-summary-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #e0e0e0;
+            padding: 6px 0;
+            color: var(--text-primary);
+        }
+        .report-summary-item:last-child { border-bottom: none; }
+        .report-summary-label { font-weight: 700; color: var(--text-secondary); }
+        .report-summary-value { font-weight: 800; color: var(--primary-dark); }
+
+        .report-header-warning {
+            text-align: center; color: #d32f2f; font-size: 0.7rem; font-weight: 900;
+            border: 1px solid #d32f2f; padding: 5px; border-radius: 4px; margin-bottom: 15px;
+            background-color: #ffebee;
+        }
+
+        .print-legal-footer {
+            display: none; margin-top: 30px; border: 2px solid #000; padding: 15px; text-align: center;
+        }
+        .print-legal-title { font-size: 14px; font-weight: 900; margin-bottom: 10px; text-decoration: underline; }
+        .print-legal-content { font-size: 11px; text-align: justify; line-height: 1.6; }
+
         .chart-container { position: relative; height: 300px; width: 100%; margin-top: 10px; }
 
-        /* 하단 버튼 (3개 배치) */
         .footer-btns { display: flex; gap: 6px; margin-top: 25px; }
         .footer-btn {
             flex: 1; padding: 10px 0; border: none; border-radius: 8px;
@@ -174,35 +237,45 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .footer-btn i { margin-right: 5px; }
-        .btn-pdf { background: linear-gradient(to right, #2ecc71, #27ae60); }
-        .btn-reserve { background: linear-gradient(to right, #9b59b6, #8e44ad); }
-        .btn-chatbot { background: linear-gradient(to right, #f39c12, #d35400); }
+        .call-btn { background: linear-gradient(to right, #2962ff, #0091ea); }
+        .save-btn { background: linear-gradient(to right, #455a64, #263238); }
+        
+        .main-footer {
+            background-color: #eceff1; color: #90a4ae;
+            padding: 15px 10px; text-align: center; font-size: 0.7rem; 
+            border-top: 1px solid #cfd8dc; word-break: keep-all; line-height: 1.4;
+        }
 
-        .main-footer { background-color: #eceff1; color: #90a4ae; padding: 15px 10px; text-align: center; font-size: 0.7rem; border-top: 1px solid #cfd8dc; }
-        .footer-bold { font-weight: 800; color: #636e72; }
-
-        /* 챗봇 스타일 (추가) */
-        .chat-float-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, #00b09b, #96c93d); border-radius: 50%; box-shadow: 0 5px 20px rgba(0, 176, 155, 0.4); display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; font-weight: 800; cursor: pointer; z-index: 999; }
-        .chat-window { position: fixed; bottom: 90px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 1000; display: none; flex-direction: column; overflow: hidden; border: 2px solid #00b09b; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .chat-header { background: #00b09b; color: white; padding: 15px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
-        .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f0f4f8; display: flex; flex-direction: column; gap: 10px; }
-        .chat-bubble { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .chat-bot { background: white; align-self: flex-start; border: 1px solid #eee; } .chat-user { background: #00b09b; color: white; align-self: flex-end; }
-        .chat-options { padding: 10px; background: white; border-top: 1px solid #eee; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .chat-option-btn { background: #eefbf3; border: 1px solid #00b09b; color: #00b09b; padding: 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-align: center; }
+        .spinner { animation: rotate 2s linear infinite; font-size: 2.5rem; color: var(--primary-main); }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
 
         @media print {
-            body { background: white; }
-            .mobile-container { max-width: 100%; box-shadow: none; border: none; }
-            .analyze-btn, .footer-btns, .file-input, .add-photo-btn, .chat-float-btn, .chat-window, .legal-disclaimer-box { display: none !important; }
+            body { background: white; padding: 0; display: block; }
+            .mobile-container { max-width: 100%; width: 100%; box-shadow: none; margin: 0; border: none; }
+            .analyze-btn, .footer-btns, .file-input, .add-photo-btn, .legal-disclaimer-box { display: none !important; }
+            
+            .section:not(:has(#result-area)) { display: none; } 
+
             .upload-wrapper { display: none !important; }
             .upload-wrapper.filled { display: block !important; page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #ccc; }
             .upload-box { border: none !important; height: 300px !important; background: none !important; }
-            .upload-box i, .upload-box span { display: none !important; }
-            .preview-img { display: block !important; width: auto; height: 100%; margin: 0 auto; object-fit: contain; }
-            #result-area { display: block !important; border: 2px solid #000; margin-top: 0; }
-            #chart_div { width: 100% !important; height: 350px !important; }
+            .upload-box img.preview-img[src] { display: block !important; height: 100%; width: auto; margin: 0 auto; object-fit: contain; }
+            .upload-box i, .upload-box span { display: none !important; } 
+            
+            #result-area { display: block !important; border: 2px solid #000; margin-top: 20px; padding: 10px;}
+            .report-summary-box { border: 1px solid #000; background: #fff; }
+            .report-summary-item { border-bottom: 1px solid #ccc; }
+            
+            #chart_div { width: 100% !important; height: 400px !important; page-break-inside: avoid; }
+            
+            .section-title { background: none; border-left: 5px solid #000; color: #000; padding-left: 10px; }
+            .main-header { background: #fff; color: #000; border-bottom: 2px solid #000; padding: 10px; }
+            .main-header h1 { color: #000; justify-content: flex-start; }
+            .main-header h1 i { color: #000; }
+            .version-badge { border: 1px solid #000; color: #000; background: #fff; }
+            .water-drop { display: none; } 
+
+            .print-legal-footer { display: block !important; page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -210,140 +283,210 @@
 
 <div class="mobile-container">
     <header class="main-header">
-        <div class="water-drop" style="width: 25px; height: 25px; top: 15%; left: 10%;"></div>
-        <div class="water-drop" style="width: 18px; height: 22px; top: 10%; left: 85%;"></div>
-        <div class="water-drop" style="width: 30px; height: 28px; top: 60%; left: 80%;"></div>
+        <div class="water-drop" style="width: 25px; height: 25px; top: 15%; left: 10%; border-radius: 50% 50% 50% 50%;"></div>
+        <div class="water-drop" style="width: 18px; height: 22px; top: 10%; left: 85%; border-radius: 60% 40% 60% 40%;"></div>
+        <div class="water-drop" style="width: 30px; height: 28px; top: 60%; left: 80%; opacity: 0.9; border-radius: 45% 55% 50% 50%;"></div>
         <div class="water-drop" style="width: 15px; height: 15px; top: 25%; left: 20%;"></div>
+        <div class="water-drop" style="width: 12px; height: 16px; top: 70%; left: 15%; border-radius: 40% 60% 70% 30%;"></div>
+        <div class="water-drop" style="width: 10px; height: 10px; top: 50%; left: 90%;"></div>
+        <div class="water-drop" style="width: 8px; height: 8px; top: 40%; left: 5%;"></div>
+        <div class="water-drop" style="width: 6px; height: 6px; top: 80%; left: 25%;"></div>
+        <div class="water-drop" style="width: 9px; height: 9px; top: 30%; left: 75%;"></div>
+        <div class="water-drop" style="width: 7px; height: 7px; top: 10%; left: 50%;"></div>
+
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v22.0 Final</span>
+        <span class="version-badge" id="version-badge" title="버전 정보를 불러오는 중..." onclick="checkDevMode()">Loading Ver...</span>
     </header>
 
     <div class="content">
         <div class="section">
             <div class="section-title"><i class="fas fa-clipboard-list"></i> 기본 정보 (Basic Info)</div>
-            <div class="info-grid-row">
-                <div class="input-group"><label class="input-label">동</label><input type="text" id="dong" placeholder="101" style="text-align:center;"></div>
-                <div class="input-group"><label class="input-label">호</label><input type="text" id="ho" placeholder="1204" style="text-align:center;"></div>
-                <div class="input-group"><label class="input-label">진단 장소</label><input type="text" id="location" placeholder="거실"></div>
-                <div class="input-group"><label class="input-label">진단 일자</label><input type="text" id="date" style="text-align:center; color:#546e7a; font-weight:bold;"></div>
-            </div>
             
-            <div class="input-group" style="margin-bottom:8px;">
+            <div class="info-grid-row">
+                <div class="input-group">
+                    <label class="input-label">동</label>
+                    <input type="text" id="dong" placeholder="101" style="text-align:center;">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">호</label>
+                    <input type="text" id="ho" placeholder="1204" style="text-align:center;">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">진단 장소</label>
+                    <input type="text" id="location" placeholder="거실, 안방">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">진단 일자</label>
+                    <input type="text" id="date" style="text-align:center; color:#546e7a; font-weight:bold; font-size:0.75rem; padding: 8px 2px; letter-spacing: -1px;">
+                </div>
+            </div>
+
+            <div class="input-group" style="margin-bottom: 8px;">
                 <label class="input-label">창호 종류 (Window Type)</label>
                 <select id="window-type">
                     <option value="미서기(Sliding)">이중창/단창 (미서기/Sliding)</option>
                     <option value="시스템(System)">시스템 창호 (System/TT/LS)</option>
                     <option value="PJ/CASEMENT">PJ/케이스먼트 (Project)</option>
+                    <option value="고정창(FIX)">고정창 (FIX)</option>
                 </select>
             </div>
 
             <div class="info-dual-row">
                 <div class="input-group">
-                    <label class="input-label">방향</label>
+                    <label class="input-label">방향 (Direction)</label>
                     <select id="direction">
-                        <option value="남서향">남서향</option><option value="정남향">정남향</option><option value="북향">북향</option><option value="동향">동향</option><option value="서향">서향</option>
+                        <option value="정남향">정남향 (채광 최우수)</option>
+                        <option value="동남향">동남향 (오전 채광 양호)</option>
+                        <option value="남서향">남서향 (오후 채광 양호)</option>
+                        <option value="정동향">정동향 (아침 해)</option>
+                        <option value="정서향">정서향 (저녁 해)</option>
+                        <option value="서북향">서북향 (취약/채광 부족)</option>
+                        <option value="북동향">북동향 (취약/채광 부족)</option>
+                        <option value="북향">북향 (취약/일조량 없음)</option>
                     </select>
                 </div>
                 <div class="input-group">
-                    <label class="input-label">세대 위치</label>
+                    <label class="input-label">세대 위치 (Position)</label>
                     <select id="house-type">
-                        <option value="끝라인">끝라인 (측벽)</option><option value="기준층">기준층</option><option value="탑층">탑층</option><option value="필로티">필로티</option>
+                        <option value="기준층(중간)">기준층 (일반 중간층)</option>
+                        <option value="탑층">탑층 (최상층, 지붕)</option>
+                        <option value="필로티">필로티 (1층 하부개방)</option>
+                        <option value="끝라인">끝라인 (외벽 코너세대)</option>
                     </select>
                 </div>
             </div>
-            <textarea id="defect-content" placeholder="하자 증상 상세 (예: 벽지 젖음, 곰팡이 등)"></textarea>
+
+            <div class="input-group">
+                <textarea id="defect-content" placeholder="하자 증상 상세 (예: 벽지 젖음, 곰팡이 발생, 미서기 창호 덜컹거림 등)"></textarea>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title"><i class="fas fa-temperature-low"></i> 환경 데이터 (TDR 정밀분석)</div>
+            <div class="section-title"><i class="fas fa-temperature-low"></i> 환경 데이터 (Environment)</div>
+            
             <div style="display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 6px; margin-bottom: 8px;">
-                <div class="input-group"><label class="input-label">실내온도</label><input type="number" id="temp-in" placeholder="°C" oninput="calcDewPoint()" style="text-align:center;"></div>
-                <div class="input-group"><label class="input-label">실내습도</label><input type="number" id="humid-in" placeholder="%" oninput="calcDewPoint()" style="text-align:center;"></div>
-                <div class="input-group"><label class="input-label" style="color:#d32f2f;">🔥 이슬점</label><input type="text" id="dew-result" placeholder="자동" readonly style="background-color:#ffebee; color:#b71c1c; font-weight:bold; text-align:center;"></div>
+                <div class="input-group">
+                    <label class="input-label">실내온도</label>
+                    <input type="number" id="temp-in" placeholder="°C" oninput="calcDewPoint()" style="text-align:center;">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">실내습도</label>
+                    <input type="number" id="humid-in" placeholder="%" oninput="calcDewPoint()" style="text-align:center;">
+                </div>
+                <div class="input-group">
+                    <label class="input-label" style="color:#d32f2f;">🔥 이슬점</label>
+                    <input type="text" id="dew-result" placeholder="자동계산" readonly 
+                           style="background-color:#ffebee; color:#b71c1c; font-weight:bold; text-align:center;">
+                </div>
             </div>
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <div class="input-group"><label class="input-label">실외온도 (°C)</label><input type="text" id="temp-out" placeholder="확인 중.." style="background-color: #eceff1; text-align:center;"></div>
-                <div class="input-group"><label class="input-label" style="color:#d32f2f; font-weight:900;">📉 표면온도 (Cold Spot)</label><input type="number" id="temp-surf" class="tdr-input" placeholder="열화상 최저" style="text-align:center;"></div>
+                <div class="input-group">
+                    <label class="input-label">실외온도 (°C)</label>
+                    <input type="text" id="temp-out" placeholder="확인 중.." style="background-color: #eceff1; text-align:center;">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">실외습도 (%)</label>
+                    <input type="text" id="humid-out" placeholder="확인 중.." style="background-color: #eceff1; text-align:center;">
+                </div>
             </div>
-            <div style="font-size:0.7rem; color:#d32f2f; margin-top:5px; text-align:center;">* 표면온도 입력 시 TDR 자동 계산 및 하자 판정 수행</div>
+            <div style="font-size:0.6rem; color:#cfd8dc; line-height:1.2; margin-top:4px; text-align:center; letter-spacing: -0.5px;">
+                (GPS 수신하여 자동 입력 / 오류 시 수동 입력)
+            </div>
         </div>
 
         <div class="section">
             <div class="section-title"><i class="fas fa-camera-retro"></i> 현장 및 계측사진 (Photo Data)</div>
             <div class="photo-stack">
-                
                 <div id="group-general">
                     <div class="upload-wrapper" id="wrap-main">
                         <label class="input-label">1. 결로/곰팡이 메인 (필수)</label>
                         <label for="img-main" class="upload-box">
-                            <i class="fas fa-camera upload-icon"></i><span class="upload-text">터치하여 촬영</span>
+                            <i class="fas fa-camera upload-icon"></i>
+                            <span class="upload-text">터치하여 촬영</span>
                             <img id="view-main" class="preview-img">
                         </label>
                         <input type="file" id="img-main" class="file-input" accept="image/*" onchange="handleImage(this)">
                     </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-general', '일반 추가')"><i class="fas fa-plus-circle"></i> 추가</button>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-general', '일반/상세 추가')">
+                        <i class="fas fa-plus-circle"></i> 일반 사진 추가
+                    </button>
                 </div>
 
                 <div id="group-uv" style="margin-top:20px;">
                     <div class="upload-wrapper" id="wrap-uv">
                         <label class="input-label" style="color:var(--uv-violet);">■ UV (자외선) 결로 흔적</label>
+                        <div style="font-size:0.75rem; color:#666; margin-bottom:5px;">* 물길(수맥) 자국 및 곰팡이 형광 반응 확인</div>
                         <label for="img-uv" class="upload-box" style="background-color: #f3e5f5; border-color: var(--uv-violet);">
-                            <i class="fas fa-lightbulb upload-icon" style="color:var(--uv-violet);"></i><span class="upload-text" style="color:var(--uv-violet);">UV 형광 촬영</span>
+                            <i class="fas fa-lightbulb upload-icon" style="color:var(--uv-violet);"></i>
+                            <span class="upload-text" style="color:var(--uv-violet);">UV 형광 촬영</span>
                             <img id="view-uv" class="preview-img">
                         </label>
                         <input type="file" id="img-uv" class="file-input" accept="image/*" onchange="handleImage(this)">
                     </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-uv', 'UV 추가', 'var(--uv-violet)', '#f3e5f5')"><i class="fas fa-plus-circle"></i> 추가</button>
-                </div>
-
-                <div id="group-thermal" style="margin-top:20px;">
-                    <div class="upload-wrapper">
-                        <label class="input-label" style="color:var(--thermal-orange);">■ 열화상 카메라 (Thermal)</label>
-                        <label for="img-thermal" class="upload-box" style="background-color: #fffbe6;">
-                            <i class="fas fa-temperature-high upload-icon" style="color:var(--thermal-orange);"></i><span class="upload-text">열화상 이미지</span>
-                            <img id="view-thermal" class="preview-img">
-                        </label>
-                        <input type="file" id="img-thermal" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-thermal', '열화상 추가', 'var(--thermal-orange)', '#fffbe6')"><i class="fas fa-plus-circle"></i> 추가</button>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-uv', 'UV 사진 추가', 'var(--uv-violet)', '#f3e5f5')">
+                        <i class="fas fa-plus-circle"></i> UV 사진 추가
+                    </button>
                 </div>
 
                 <div id="group-mr277" style="margin-top:20px;">
                     <div class="upload-wrapper" id="wrap-mr277">
-                        <label class="input-label" style="color:var(--primary-main);">■ FLIR MR 277 (Abs. Humidity)</label>
-                        <div style="font-size:0.75rem; color:#666;">* 수증기압(kPa) 및 절대습도(g/kg)</div>
+                        <label class="input-label" style="color:#0d47a1;">■ FLIR MR 277 (VAP/Abs. Humidity)</label>
+                        <div style="font-size:0.75rem; color:#666; margin-bottom:5px;">* 수증기압(kPa) 및 절대습도(g/kg)</div>
                         <label for="img-mr277" class="upload-box">
-                            <i class="fas fa-ruler-combined upload-icon" style="color:var(--primary-main);"></i><span class="upload-text">계측기 화면</span>
+                            <i class="fas fa-ruler-combined upload-icon" style="color:#0d47a1;"></i>
+                            <span class="upload-text">계측기 화면 촬영</span>
                             <img id="view-mr277" class="preview-img">
                         </label>
                         <input type="file" id="img-mr277" class="file-input" accept="image/*" onchange="handleImage(this)">
                     </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-mr277', 'MR277 추가', 'var(--primary-main)')"><i class="fas fa-plus-circle"></i> 추가</button>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-mr277', 'MR277 추가', '#0d47a1')">
+                        <i class="fas fa-plus-circle"></i> 계측 사진 추가
+                    </button>
                 </div>
-
                 <div id="group-probe" style="margin-top:20px;">
                     <div class="upload-wrapper">
                         <label class="input-label" style="color:var(--moisture-blue);">■ FLIR MR12 (Moisture Content)</label>
-                        <div style="font-size:0.75rem; color:#666;">* 표면 수분 함수율(%) 측정</div>
+                        <div style="font-size:0.75rem; color:#666; margin-bottom:5px;">* 표면 수분 함수율(%) 측정</div>
                         <label for="img-probe" class="upload-box" style="background-color: #e1f5fe;">
-                            <i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i><span class="upload-text">볼 프로브 촬영</span>
+                            <i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i>
+                            <span class="upload-text">볼 프로브/수분계 촬영</span>
                             <img id="view-probe" class="preview-img">
                         </label>
                         <input type="file" id="img-probe" class="file-input" accept="image/*" onchange="handleImage(this)">
                     </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-probe', '볼 프로브 추가', 'var(--moisture-blue)', '#e1f5fe')"><i class="fas fa-plus-circle"></i> 추가</button>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-probe', '볼 프로브 추가', 'var(--moisture-blue)', '#e1f5fe')">
+                        <i class="fas fa-plus-circle"></i> 프로브 사진 추가
+                    </button>
                 </div>
-
+                
+                <div id="group-thermal" style="margin-top:20px;">
+                    <div class="upload-wrapper">
+                        <label class="input-label" style="color:#d84315;">■ 열화상 카메라 (Thermal)</label>
+                        <label for="img-thermal" class="upload-box" style="background-color: #fffbe6;">
+                            <i class="fas fa-temperature-high upload-icon" style="color: #ff7043;"></i>
+                            <span class="upload-text">열화상 이미지</span>
+                            <img id="view-thermal" class="preview-img">
+                        </label>
+                        <input type="file" id="img-thermal" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    </div>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-thermal', '열화상 추가', '#d84315', '#fffbe6')">
+                        <i class="fas fa-plus-circle"></i> 열화상 사진 추가
+                    </button>
+                </div>
                 <div id="group-sonic" style="margin-top:20px;">
                     <div class="upload-wrapper">
                         <label class="input-label" style="color: var(--sonic-purple);">■ 초음파(Ultrasonic) 진단</label>
                         <label for="img-sonic" class="upload-box" style="background-color: #f3e5f5;">
-                            <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i><span class="upload-text">초음파 이미지</span>
+                            <i class="fas fa-wave-square upload-icon" style="color: var(--sonic-purple);"></i>
+                            <span class="upload-text">초음파 이미지</span>
                             <img id="view-sonic" class="preview-img">
                         </label>
                         <input type="file" id="img-sonic" class="file-input" accept="image/*" onchange="handleImage(this)">
                     </div>
-                    <button class="add-photo-btn" onclick="addPhotoInput('group-sonic', '초음파 추가', 'var(--sonic-purple)', '#f3e5f5')"><i class="fas fa-plus-circle"></i> 추가</button>
+                    <button class="add-photo-btn" onclick="addPhotoInput('group-sonic', '초음파 추가', 'var(--sonic-purple)', '#f3e5f5')">
+                        <i class="fas fa-plus-circle"></i> 초음파 사진 추가
+                    </button>
                 </div>
             </div>
         </div>
@@ -351,11 +494,15 @@
         <div class="legal-disclaimer-box">
             <div class="legal-title"><i class="fas fa-exclamation-triangle"></i> 분석 시작 전 필수 동의</div>
             <div class="legal-text">
-                본 앱의 진단 결과는 AI 추정치입니다. 청개구리샤시는 법적 책임을 지지 않으며, 공인 감정서는 전문 기관에 의뢰하십시오.
+                본 앱의 진단 결과는 AI 알고리즘에 의한 <strong>단순 참고용 추정치</strong>입니다. 
+                <br><br>
+                청개구리샤시는 본 결과의 정확성을 보증하지 않으며, 이를 근거로 한 <strong>건설사와의 법적 분쟁 및 소송 결과에 대해 어떠한 법적 책임도 지지 않습니다.</strong>
+                <br><br>
+                법적 효력이 있는 공인 감정서가 필요하신 경우, 반드시 기술사 자격이 있는 전문 기관의 정밀 안전 진단을 별도로 받으셔야 합니다.
             </div>
             <label class="legal-check-wrapper">
                 <input type="checkbox" id="legal-agree" onchange="toggleAnalyzeBtn()">
-                <span class="legal-check-text">위 내용을 확인하였으며 동의합니다.</span>
+                <span class="legal-check-text">위 면책 조항을 모두 확인하였으며 동의합니다.</span>
             </label>
         </div>
 
@@ -365,70 +512,162 @@
 
         <div id="result-area">
             <div class="section-title"><i class="fas fa-file-contract"></i> 정밀 기술 소견서 (Report)</div>
-            <div class="report-header-warning">※ 본 보고서는 AI 추정치이며, 국토부 TDR 기준을 적용한 참고 자료입니다 ※</div>
-            <div id="report-summary-box" class="report-summary-box" style="display:none;"></div>
             
+            <div class="report-header-warning">
+                ※ 본 보고서는 AI 추정치로 법적 효력이 없습니다 (참고용) ※
+            </div>
+
+            <div id="report-summary-box" class="report-summary-box" style="display:none;">
+            </div>
+
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
-                <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--primary-main)"></i>
-                <p style="margin-top:15px; font-weight:bold; color:var(--primary-main);">TDR 산출 및 논리적 하자 원인을<br>정밀 분석 중입니다...</p>
+                <i class="fas fa-spinner spinner"></i>
+                <p id="loading-text" style="margin-top:15px; font-weight:bold; color:var(--primary-main);">
+                    방향/세대위치 구조 분석 및 UV 형광 반응을 포함하여<br>종합 정밀 분석 중입니다...
+                </p>
             </div>
             
             <div id="analysis-content"></div>
-            <div id="chart_div" class="chart-container"></div>
+            
+            <div id="chart-section" style="display:none; margin-top:30px; padding-top:20px; border-top:2px dashed #eee;">
+                <div class="section-title"><i class="fas fa-chart-pie"></i> 결로 원인 귀책 분석 (3D)</div>
+                <div id="chart_div" class="chart-container"></div>
+                
+                <div class="print-legal-footer">
+                    <div class="print-legal-title">※ 법적 면책 고지 및 주의사항 (Legal Disclaimer) ※</div>
+                    <div class="print-legal-content">
+                        1. <strong>[법적 효력 부존재]</strong> 본 문서는 사용자가 입력한 제한된 데이터와 AI 알고리즘을 기반으로 작성된 '비공식 참고용 소견서'입니다. 본 문서는 건축법령에 따른 공인된 안전진단기관의 정밀안전진단 보고서가 아니며, 법원, 관공서, 소비자보호원 등의 분쟁 해결 기관에서 <strong>법적 증거 능력(감정서 효력)을 갖지 않습니다.</strong><br><br>
+                        2. <strong>[책임 제한]</strong> 본 데이터는 계측 장비의 오차, 촬영 환경, 날씨, 사용자 입력 값의 정확도에 따라 실제 원인과 다를 수 있습니다. 본 결과를 근거로 시공사, 시행사, 임대인 등을 상대로 진행하는 소송, 내용증명 발송, 하자 보수 요구 등으로 인해 발생하는 금전적 손실 및 법적 불이익에 대해 <strong>'청개구리샤시' 및 앱 개발사는 민·형사상 어떠한 책임도 지지 않습니다.</strong><br><br>
+                        3. <strong>[전문가 자문 권고]</strong> 정확한 하자 판정 및 귀책 사유 규명을 위해서는 반드시 건축구조기술사 또는 공인된 하자 진단 전문 기관의 현장 정밀 진단을 받으시기 바랍니다.
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="footer-btns">
-            <button class="footer-btn btn-pdf" onclick="savePdf()"><i class="fas fa-file-pdf"></i> 전체저장</button>
-            <button class="footer-btn btn-reserve" onclick="alert('유료 예약 팝업')"><i class="fas fa-calendar-check"></i> 유료예약</button>
-            <button class="footer-btn btn-chatbot" onclick="window.toggleChat()"><i class="fas fa-robot"></i> AI 상담</button>
+            <button class="footer-btn call-btn" onclick="window.location.href='tel:01023220949'">
+                <i class="fas fa-headset"></i> 수리문의
+            </button>
+            <button class="footer-btn save-btn" onclick="savePdf()">
+                <i class="fas fa-file-pdf"></i> PDF로 저장
+            </button>
         </div>
+    </div> 
+    
+    <footer class="main-footer" id="main-footer">
+        청개구리샤시 | 사업자등록번호 : 123-36-31426 | 대표 : 전영웅<br>
+        전화 1599-7380 | COPYRIGHT ⓒ 2026 Cheong-gaeguri Corp.
+    </footer>
 
-        <div class="footer-info">
-            <p><span class="footer-bold">청개구리샤시</span> | 📞 010-2322-0949</p>
-            <p>COPYRIGHT ⓒ 2026 Cheong-gaeguri Corp.</p>
-        </div>
-    </div>
+</div>
 
-    <div class="chat-float-btn" onclick="window.toggleChat()">챗봇</div>
-    <div class="chat-window" id="chatWindow">
-        <div class="chat-header">
-            <span>🐸 청개구리 챗봇 (기술지원)</span>
-            <span style="cursor:pointer;" onclick="window.toggleChat()"><i class="fa-solid fa-xmark"></i></span>
-        </div>
-        <div class="chat-body" id="chatBody">
-            <div class="chat-bubble chat-bot">안녕하세요! 기술 지원 조교입니다.<br>무엇을 도와드릴까요?</div>
-        </div>
-        <div class="chat-options">
-            <div class="chat-option-btn" onclick="window.askBot('tdr')">📉 TDR 기준이란?</div>
-            <div class="chat-option-btn" onclick="window.askBot('photo')">📸 촬영 가이드</div>
-        </div>
-    </div>
+<script>
+    google.charts.load("current", {packages:["corechart"]});
 
-    <script type="module">
-        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-        google.charts.load("current", {packages:["corechart"]});
+    const today = new Date();
+    document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
 
-        const API_KEY = "AIzaSyCGtANQJNBEGSh" + "9zCrTXMEnR-" + "PHxLlXtkw"; 
-        const today = new Date();
-        document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
+    const keyPart1 = "AIzaSyCGtANQJNBEGSh"; 
+    const keyPart2 = "9zCrTXMEnR-";        
+    const keyPart3 = "PHxLlXtkw";        
+    const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-        let currentFile = null;
-        let clickCount = 0; let clickTimer;
+    // --- 버전 정보 업데이트 (v20.1) ---
+    const versionData = {
+        "version": "20.1",
+        "build": "20260124-LogicExpansion",
+        "last_updated": "2026. 01. 24.",
+        "changes": "미서기 창호 구조적 취약성 및 외부 환경(날씨) 상관관계 로직 추가"
+    };
 
-        // 이슬점 계산
-        window.calcDewPoint = function() {
-            const temp = parseFloat(document.getElementById('temp-in').value);
-            const humid = parseFloat(document.getElementById('humid-in').value);
-            const resultBox = document.getElementById('dew-result');
-            if (!isNaN(temp) && !isNaN(humid)) {
-                const a = 17.27; const b = 237.7;
-                const alpha = ((a * temp) / (b + temp)) + Math.log(humid / 100.0);
-                const dewPoint = (b * alpha) / (a - alpha);
-                resultBox.value = dewPoint.toFixed(1) + "°C";
+    let clickCount = 0;
+    let clickTimer;
+    const DAILY_LIMIT = 100;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const isDev = localStorage.getItem('is_developer') === 'true';
+        if (isDev) {
+            document.getElementById('version-badge').classList.add('dev-active');
+        }
+    });
+
+    function checkDevMode() {
+        clearTimeout(clickTimer); 
+        clickCount++;
+
+        if (clickCount === 5) {
+            const isDev = localStorage.getItem('is_developer') === 'true';
+            localStorage.setItem('is_developer', !isDev);
+            
+            const badge = document.getElementById('version-badge');
+            
+            if (!isDev) {
+                alert("🐸 개발자 모드(무제한)가 활성화되었습니다!");
+                badge.classList.add('dev-active');
+            } else {
+                alert("개발자 모드가 해제되었습니다. (일일 100회 제한 적용)");
+                badge.classList.remove('dev-active');
             }
-        };
+            clickCount = 0;
+        }
 
-        // 날씨 API
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+        }, 1000);
+    }
+
+    function checkDailyLimit() {
+        const isDev = localStorage.getItem('is_developer') === 'true';
+        if (isDev) return true; 
+
+        const today = new Date().toDateString(); 
+        let usageData = JSON.parse(localStorage.getItem('expert_app_usage') || '{}');
+
+        if (usageData.date !== today) {
+            usageData = { date: today, count: 0 };
+        }
+
+        if (usageData.count >= DAILY_LIMIT) {
+            alert(`⚠️ 일일 무료 사용 한도(${DAILY_LIMIT}회)를 초과했습니다.\n내일 다시 이용해 주세요.`);
+            return false; 
+        }
+        
+        usageData.count++;
+        localStorage.setItem('expert_app_usage', JSON.stringify(usageData));
+        return true;
+    }
+
+    function loadVersionInfo() {
+        const versionString = `Ver ${versionData.version} PRO Expert`;
+        document.getElementById('app-title').textContent = `결로진단 AI앱 (${versionString})`;
+        const versionBadge = document.getElementById('version-badge');
+        versionBadge.textContent = versionString;
+        versionBadge.title = `Build: ${versionData.build}\nChanges: ${versionData.changes}`;
+        const footer = document.getElementById('main-footer');
+        if (!footer.innerHTML.includes('Last Updated:')) {
+             footer.innerHTML += `<br><span style="font-size: 0.65rem; color: #b0bec5; margin-top: 5px; display: inline-block;">
+                                     Last Updated: ${versionData.last_updated} (v${versionData.version})
+                                  </span>`;
+        }
+    }
+
+    function toggleAnalyzeBtn() {
+        const checkbox = document.getElementById('legal-agree');
+        const btn = document.getElementById('analyze-btn');
+        if (checkbox.checked) {
+            btn.classList.add('active');
+            btn.disabled = false;
+            btn.style.cursor = 'pointer';
+        } else {
+            btn.classList.remove('active');
+            btn.disabled = true;
+            btn.style.cursor = 'not-allowed';
+        }
+    }
+
+    function fetchWeather() {
+        const tempOut = document.getElementById('temp-out');
+        const humidOut = document.getElementById('humid-out');
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (position) => {
                 try {
@@ -436,232 +675,275 @@
                     const response = await fetch(url);
                     if(response.ok) {
                         const data = await response.json();
-                        document.getElementById('temp-out').value = data.current.temperature_2m.toFixed(1);
-                        // 습도 필드가 없으므로 생략
+                        tempOut.value = data.current.temperature_2m.toFixed(1);
+                        humidOut.value = data.current.relative_humidity_2m;
+                        tempOut.style.fontWeight = "bold"; humidOut.style.fontWeight = "bold";
+                        tempOut.style.color = "#1a237e"; humidOut.style.color = "#1a237e";
                     }
                 } catch (e) { console.error(e); }
             });
         }
+    }
+    
+    window.onload = function() { 
+        fetchWeather();
+        loadVersionInfo(); 
+        const isDev = localStorage.getItem('is_developer') === 'true';
+        if (isDev) {
+            document.getElementById('version-badge').classList.add('dev-active');
+        }
+    };
 
-        // 사진 추가 (v20.1 로직 복원)
-        let uniqueIdCounter = 0;
-        window.addPhotoInput = function(groupId, labelText, color='#546e7a', bgColor='#ffffff') {
-            uniqueIdCounter++;
-            const newId = `added-${uniqueIdCounter}`;
-            const groupDiv = document.getElementById(groupId);
-            const btn = groupDiv.querySelector('.add-photo-btn');
-            const wrapper = document.createElement('div');
-            wrapper.className = 'upload-wrapper';
-            wrapper.style.marginTop = '10px';
-            wrapper.style.borderColor = (color !== '#546e7a') ? color : '#eee';
-            
-            wrapper.innerHTML = `
-                <label class="input-label" style="color:${color};">${labelText} (추가)</label>
-                <label for="img-${newId}" class="upload-box" style="background-color:${bgColor}; border-color:${color === '#546e7a' ? '#b0bec5' : color}">
-                    <i class="fas fa-plus upload-icon" style="color:${color};"></i>
-                    <span class="upload-text" style="color:${color};">추가 촬영</span>
-                    <img id="view-${newId}" class="preview-img">
-                </label>
-                <input type="file" id="img-${newId}" class="file-input" accept="image/*" onchange="handleImage(this)">
-            `;
-            groupDiv.insertBefore(wrapper, btn);
+    function calcDewPoint() {
+        const temp = parseFloat(document.getElementById('temp-in').value);
+        const humid = parseFloat(document.getElementById('humid-in').value);
+        const resultBox = document.getElementById('dew-result');
+        if (!isNaN(temp) && !isNaN(humid)) {
+            const a = 17.27; const b = 237.7;
+            const alpha = ((a * temp) / (b + temp)) + Math.log(humid / 100.0);
+            const dewPoint = (b * alpha) / (a - alpha);
+            resultBox.value = dewPoint.toFixed(1) + "°C";
+            if(dewPoint > temp - 3) { resultBox.style.backgroundColor = "#ffebee"; resultBox.style.color = "#d32f2f"; }
+            else { resultBox.style.backgroundColor = "#e8f5e9"; resultBox.style.color = "#2e7d32"; }
+        }
+    }
+
+    let uniqueIdCounter = 0;
+    function addPhotoInput(groupId, labelText, color = '#546e7a', bgColor = '#ffffff') {
+        uniqueIdCounter++;
+        const newId = `added-${uniqueIdCounter}`;
+        const groupDiv = document.getElementById(groupId);
+        const btn = groupDiv.querySelector('.add-photo-btn');
+        const wrapper = document.createElement('div');
+        wrapper.className = 'upload-wrapper';
+        wrapper.id = `wrap-${newId}`;
+        wrapper.innerHTML = `
+            <label class="input-label" style="color:${color};">${labelText} (추가)</label>
+            <label for="img-${newId}" class="upload-box" style="background-color: ${bgColor}; border-color: ${color === 'var(--uv-violet)' ? 'var(--uv-violet)' : '#b0bec5'}">
+                <i class="fas fa-plus upload-icon" style="color:${color};"></i>
+                <span class="upload-text" style="color:${color};">추가 사진 촬영</span>
+                <img id="view-${newId}" class="preview-img">
+            </label>
+            <input type="file" id="img-${newId}" class="file-input" accept="image/*" onchange="handleImage(this)">
+        `;
+        groupDiv.insertBefore(wrapper, btn);
+    }
+
+    function handleImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const wrapper = input.closest('.upload-wrapper');
+                const img = wrapper.querySelector('.preview-img');
+                const box = wrapper.querySelector('.upload-box');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
+                wrapper.classList.add('filled');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function savePdf() {
+        const dong = document.getElementById('dong').value || "000";
+        const ho = document.getElementById('ho').value || "0000";
+        const loc = document.getElementById('location').value || "장소미지정";
+        const dateRaw = document.getElementById('date').value;
+        const dateClean = dateRaw.replace(/[.\s]/g, '-').replace(/-$/, '');
+
+        document.title = `결로진단AI앱(PRO)_${dong}동_${ho}호_${loc}_${dateClean}`;
+        
+        window.print();
+    }
+
+    async function startAnalysis() {
+        if (!checkDailyLimit()) {
+            return;
         }
 
-        // 이미지 처리
-        window.handleImage = function(input) {
-            if(input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const wrapper = input.closest('.upload-wrapper');
-                    const img = wrapper.querySelector('.preview-img');
-                    const box = wrapper.querySelector('.upload-box');
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-                    box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
-                    wrapper.classList.add('filled');
-                };
-                reader.readAsDataURL(input.files[0]);
+        const resultArea = document.getElementById('result-area');
+        const loading = document.getElementById('loading-spinner');
+        const content = document.getElementById('analysis-content');
+        const chartSection = document.getElementById('chart-section');
+        const summaryBox = document.getElementById('report-summary-box');
+        
+        const dong = document.getElementById('dong').value;
+        const ho = document.getElementById('ho').value;
+        const location = document.getElementById('location').value;
+        const date = document.getElementById('date').value;
+        
+        const direction = document.getElementById('direction').value;
+        const houseType = document.getElementById('house-type').value;
+        // [추가] 창호 종류 값 가져오기
+        const windowType = document.getElementById('window-type').value;
+
+        // [추가] 외부 환경 데이터 가져오기
+        const tempOut = document.getElementById('temp-out').value;
+        const humidOut = document.getElementById('humid-out').value;
+
+        const fullLocation = `${dong ? dong + '동 ' : ''}${ho ? ho + '호 ' : ''}${location || "미지정 장소"}`;
+        
+        const defect = document.getElementById('defect-content').value;
+        const tempIn = document.getElementById('temp-in').value;
+        const humidIn = document.getElementById('humid-in').value;
+        const dew = document.getElementById('dew-result').value;
+
+        summaryBox.innerHTML = `
+            <div class="report-summary-item">
+                <span class="report-summary-label">진단 일자</span>
+                <span class="report-summary-value">${date}</span>
+            </div>
+            <div class="report-summary-item">
+                <span class="report-summary-label">현장 위치</span>
+                <span class="report-summary-value">${dong ? dong+'동' : '-'} ${ho ? ho+'호' : '-'}</span>
+            </div>
+            <div class="report-summary-item">
+                <span class="report-summary-label">구조/창호</span>
+                <span class="report-summary-value" style="color:var(--expert-gold);">${direction} / ${houseType} / ${windowType}</span>
+            </div>
+        `;
+        summaryBox.style.display = 'block';
+
+        let imageParts = [];
+        const allImages = document.querySelectorAll('.preview-img');
+        
+        allImages.forEach((img, index) => {
+            if(img.src && img.src.startsWith('data:image')) {
+                const base64Data = img.src.split(',')[1];
+                imageParts.push({ inline_data: { mime_type: "image/jpeg", data: base64Data } });
             }
-        };
+        });
 
-        window.toggleAnalyzeBtn = function() {
-            const chk = document.getElementById('legal-agree');
-            const btn = document.getElementById('analyze-btn');
-            if(chk.checked) {
-                btn.classList.add('active'); btn.disabled = false; btn.style.cursor = 'pointer';
-            } else {
-                btn.classList.remove('active'); btn.disabled = true; btn.style.cursor = 'not-allowed';
-            }
-        };
+        if(imageParts.length === 0) {
+            alert("최소 1장 이상의 사진을 등록해주세요.");
+            return;
+        }
 
-        window.savePdf = function() {
-            const dong = document.getElementById('dong').value || "000";
-            const ho = document.getElementById('ho').value || "0000";
-            document.title = `청개구리_결로진단_${dong}동${ho}호`;
-            window.print();
-        };
+        resultArea.style.display = 'block';
+        loading.style.display = 'block';
+        content.style.display = 'none';
+        chartSection.style.display = 'none';
+        resultArea.scrollIntoView({behavior: "smooth"});
 
-        // 개발자 모드
-        window.checkDevMode = function() {
-            clearTimeout(clickTimer); clickCount++;
-            if (clickCount === 5) {
-                const badge = document.getElementById('version-badge');
-                if(badge.classList.contains('dev-active')) {
-                    badge.classList.remove('dev-active'); alert("개발자 모드 해제");
-                } else {
-                    badge.classList.add('dev-active'); alert("🐸 개발자 모드 활성화!");
-                }
-                clickCount = 0;
-            }
-            clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
-        };
+        // [프롬프트 수정] 미서기 창호 및 외부 환경 논리 추가
+        const prompt = `
+            당신은 '청개구리샤시'의 **건축 환경 진단 AI 전문 분석관(Expert Analyst)**입니다.
+            제공된 데이터를 정밀 분석하되, **국토교통부 공동주택 결로 방지 설계기준**에 의거하여 논리적으로 판단하십시오.
 
-        // 분석 시작 (v21.1 핵심 로직 통합)
-        window.startAnalysis = async function() {
-            const contentDiv = document.getElementById('analysis-content');
-            const resultArea = document.getElementById('result-area');
-            const loading = document.getElementById('loading-spinner');
-            const summaryBox = document.getElementById('report-summary-box');
+            [1. 진단 개요]
+            - 위치: ${fullLocation} (진단일: ${new Date().toLocaleDateString()})
+            - 구조: ${direction} / ${houseType}
+            - 환경: 실내 ${tempIn}°C / ${humidIn}% (이슬점: ${dew})
+            - 증상: ${defect}
+
+            [2. 전문 용어 및 기준 적용 (필수)]
+            - **'절대습도(g/kg)'**와 **'수증기압(kPa)'** 용어를 사용하여 공기 상태를 설명할 것 (MIX X).
+            - 재료의 수분 상태는 **'함수율(%)'** 또는 '표면 수분량'으로 표현할 것 (MR12 X).
+            - 결로 판단 기준: **국토교통부 공동주택 결로 방지 설계기준** 인용.
+            - **사용자 안내:** 일반인을 위해 "실내 적정 습도 40~50% 유지 권장"을 쉽게 풀어서 설명하되, 상세 분석에서는 전문 용어 사용.
+
+            [3. 창호 특성 및 시공 상태 분석]
+            - 창호 종류: ${windowType}
+            - **핵심 논리 (미서기 창호):** 만약 창호가 '미서기(Sliding)' 방식이라면, 구조적으로 모헤어 틈새를 통한 기밀성 저하(단열 취약성)가 존재함을 명시할 것. 특히 수직/수평 불량이 의심될 경우, 이는 단순 제작 불량이 아니라 '시공 정밀도 부족에 의한 기밀 성능 저하'로 리포트하여 시공 하자를 강조할 것.
+
+            [4. 외부 환경 요인 분석]
+            - 외부 환경: ${tempOut}°C / ${humidOut}%
+            - **논리:** 실내외 온도차(Delta T)가 클수록 열관류율(U-value)에 따른 표면 온도 저하가 심화됨을 설명. 외부 습도가 높다면 환기 효율이 떨어질 수 있음도 언급.
+
+            [5. 핵심 논리: TDR (온도차이비율) 적용]
+            - **매우 중요:** 현재 실내 습도가 높더라도(예: 50% 초과), **해당 결로 부위의 표면 온도가 국토부 TDR 기준(지역별 0.26~0.28 이하)을 만족하지 못할 정도로 낮다면**, 이는 습도 문제가 아니라 **'단열 결손' 또는 '열교(Thermal Bridge)'에 의한 하자**임을 강력히 시사할 것.
+            - "습하게 살아서 생긴 것"이라는 주장에 대해, **"정상적인 단열 시공이 되었다면 이 정도 환경에서도 결로가 생기지 않아야 함"**을 논리적으로 반박하는 톤 유지.
+
+            [6. 이미지 정밀 분석]
+            - **UV 형광:** 물길(Water Stain) 및 곰팡이 포자 식별 -> 누수/결로 이력 추적.
+            - **열화상:** 주변부와 3도 이상 온도차가 나는 **'냉점(Cold Spot)'** 식별 -> 단열재 끊김, 채움 부족 의심.
+
+            [7. 종합 결론 (귀책 분석)]
+            - 구조적 특성(${direction}, ${houseType})과 계측값(VAP, 함수율)을 교차 검증.
+            - **방향/위치상 취약점**이 있는데다 **열화상 냉점**이 뚜렷하다면 -> **시공 하자(단열 부족)** 비율을 높게 책정.
             
-            const tempIn = parseFloat(document.getElementById('temp-in').value) || 20;
-            const tempOut = parseFloat(document.getElementById('temp-out').value) || -5;
-            const tempSurf = parseFloat(document.getElementById('temp-surf').value);
-            const windowType = document.getElementById('window-type').value;
-            const direction = document.getElementById('direction').value;
-            const houseType = document.getElementById('house-type').value;
-            const date = document.getElementById('date').value;
-            const defect = document.getElementById('defect-content').value;
-            
-            summaryBox.innerHTML = `
-                <div class="report-summary-item"><span class="report-summary-label">진단 일자</span><span class="report-summary-value">${date}</span></div>
-                <div class="report-summary-item"><span class="report-summary-label">구조/창호</span><span class="report-summary-value" style="color:var(--expert-gold);">${direction} / ${houseType} / ${windowType}</span></div>
-            `;
-            summaryBox.style.display = 'block';
+            [8. 필수 JSON]
+            맨 마지막에:
+            ___JSON_START___
+            {"ventilation": (0~100), "insulation": (0~100), "normal": (0~20)}
+            ___JSON_END___
+        `;
 
-            // TDR 계산
-            let tdrMsg = "", tdrVal = 0, calcProcess = "";
-            let dewMsg = document.getElementById('dew-result').value || "계산불가";
-            let standard = 0.28; 
+        let parts = [{ text: prompt }, ...imageParts];
+        const modelName = "gemini-2.0-flash-exp"; 
 
-            if (!isNaN(tempSurf)) {
-                let denominator = tempIn - tempOut;
-                if(denominator === 0) denominator = 1; 
-                tdrVal = (tempIn - tempSurf) / denominator;
-                tdrVal = tdrVal.toFixed(2);
-                calcProcess = `(${tempIn} - ${tempSurf}) / (${tempIn} - (${tempOut})) = ${tdrVal}`;
-                
-                if (tdrVal > standard) {
-                    tdrMsg = `🚨 **[치명적 결함 발견: TDR 기준 초과]**\n* TDR 산출: ${calcProcess}\n* 의미: 법적 단열 성능 기준(${standard} 이하)을 대폭 초과했습니다. 이는 습도 조절만으로는 해결되지 않는 **'구조적 단열 결손'** 상태입니다.`;
-                } else {
-                    tdrMsg = `✅ **[TDR 기준 만족]**\n* TDR 산출: ${calcProcess}\n* 의미: 단열 성능은 양호합니다. 환기 부족 또는 국부적 열교가 원인일 수 있습니다.`;
-                }
-            } else {
-                tdrMsg = "⚠️ 표면 온도가 입력되지 않아 TDR 정밀 계산이 생략되었습니다.";
-            }
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: parts }] })
+            });
 
-            resultArea.style.display = 'block';
-            contentDiv.style.display = 'none';
-            document.getElementById('chart_div').style.display = 'none';
-            loading.style.display = 'block';
-            resultArea.scrollIntoView({behavior: "smooth"});
+            if (response.ok) {
+                const data = await response.json();
+                if (data.candidates && data.candidates.length > 0) {
+                    let aiText = data.candidates[0].content.parts[0].text;
+                    let finalJson = null;
 
-            try {
-                const genAI = new GoogleGenerativeAI(API_KEY);
-                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
-                
-                // 이미지 수집 (모든 이미지)
-                let imageParts = [];
-                document.querySelectorAll('.preview-img').forEach(img => {
-                    if(img.src.startsWith('data:image')) {
-                        imageParts.push({ inline_data: { mime_type: "image/jpeg", data: img.src.split(',')[1] } });
+                    let match = aiText.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
+                    if (!match) match = aiText.match(/\{[\s\n]*"ventilation"[\s\S]*?\}/);
+
+                    if(match) {
+                        try {
+                            let rawJson = match[0].replace(/___JSON_START___|___JSON_END___|```json|```/gi, "").trim();
+                            const braceMatch = rawJson.match(/\{[\s\S]*\}/);
+                            if(braceMatch) rawJson = braceMatch[0];
+                            finalJson = JSON.parse(rawJson);
+                            aiText = aiText.replace(match[0], ""); 
+                        } catch(e) { console.error("JSON Error", e); }
                     }
-                });
 
-                if(imageParts.length === 0) {
-                    alert("사진을 최소 1장 이상 등록해주세요.");
+                    const md = window.markdownit({ html: true }); 
+                    content.innerHTML = md.render(aiText);
                     loading.style.display = 'none';
-                    return;
+                    content.style.display = 'block';
+
+                    if (finalJson) {
+                        chartSection.style.display = 'block';
+                        drawChart(finalJson);
+                    }
                 }
+            } else { throw new Error("API Error"); }
+        } catch (error) { 
+            console.error(error);
+            loading.style.display = 'none';
+            content.style.display = 'block';
+            content.innerHTML = "<p style='color:red;'>분석 오류 발생. 네트워크 혹은 API 키를 확인하세요.</p>";
+        }
+    }
 
-                const prompt = `
-                    당신은 '청개구리샤시'의 건축 결로 진단 전문가(Expert Analyst)입니다.
-                    아래 데이터를 바탕으로 건설사(A업체)의 '사용자 과실(습도 탓)' 주장을 논리적으로 반박하거나 수용하는 정밀 보고서를 작성하세요.
+    function drawChart(data) {
+        var chartData = google.visualization.arrayToDataTable([
+            ['원인', '비율'],
+            ['거주자 과습 생활 (환기부족)', data.ventilation],
+            ['시공사 단열/기밀 불량 (하자)', data.insulation],
+            ['기타/자연적 요인', data.normal || 0]
+        ]);
 
-                    [입력 데이터]
-                    - 위치/구조: ${direction} / ${houseType}
-                    - 창호: ${windowType}
-                    - 환경: 실내 ${tempIn}°C / 실외 ${tempOut}°C / 표면 ${tempSurf}°C (이슬점 ${dewMsg})
-                    - 증상: ${defect}
-                    - **TDR 분석:** ${tdrMsg}
-                    - **계산식:** ${calcProcess} (리포트에 그대로 출력)
-
-                    [작성 지침 - 필승 논리]
-                    1. **TDR 수치 명시:** 측정된 표면 온도와 산출된 TDR 값(${tdrVal})을 명시하고, 0.28 초과 시 "법적 기준 위반에 따른 명백한 시공 하자"라고 못 박으세요.
-                    2. **이슬점 방어:** "현재 환경의 이슬점은 ${dewMsg}입니다. 표면 온도가 이보다 낮다는 것은 단열재가 냉기를 막지 못해 결로가 맺히는 것입니다. 습도가 높아서가 아니라, 표면이 너무 차가워서 생기는 문제입니다."라고 강조하세요.
-                    3. **미서기 창호:** 만약 미서기 창호라면 "레일 틈새를 통한 기밀성 저하"를 언급하세요.
-                    4. **용어:** 절대습도, 수증기압, 함수율 용어 사용 (MIX X, MR12 X).
-                    
-                    [출력 형식]
-                    Markdown 형식. 마지막에 JSON 데이터 포함:
-                    ___JSON_START___
-                    {"ventilation": ${tdrVal > 0.28 ? 10 : 80}, "insulation": ${tdrVal > 0.28 ? 90 : 20}, "normal": 0}
-                    ___JSON_END___
-                `;
-
-                let parts = [{ text: prompt }, ...imageParts];
-                const result = await model.generateContent({ contents: [{ parts: parts }] });
-                const response = await result.response;
-                let text = response.text();
-                
-                let jsonMatch = text.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
-                if(jsonMatch) {
-                    const jsonData = JSON.parse(jsonMatch[1]);
-                    drawChart(jsonData);
-                    text = text.replace(jsonMatch[0], "");
-                    document.getElementById('chart_div').style.display = 'block';
-                }
-
-                const md = window.markdownit();
-                contentDiv.innerHTML = md.render(text);
-                loading.style.display = 'none';
-                contentDiv.style.display = 'block';
-
-            } catch (e) {
-                loading.style.display = 'none';
-                contentDiv.innerHTML = "분석 중 오류가 발생했습니다. (네트워크 또는 API 확인)";
-                console.error(e);
-            }
+        var options = {
+            title: '결로 원인 귀책 분석 (AI 산출 - 참고용)',
+            is3D: true,
+            slices: {
+                0: { color: '#FF9800' }, 
+                1: { color: '#D32F2F', offset: 0.1 }, 
+                2: { color: '#4CAF50' }  
+            },
+            backgroundColor: 'transparent',
+            fontSize: 12, 
+            chartArea: { width: '90%', height: '75%' }, 
+            legend: { position: 'bottom' } 
         };
 
-        window.toggleChat = function() {
-            const el = document.getElementById('chatWindow');
-            el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
-        };
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(chartData, options);
+    }
+</script>
 
-        window.askBot = function(type) {
-            const body = document.getElementById('chatBody');
-            let user = "", bot = "";
-            if(type === 'tdr') {
-                user = "TDR 기준이 무엇인가요?";
-                bot = "📉 **[TDR (온도차이비율)]**<br>실내외 온도차 대비 벽체 표면 온도가 얼마나 떨어지는지 나타내는 지표입니다.<br><br><strong>* 국토부 기준: 0.28 이하</strong><br><br>이 수치를 초과하면 아무리 환기를 잘해도 결로가 생기는 **'단열 불량'**입니다.";
-            } else if(type === 'photo') {
-                user = "촬영 가이드";
-                bot = "📸 1. 열화상으로 가장 파란(차가운) 곳을 찍으세요.<br>2. 물방울이 맺힌 곳을 가까이서 찍으세요.";
-            }
-            body.innerHTML += `<div class="chat-bubble chat-user">${user}</div>`;
-            setTimeout(() => {
-                body.innerHTML += `<div class="chat-bubble chat-bot">${bot}</div>`;
-                body.scrollTop = body.scrollHeight;
-            }, 300);
-        }
-
-        function drawChart(data) {
-            var d = google.visualization.arrayToDataTable([
-                ['원인', '비율'], ['사용자 습관', data.ventilation], ['시공 하자(단열)', data.insulation], ['기타', data.normal]
-            ]);
-            var c = new google.visualization.PieChart(document.getElementById('chart_div'));
-            c.draw(d, { title: '귀책 사유 분석', is3D: true, slices: { 1: {offset: 0.1, color: '#d32f2f'} } });
-        }
-    </script>
 </body>
 </html>
