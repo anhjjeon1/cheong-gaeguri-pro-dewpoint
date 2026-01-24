@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="app-title">청개구리 결로진단 AI (PRO Expert)</title>
+    <title id="app-title">청개구리 결로진단 AI (v20.1)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -321,6 +321,16 @@
                 </div>
             </div>
 
+            <div class="input-group" style="margin-bottom: 8px;">
+                <label class="input-label">창호 종류 (Window Type)</label>
+                <select id="window-type">
+                    <option value="미서기(Sliding)">이중창/단창 (미서기/Sliding)</option>
+                    <option value="시스템(System)">시스템 창호 (System/TT/LS)</option>
+                    <option value="PJ/CASEMENT">PJ/케이스먼트 (Project)</option>
+                    <option value="고정창(FIX)">고정창 (FIX)</option>
+                </select>
+            </div>
+
             <div class="info-dual-row">
                 <div class="input-group">
                     <label class="input-label">방향 (Direction)</label>
@@ -347,7 +357,7 @@
             </div>
 
             <div class="input-group">
-                <textarea id="defect-content" placeholder="하자 증상 상세 (예: 벽지 젖음, 곰팡이 발생 등)"></textarea>
+                <textarea id="defect-content" placeholder="하자 증상 상세 (예: 벽지 젖음, 곰팡이 발생, 미서기 창호 덜컹거림 등)"></textarea>
             </div>
         </div>
 
@@ -562,12 +572,12 @@
     const keyPart3 = "PHxLlXtkw";        
     const API_KEY = keyPart1 + keyPart2 + keyPart3;
 
-    // --- 버전 정보 업데이트 (v20.0 Expert Logic) ---
+    // --- 버전 정보 업데이트 (v20.1) ---
     const versionData = {
-        "version": "20.0",
-        "build": "20260124-ExpertLogic",
+        "version": "20.1",
+        "build": "20260124-LogicExpansion",
         "last_updated": "2026. 01. 24.",
-        "changes": "전문 용어(MIX->절대습도, MR12->함수율) 수정 및 국토부 기준 반영, TDR 논리 알고리즘 탑재"
+        "changes": "미서기 창호 구조적 취약성 및 외부 환경(날씨) 상관관계 로직 추가"
     };
 
     let clickCount = 0;
@@ -765,6 +775,12 @@
         
         const direction = document.getElementById('direction').value;
         const houseType = document.getElementById('house-type').value;
+        // [추가] 창호 종류 값 가져오기
+        const windowType = document.getElementById('window-type').value;
+
+        // [추가] 외부 환경 데이터 가져오기
+        const tempOut = document.getElementById('temp-out').value;
+        const humidOut = document.getElementById('humid-out').value;
 
         const fullLocation = `${dong ? dong + '동 ' : ''}${ho ? ho + '호 ' : ''}${location || "미지정 장소"}`;
         
@@ -783,8 +799,8 @@
                 <span class="report-summary-value">${dong ? dong+'동' : '-'} ${ho ? ho+'호' : '-'}</span>
             </div>
             <div class="report-summary-item">
-                <span class="report-summary-label">구조 특성</span>
-                <span class="report-summary-value" style="color:var(--expert-gold);">${direction} / ${houseType}</span>
+                <span class="report-summary-label">구조/창호</span>
+                <span class="report-summary-value" style="color:var(--expert-gold);">${direction} / ${houseType} / ${windowType}</span>
             </div>
         `;
         summaryBox.style.display = 'block';
@@ -810,7 +826,7 @@
         chartSection.style.display = 'none';
         resultArea.scrollIntoView({behavior: "smooth"});
 
-        // [프롬프트 수정] A업체 반박 수용 및 논리 강화 (TDR)
+        // [프롬프트 수정] 미서기 창호 및 외부 환경 논리 추가
         const prompt = `
             당신은 '청개구리샤시'의 **건축 환경 진단 AI 전문 분석관(Expert Analyst)**입니다.
             제공된 데이터를 정밀 분석하되, **국토교통부 공동주택 결로 방지 설계기준**에 의거하여 논리적으로 판단하십시오.
@@ -827,19 +843,27 @@
             - 결로 판단 기준: **국토교통부 공동주택 결로 방지 설계기준** 인용.
             - **사용자 안내:** 일반인을 위해 "실내 적정 습도 40~50% 유지 권장"을 쉽게 풀어서 설명하되, 상세 분석에서는 전문 용어 사용.
 
-            [3. 핵심 논리: TDR (온도차이비율) 적용]
+            [3. 창호 특성 및 시공 상태 분석]
+            - 창호 종류: ${windowType}
+            - **핵심 논리 (미서기 창호):** 만약 창호가 '미서기(Sliding)' 방식이라면, 구조적으로 모헤어 틈새를 통한 기밀성 저하(단열 취약성)가 존재함을 명시할 것. 특히 수직/수평 불량이 의심될 경우, 이는 단순 제작 불량이 아니라 '시공 정밀도 부족에 의한 기밀 성능 저하'로 리포트하여 시공 하자를 강조할 것.
+
+            [4. 외부 환경 요인 분석]
+            - 외부 환경: ${tempOut}°C / ${humidOut}%
+            - **논리:** 실내외 온도차(Delta T)가 클수록 열관류율(U-value)에 따른 표면 온도 저하가 심화됨을 설명. 외부 습도가 높다면 환기 효율이 떨어질 수 있음도 언급.
+
+            [5. 핵심 논리: TDR (온도차이비율) 적용]
             - **매우 중요:** 현재 실내 습도가 높더라도(예: 50% 초과), **해당 결로 부위의 표면 온도가 국토부 TDR 기준(지역별 0.26~0.28 이하)을 만족하지 못할 정도로 낮다면**, 이는 습도 문제가 아니라 **'단열 결손' 또는 '열교(Thermal Bridge)'에 의한 하자**임을 강력히 시사할 것.
             - "습하게 살아서 생긴 것"이라는 주장에 대해, **"정상적인 단열 시공이 되었다면 이 정도 환경에서도 결로가 생기지 않아야 함"**을 논리적으로 반박하는 톤 유지.
 
-            [4. 이미지 정밀 분석]
+            [6. 이미지 정밀 분석]
             - **UV 형광:** 물길(Water Stain) 및 곰팡이 포자 식별 -> 누수/결로 이력 추적.
             - **열화상:** 주변부와 3도 이상 온도차가 나는 **'냉점(Cold Spot)'** 식별 -> 단열재 끊김, 채움 부족 의심.
 
-            [5. 종합 결론 (귀책 분석)]
+            [7. 종합 결론 (귀책 분석)]
             - 구조적 특성(${direction}, ${houseType})과 계측값(VAP, 함수율)을 교차 검증.
             - **방향/위치상 취약점**이 있는데다 **열화상 냉점**이 뚜렷하다면 -> **시공 하자(단열 부족)** 비율을 높게 책정.
             
-            [6. 필수 JSON]
+            [8. 필수 JSON]
             맨 마지막에:
             ___JSON_START___
             {"ventilation": (0~100), "insulation": (0~100), "normal": (0~20)}
