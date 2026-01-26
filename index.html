@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (Expert Pro v26.0)</title>
+    <title>청개구리 결로진단 AI (v26.2 Layout)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -11,14 +11,13 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <style>
-        /* --- [디자인 시스템: Expert Theme] --- */
+        /* --- [디자인 시스템] --- */
         :root {
             --primary-dark: #1a237e; --primary-main: #283593; --accent-color: #3949ab;
             --bg-color: #f5f5f5; --card-bg: #ffffff; 
             --text-primary: #212121; --text-secondary: #546e7a;
             --border-color: #cfd8dc; --expert-gold: #f57f17;
             
-            /* 진단 장비별 컬러 코드 */
             --moisture-blue: #0277bd; --sonic-purple: #7b1fa2; --uv-violet: #311b92;
             --thermal-orange: #d84315; --warning-red: #c62828;
             
@@ -28,39 +27,52 @@
 
         body {
             font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg-color); color: var(--text-primary);
-            margin: 0; padding: 10px 0; line-height: 1.6; display: flex; justify-content: center;
+            margin: 0; padding: 0;
+            line-height: 1.6; display: flex; justify-content: center;
             min-height: 100vh; padding-bottom: 80px;
         }
 
         .mobile-container {
             width: 100%; max-width: var(--container-max-width); background-color: var(--card-bg);
-            box-shadow: var(--shadow-card); border-radius: 0 0 15px 15px; margin: 0; position: relative;
-            min-height: 100vh;
+            box-shadow: var(--shadow-card); 
+            min-height: 100vh; margin: 0; position: relative;
         }
 
-        /* 헤더 디자인 */
+        /* [수정됨] 2단 구조 컴팩트 헤더 */
         .main-header {
             background: linear-gradient(145deg, var(--primary-dark), var(--primary-main)); color: white;
-            padding: 25px 20px 40px 20px; position: relative; border-radius: 0 0 25px 25px; box-shadow: 0 4px 10px rgba(40, 53, 147, 0.3);
+            padding: 12px 20px; /* 상하 패딩 최적화 */
+            display: flex; 
+            flex-direction: column; /* 세로 배치 */
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(40, 53, 147, 0.2);
+            position: sticky; top: 0; z-index: 100;
         }
         .main-header h1 {
-            margin: 0; font-size: 1.4rem; font-weight: 900; display: flex; align-items: center; justify-content: center;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: -0.5px;
+            margin: 0; font-size: 1.2rem; font-weight: 800; 
+            display: flex; align-items: center; gap: 8px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            align-self: flex-start; /* 타이틀 좌측 정렬 */
+            width: 100%;
         }
-        .main-header h1 i { margin-right: 10px; color: #81d4fa; font-size: 1.2em;}
+        .main-header h1 i { color: #81d4fa; font-size: 1.1em; }
+        
         .version-badge {
-            position: absolute; right: 20px; bottom: 15px; background: rgba(0,0,0,0.3); color: #fff;
-            padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px);
+            background: rgba(255,255,255,0.2); color: #fff;
+            padding: 2px 10px; border-radius: 10px; font-size: 0.65rem; font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.3); white-space: nowrap;
+            align-self: flex-end; /* 배지 우측 정렬 */
+            margin-top: 4px; /* 타이틀과의 간격 */
         }
+        .version-badge.dev-active { background: #6200ea; border-color: #b388ff; box-shadow: 0 0 10px #6200ea; }
 
-        .content { padding: 20px; }
-        .section { margin-bottom: 30px; background: #fff; border-radius: 12px; }
+        .content { padding: 20px; padding-top: 15px; }
+        .section { margin-bottom: 25px; background: #fff; border-radius: 12px; }
         
         .section-title {
             font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; margin-top: 5px;
-            display: flex; align-items: center; font-size: 1.1rem;
-            border-left: 4px solid var(--expert-gold); padding-left: 12px;
+            display: flex; align-items: center; font-size: 1.05rem;
+            border-left: 4px solid var(--expert-gold); padding-left: 10px;
         }
         .section-title i { margin-right: 8px; color: var(--text-secondary); opacity: 0.8; }
 
@@ -79,7 +91,6 @@
         .info-grid-row { display: grid; grid-template-columns: 0.8fr 0.8fr 1.4fr 1.5fr; gap: 8px; align-items: end; margin-bottom: 12px; }
         .info-dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; margin-bottom: 12px; }
 
-        /* 강조 입력창 (TDR, VAP) */
         .tdr-input { background-color: #fff3e0 !important; border: 1px solid #ffb74d !important; color: #e65100 !important; font-weight: 800; }
         .vap-input { background-color: #e1f5fe !important; border: 1px solid #4fc3f7 !important; color: #01579b !important; font-weight: 800; }
 
@@ -116,7 +127,6 @@
             line-height: 1.4;
         }
         
-        /* 리포트 내 사진 갤러리 */
         .report-gallery {
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
             padding-bottom: 20px; border-bottom: 1px dashed #ddd;
@@ -168,8 +178,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">Data-Driven Expert Diagnosis</div>
-        <span class="version-badge">Ver 26.0 Expert</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.2 Expert</span>
     </header>
 
     <div class="content">
@@ -351,6 +360,23 @@
         const dateStr = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
         document.getElementById('date').value = dateStr;
 
+        let clickCount = 0; let clickTimer;
+
+        // 개발자 모드
+        window.checkDevMode = function() {
+            clearTimeout(clickTimer); clickCount++;
+            if (clickCount === 5) {
+                const badge = document.getElementById('version-badge');
+                if(badge.classList.contains('dev-active')) {
+                    badge.classList.remove('dev-active'); alert("개발자 모드 해제");
+                } else {
+                    badge.classList.add('dev-active'); alert("🐸 개발자 모드 활성화!");
+                }
+                clickCount = 0;
+            }
+            clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+        };
+
         // [내장 DB] 패시브협회/건축물리 기반 핵심 데이터 (법적 문제 회피용 일반화된 용어 사용)
         const CONDENSATION_DB = [
             {
@@ -461,6 +487,7 @@
             const container = document.getElementById('photo-container');
             const newDiv = document.createElement('div');
             newDiv.className = 'upload-wrapper';
+            newDiv.style.marginTop = '15px'; // 간격 추가
             const uniqueId = Date.now();
             
             newDiv.innerHTML = `
