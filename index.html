@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.12 New Apt)</title>
+    <title>청개구리 결로진단 AI (v26.13 UI Patch)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -72,7 +72,7 @@
         }
         .section-title i { margin-right: 8px; color: var(--text-secondary); opacity: 0.8; }
 
-        /* 입력 폼 스타일 */
+        /* [수정 2 & 3] 입력 폼 스타일 개선 (중앙 정렬 + Placeholder) */
         .input-group { margin-bottom: 6px; }
         .input-label { display: block; font-weight: 700; margin-bottom: 3px; color: var(--text-secondary); font-size: 0.8rem; }
         
@@ -80,10 +80,23 @@
             width: 100%; padding: 8px; 
             border: 1px solid var(--border-color); border-radius: 6px;
             background-color: #fcfcfc; font-size: 0.9rem; box-sizing: border-box; 
-            color: var(--text-primary); font-weight: 600; transition: border 0.2s;
+            color: var(--text-primary); 
+            font-weight: 700; /* 입력된 값은 진하게 */
+            transition: border 0.2s;
+            text-align: center; /* [수정] 모든 입력값 중앙 정렬 */
         }
+
+        /* [수정 3] Placeholder(입력 전 안내문구) 스타일 */
+        ::placeholder {
+            color: #cfd8dc !important; /* 연한 회색 */
+            font-weight: 300 !important; /* 얇은 글씨 */
+            opacity: 1; 
+        }
+        /* select의 placeholder 느낌 (선택 전) */
+        select { color: var(--text-primary); }
+        
         input:focus, textarea:focus, select:focus { border-color: var(--primary-main); outline: none; background: #fff; }
-        textarea { resize: none; height: 70px; }
+        textarea { resize: none; height: 70px; text-align: left; /* 텍스트 영역은 왼쪽 정렬 유지 */ }
         
         /* 그리드 조정 */
         .info-grid-row { 
@@ -161,13 +174,13 @@
         }
         .report-img-item { 
             border-radius: 8px; overflow: hidden; border: 1px solid #eee; 
-            aspect-ratio: 4 / 3; /* 4:3 비율 고정 */
+            aspect-ratio: 4 / 3; 
             background: #000;    
             display: flex; flex-direction: column;
         }
         .report-img-item img { 
             width: 100%; height: 100%; 
-            object-fit: contain; /* 짤림 방지 */
+            object-fit: contain; 
             display: block; 
         }
         .report-img-caption { 
@@ -181,7 +194,8 @@
         .report-summary-table th { color: var(--text-secondary); width: 40%; }
         .report-summary-table td { font-weight: 700; color: var(--primary-dark); }
 
-        .chart-container { position: relative; height: 300px; width: 100%; margin-top: 20px; }
+        /* [수정 1] 차트 컨테이너 크기 확보 */
+        .chart-container { position: relative; height: 350px; width: 100%; margin-top: 20px; }
 
         .analyze-btn {
             width: 100%; padding: 16px; background: #cfd8dc; color: #fff; border: none; border-radius: 12px;
@@ -217,17 +231,17 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.12 New Apt</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.13 UI Patch</span>
     </header>
 
     <div class="content">
         <div class="section no-print">
             <div class="section-title"><i class="fas fa-home"></i> 진단 개요 (Overview)</div>
             <div class="info-grid-row">
-                <div class="input-group"><label class="input-label">동</label><input type="text" id="dong" placeholder="101" style="text-align:center;"></div>
-                <div class="input-group"><label class="input-label">호</label><input type="text" id="ho" placeholder="1204" style="text-align:center;"></div>
+                <div class="input-group"><label class="input-label">동</label><input type="text" id="dong" placeholder="101"></div>
+                <div class="input-group"><label class="input-label">호</label><input type="text" id="ho" placeholder="1204"></div>
                 <div class="input-group"><label class="input-label">장소</label><input type="text" id="location" placeholder="거실창"></div>
-                <div class="input-group"><label class="input-label">일자</label><input type="text" id="date" style="text-align:center; color:#1565c0; font-weight:bold;"></div>
+                <div class="input-group"><label class="input-label">일자</label><input type="text" id="date" style="color:#1565c0;"></div>
             </div>
             
             <div class="info-triple-row">
@@ -272,15 +286,15 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 8px;">
                     <div class="input-group">
                         <label class="input-label">실내온도(Ti)</label>
-                        <input type="number" id="temp-in" placeholder="Auto" oninput="calcDewPoint()" style="text-align:center; font-weight:bold;">
+                        <input type="number" id="temp-in" placeholder="Auto" oninput="calcDewPoint()">
                     </div>
                     <div class="input-group">
                         <label class="input-label">상대습도(RH)</label>
-                        <input type="number" id="humid-in" placeholder="Auto" oninput="calcDewPoint()" style="text-align:center; font-weight:bold;">
+                        <input type="number" id="humid-in" placeholder="Auto" oninput="calcDewPoint()">
                     </div>
                     <div class="input-group">
                         <label class="input-label" style="color:#c62828;">🔥 노점온도(Tdp)</label>
-                        <input type="text" id="dew-result" placeholder="자동계산" readonly style="background-color:#ffebee; color:#c62828; font-weight:900; text-align:center;">
+                        <input type="text" id="dew-result" placeholder="자동계산" readonly style="background-color:#ffebee; color:#c62828; font-weight:900;">
                     </div>
                 </div>
             </div>
@@ -288,30 +302,30 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div class="input-group">
                     <label class="input-label">📉 표면온도(Tsi)</label>
-                    <input type="number" id="temp-surf" class="tdr-input" placeholder="열화상 Auto" style="text-align:center;">
-                    <div style="font-size:0.7rem; color:#ef6c00; margin-top:3px;">* 열화상 사진 최저값 자동 입력</div>
+                    <input type="number" id="temp-surf" class="tdr-input" placeholder="열화상 Auto">
+                    <div style="font-size:0.7rem; color:#ef6c00; margin-top:3px; text-align:center;">* 열화상 사진 최저값 자동 입력</div>
                 </div>
                 <div class="input-group">
                     <label class="input-label">외기온도(To)</label>
-                    <input type="text" id="temp-out" placeholder="Loading.." style="text-align:center; background:#eee;">
+                    <input type="text" id="temp-out" placeholder="Loading.." style="background:#eee;">
                 </div>
             </div>
 
             <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #ccc;">
                 <label class="input-label"><i class="fas fa-wind"></i> 공기질 정밀 진단 (Auto)</label>
                 
-                <div style="font-size:0.8rem; color:#c62828; margin-bottom:5px; font-weight:bold;">
+                <div style="font-size:0.8rem; color:#c62828; margin-bottom:5px; font-weight:bold; text-align:center;">
                     ※ 겨울철 적정(신축): VAP 1.2kPa ↓ / MIX 7.3g/kg ↓
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
                         <label class="input-label" style="font-size:0.75rem;">VAP (수증기압)</label>
-                        <input type="number" id="vap-val" class="vap-input" placeholder="kPa" step="0.01" style="text-align:center;">
+                        <input type="number" id="vap-val" class="vap-input" placeholder="kPa" step="0.01">
                     </div>
                     <div>
                         <label class="input-label" style="font-size:0.75rem;">MIX (절대습도)</label>
-                        <input type="number" id="mix-val" class="vap-input" placeholder="g/kg" step="0.01" style="text-align:center;">
+                        <input type="number" id="mix-val" class="vap-input" placeholder="g/kg" step="0.01">
                     </div>
                 </div>
                 <div style="font-size:0.7rem; color:#0277bd; margin-top:5px; text-align:right;">* MR277 사진 등록 시 자동 입력됨</div>
@@ -566,7 +580,6 @@
 
                 let prompt = "";
                 if(type === 'mr277') {
-                    // [수정] VAP 및 MIX를 명시적으로 찾도록 프롬프트 최적화
                     prompt = `Analyze this FLIR MR277 instrument screen. Extract numerical values for:
                         1. Temperature (C)
                         2. Relative Humidity (%)
@@ -589,7 +602,6 @@
                     if(type === 'mr277') {
                         if(data.temp) document.getElementById('temp-in').value = data.temp;
                         if(data.humid) document.getElementById('humid-in').value = data.humid;
-                        // [수정] VAP/MIX 자동 입력 연결 확인
                         if(data.vap) document.getElementById('vap-val').value = data.vap;
                         if(data.mix) document.getElementById('mix-val').value = data.mix;
                         calcDewPoint(); 
@@ -697,7 +709,6 @@
             if(vapVal && mixVal) {
                 let winterGuide = "";
                 if(isWinter) {
-                    // [수정] 신축 기준(1.2kPa / 7.3g/kg) 로직 적용
                     winterGuide = "현재 진단 시점은 **겨울철**이며, **신축 아파트 기준 적정 공기질은 VAP 1.2kPa 이하, MIX 7.3g/kg 이하**입니다. 이 수치를 초과하면 환기 부족이 원인일 가능성이 높고, 이하라면 단열 미흡이 원인일 가능성이 큽니다.";
                 }
                 airQualityLogic = `[중요] 공기질 데이터(VAP: ${vapVal}kPa, MIX: ${mixVal}g/kg) 분석. ${winterGuide}`;
@@ -797,8 +808,8 @@
                 is3D: true,
                 slices: { 0: { color: '#FFA726' }, 1: { color: '#EF5350', offset: 0.1 }, 2: { color: '#66BB6A' } },
                 backgroundColor: 'transparent',
-                chartArea: { width: '95%', height: '80%' },
-                legend: { position: 'bottom' }
+                chartArea: { top: 20, width: '90%', height: '75%' },
+                legend: { position: 'bottom', alignment: 'center', textStyle: { color: '#555', fontSize: 11 } }
             };
             var c = new google.visualization.PieChart(document.getElementById('chart_div'));
             c.draw(d, options);
