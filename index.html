@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.9 Vision Pro)</title>
+    <title>청개구리 결로진단 AI (v26.10 Final)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -105,7 +105,7 @@
         .tdr-input { background-color: #fff3e0 !important; border: 1px solid #ffb74d !important; color: #e65100 !important; font-weight: 800; }
         .vap-input { background-color: #e1f5fe !important; border: 1px solid #4fc3f7 !important; color: #01579b !important; font-weight: 800; }
 
-        /* [NEW] 스캔 중 애니메이션 효과 */
+        /* 스캔 중 애니메이션 */
         @keyframes scan-glow {
             0% { box-shadow: 0 0 5px rgba(33, 150, 243, 0); border-color: #cfd8dc; }
             50% { box-shadow: 0 0 15px rgba(33, 150, 243, 0.5); border-color: #2196f3; background-color: #e3f2fd; }
@@ -155,13 +155,27 @@
             line-height: 1.4;
         }
         
+        /* [수정 1] 사진 비율 4:3 유지 및 짤림 방지 */
         .report-gallery {
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
             padding-bottom: 20px; border-bottom: 1px dashed #ddd;
         }
-        .report-img-item { border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
-        .report-img-item img { width: 100%; height: 120px; object-fit: cover; display: block; }
-        .report-img-caption { font-size: 0.7rem; padding: 4px; text-align: center; background: #f5f5f5; color: #555; font-weight: bold; }
+        .report-img-item { 
+            border-radius: 8px; overflow: hidden; border: 1px solid #eee; 
+            aspect-ratio: 4 / 3; /* 4:3 비율 고정 */
+            background: #000;    /* 빈 공간은 검정색 */
+            display: flex; flex-direction: column;
+        }
+        .report-img-item img { 
+            width: 100%; height: 100%; 
+            object-fit: contain; /* 이미지 전체가 보이도록 설정 (짤림 방지) */
+            display: block; 
+        }
+        .report-img-caption { 
+            font-size: 0.7rem; padding: 4px; text-align: center; 
+            background: #f5f5f5; color: #555; font-weight: bold; width: 100%;
+            margin-top: auto; /* 캡션을 아래로 */
+        }
 
         .report-summary-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem; }
         .report-summary-table th, .report-summary-table td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
@@ -204,7 +218,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.9 Vision</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.10 Final</span>
     </header>
 
     <div class="content">
@@ -343,29 +357,7 @@
                     <button class="add-photo-btn" onclick="addPhotoInput(this, 'MR277 사진')"><i class="fas fa-plus-circle"></i> 사진 추가</button>
                 </div>
 
-                <div class="upload-wrapper" style="border-color:var(--moisture-blue);">
-                    <label class="input-label" style="color:var(--moisture-blue);">5. FLIR MR12 볼 프로브 (비파괴)</label>
-                    <label for="img-mr12" class="upload-box" style="background:#e1f5fe;">
-                        <i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i>
-                        <span style="font-size:0.8rem; color:var(--moisture-blue);">함수율 측정 이미지</span>
-                        <img id="view-mr12" class="preview-img">
-                    </label>
-                    <input type="file" id="img-mr12" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    <button class="add-photo-btn" onclick="addPhotoInput(this, '볼 프로브 사진')"><i class="fas fa-plus-circle"></i> 사진 추가</button>
                 </div>
-
-                <div class="upload-wrapper" style="border-color:var(--sonic-purple);">
-                    <label class="input-label" style="color:var(--sonic-purple);">6. 초음파 음향 카메라 (Sonic)</label>
-                    <label for="img-sonic" class="upload-box" style="background:#f3e5f5;">
-                        <i class="fas fa-wave-square upload-icon" style="color:var(--sonic-purple);"></i>
-                        <span style="font-size:0.8rem; color:var(--sonic-purple);">음향 카메라 이미지</span>
-                        <img id="view-sonic" class="preview-img">
-                    </label>
-                    <input type="file" id="img-sonic" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    <button class="add-photo-btn" onclick="addPhotoInput(this, '초음파 사진')"><i class="fas fa-plus-circle"></i> 사진 추가</button>
-                </div>
-
-            </div>
         </div>
 
         <div class="legal-box no-print">
@@ -402,7 +394,7 @@
                 <i class="fas fa-spinner fa-spin fa-3x" style="color:var(--primary-main)"></i>
                 <p style="margin-top:20px; font-weight:bold; color:var(--text-secondary);">
                     건축 물리 데이터 대조 중...<br>
-                    (VAP/MIX 분석 및 결로 원인 판별)
+                    (겨울철 공기질 기준 적용 및 원인 판별)
                 </p>
             </div>
             
@@ -522,85 +514,55 @@
             }
         };
 
-        // [NEW] Gemini Vision을 이용한 계측기 값 자동 추출 함수
         window.autoFillFromImage = async function(input, type) {
             if(!input.files || !input.files[0]) return;
-
-            // 1. UI 스캔 효과 적용 (로딩 표시)
-            const targetIds = type === 'mr277' 
-                ? ['temp-in', 'humid-in', 'vap-val', 'mix-val'] 
-                : ['temp-surf'];
-            
+            const targetIds = type === 'mr277' ? ['temp-in', 'humid-in', 'vap-val', 'mix-val'] : ['temp-surf'];
             targetIds.forEach(id => {
                 document.getElementById(id).classList.add('scanning');
-                document.getElementById(id).value = ''; // 초기화
+                document.getElementById(id).value = ''; 
                 document.getElementById(id).placeholder = "Scanning...";
             });
 
             try {
-                // 2. 이미지 Base64 변환
                 const file = input.files[0];
                 const reader = new FileReader();
-                
                 const base64Promise = new Promise((resolve) => {
                     reader.onload = (e) => resolve(e.target.result.split(',')[1]);
                     reader.readAsDataURL(file);
                 });
                 const base64Data = await base64Promise;
-
-                // 3. Gemini 호출
                 const genAI = new GoogleGenerativeAI(API_KEY);
                 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
                 let prompt = "";
                 if(type === 'mr277') {
-                    prompt = `
-                        Analyze this FLIR MR277 instrument screen.
-                        Extract the following numerical values exactly as shown:
-                        1. Air Temperature (Temp or C)
-                        2. Relative Humidity (RH or %)
-                        3. VAP (Vapor Pressure, kPa)
-                        4. Mixing Ratio (Mix, g/kg or GPP)
-                        
-                        Return ONLY a JSON object: {"temp": number, "humid": number, "vap": number, "mix": number}.
-                        If a value is not visible, use null.
-                    `;
+                    prompt = `Analyze this FLIR MR277 instrument screen. Extract values. Return ONLY a JSON object: {"temp": number, "humid": number, "vap": number, "mix": number}.`;
                 } else if(type === 'thermal') {
-                    prompt = `
-                        Analyze this thermal camera image.
-                        Find the 'Minimum' temperature reading (usually labeled as 'Lo', 'Min', or indicated by a crosshair with the lowest value).
-                        Return ONLY a JSON object: {"min_temp": number}.
-                    `;
+                    prompt = `Analyze this thermal camera image. Find 'Minimum' (Lo/Min) temperature. Return ONLY a JSON object: {"min_temp": number}.`;
                 }
 
                 const result = await model.generateContent({ 
                     contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: file.type, data: base64Data } }] }] 
                 });
-                
                 const response = await result.response;
                 const text = response.text();
-                
-                // 4. JSON 파싱 및 값 입력
                 const jsonMatch = text.match(/\{[\s\S]*\}/);
+                
                 if(jsonMatch) {
                     const data = JSON.parse(jsonMatch[0]);
-                    
                     if(type === 'mr277') {
                         if(data.temp) document.getElementById('temp-in').value = data.temp;
                         if(data.humid) document.getElementById('humid-in').value = data.humid;
                         if(data.vap) document.getElementById('vap-val').value = data.vap;
                         if(data.mix) document.getElementById('mix-val').value = data.mix;
-                        calcDewPoint(); // 이슬점 재계산
+                        calcDewPoint(); 
                     } else if(type === 'thermal') {
                         if(data.min_temp) document.getElementById('temp-surf').value = data.min_temp;
                     }
                 }
-
             } catch(e) {
-                console.error("Auto-fill failed:", e);
                 targetIds.forEach(id => document.getElementById(id).placeholder = "직접입력");
             } finally {
-                // 5. 스캔 효과 해제
                 targetIds.forEach(id => document.getElementById(id).classList.remove('scanning'));
             }
         };
@@ -612,20 +574,8 @@
             newDiv.className = 'upload-wrapper';
             newDiv.style.marginTop = '15px'; 
             const uniqueId = Date.now();
-            
-            newDiv.innerHTML = `
-                <label class="input-label" style="color:#546e7a;">${labelText} (추가)</label>
-                <label for="img-${uniqueId}" class="upload-box">
-                    <i class="fas fa-plus upload-icon" style="color:#b0bec5;"></i>
-                    <img id="view-${uniqueId}" class="preview-img">
-                </label>
-                <input type="file" id="img-${uniqueId}" class="file-input" accept="image/*" onchange="handleImage(this)">
-                <button class="add-photo-btn" onclick="addPhotoInput(this, '${labelText}')">
-                    <i class="fas fa-plus-circle"></i> 사진 추가
-                </button>
-            `;
-            if (wrapper.nextSibling) container.insertBefore(newDiv, wrapper.nextSibling);
-            else container.appendChild(newDiv);
+            newDiv.innerHTML = `<label class="input-label" style="color:#546e7a;">${labelText} (추가)</label><label for="img-${uniqueId}" class="upload-box"><i class="fas fa-plus upload-icon" style="color:#b0bec5;"></i><img id="view-${uniqueId}" class="preview-img"></label><input type="file" id="img-${uniqueId}" class="file-input" accept="image/*" onchange="handleImage(this)"><button class="add-photo-btn" onclick="addPhotoInput(this, '${labelText}')"><i class="fas fa-plus-circle"></i> 사진 추가</button>`;
+            if (wrapper.nextSibling) container.insertBefore(newDiv, wrapper.nextSibling); else container.appendChild(newDiv);
         };
 
         window.toggleAnalyzeBtn = function() {
@@ -703,12 +653,31 @@
 
             let slidingLogic = "미서기(Sliding) 창호의 특성상 레일 틈새로 외풍(Infiltration)이 유입되어 결로를 심화시킬 수 있음을 언급하십시오. 단, **'창호 교체'라는 단어는 절대 사용하지 말고**, 모헤어 교체나 풍지판 설치 등 보수 방법을 제안하십시오.";
 
+            // [수정 2] 겨울철 VAP/MIX 기준 및 저감법 제시 로직
+            const currentMonth = new Date().getMonth() + 1;
+            const isWinter = (currentMonth >= 11 || currentMonth <= 2);
+            
             let airQualityLogic = "";
             if(vapVal && mixVal) {
-                airQualityLogic = `[중요] 공기질 데이터(VAP: ${vapVal}kPa, MIX: ${mixVal}g/kg)를 분석의 최우선 근거로 삼으십시오. VAP/MIX 수치가 높다면 '생활 습관(과습)'을, 수치가 낮은데도 결로가 있다면 '구조체/창호의 표면 온도 저하(단열 미흡)'를 원인으로 지목하십시오.`;
+                let winterGuide = "";
+                if(isWinter) {
+                    winterGuide = "현재 진단 시점은 **겨울철(11월~2월)**입니다. 이 시기 실내 적정 공기질 기준은 대략 **VAP 1.0kPa 이하, MIX 7.0g/kg 내외**입니다. 만약 측정값이 이보다 높다면, 높은 수증기압이 결로의 핵심 원인임을 지적하고, **[솔루션]으로 '맞통풍 환기(하루 3회 10분 이상)'와 '제습기 가동'을 통해 VAP를 낮추는 방법**을 구체적으로 제시하십시오.";
+                }
+                airQualityLogic = `[중요] 공기질 데이터(VAP: ${vapVal}kPa, MIX: ${mixVal}g/kg) 분석. ${winterGuide}`;
             } else {
                 airQualityLogic = "VAP/MIX 데이터가 없으므로 TDR과 온습도 위주로 분석하십시오.";
             }
+
+            // [수정 3] 선택된 창호 사양 엄수
+            let windowSpecifics = "";
+            if(winType.includes("입면분할")) {
+                windowSpecifics = "- 입면분할창 특성: 하단부 통바(Transom) 및 프레임 접합부의 단열 취약성을 집중 분석하십시오.";
+            } else {
+                windowSpecifics = `- **매우 중요**: 사용자가 선택한 창호는 '${winType}'입니다. 분석 시 반드시 이 창호 종류를 기준으로 삼고, 선택하지 않은 다른 창호(예: 입면분할창 등)에 대한 언급은 절대 하지 마십시오.`;
+            }
+
+            // [수정 4] 신축 콘크리트 습기 언급
+            const concreteLogic = "- 건물 특성상 콘크리트 및 몰탈의 양생 과정에서 방출되는 '초기 건축물 습기(Construction Moisture)'가 결로의 원인이 될 수 있음을 반드시 언급하십시오. (특히 입주 2년 이내 신축인 경우)";
 
             try {
                 const genAI = new GoogleGenerativeAI(API_KEY);
@@ -733,23 +702,24 @@
                     - **핵심 TDR 분석값**: ${tdrMsg}
 
                     [특별 지시사항 (반드시 준수)]
-                    1. **간봉 분석**: ${spacerLogic}
-                    2. **창호 기밀성**: ${slidingLogic}
-                    3. **공기질 분석(핵심)**: ${airQualityLogic}
-                    4. **입면분할창**: 하단부 통바(Transom) 부위의 단열 취약성을 고려하여 분석하십시오.
-                    5. **논리적 판정**: 
+                    1. **창호 종류 엄수**: ${windowSpecifics}
+                    2. **간봉 분석**: ${spacerLogic}
+                    3. **창호 기밀성**: ${slidingLogic}
+                    4. **공기질 분석(겨울철 기준 포함)**: ${airQualityLogic}
+                    5. **콘크리트 특성**: ${concreteLogic}
+                    6. **논리적 판정**: 
                        - 표면온도가 노점온도보다 낮은지 확인하십시오. (T_surf < T_dp 이면 결로 발생)
                        - TDR 0.28 기준을 적용하되, VAP/MIX 값을 종합하여 최종 귀책(사용자 vs 시공사)을 추정하십시오.
-                    6. **금지어**: '기술사', '협회', '창호 교체 권유' (교체 대신 보수/개선 제안)
+                    7. **금지어**: '기술사', '협회', '창호 교체 권유' (교체 대신 보수/개선 제안)
 
                     [출력 포맷]
                     Markdown 형식.
                     ## 1. 정밀 데이터 분석
                     (TDR, VAP/MIX, 노점, 표면온도 상호 관계 설명)
                     ## 2. 진단 결과 및 발생 메커니즘
-                    (데이터에 근거한 원인 규명, 간봉/미서기 특성 반영)
+                    (데이터에 근거한 원인 규명, 간봉/미서기/콘크리트 특성 반영)
                     ## 3. 전문가 처방 (Solution)
-                    (단계별 해결책 - 교체 권유 제외)
+                    (단계별 해결책 - 교체 권유 제외, 공기질 개선법 포함)
 
                     마지막에 아래 JSON 포함 (차트용):
                     ___JSON_START___
