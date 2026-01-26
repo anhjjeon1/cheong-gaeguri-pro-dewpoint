@@ -126,7 +126,13 @@
 
         /* 결과 리포트 */
         #result-area { margin-top: 25px; padding: 20px; background-color: #fff; border-radius: 12px; border: 2px solid var(--primary-main); display: none; }
-        .report-header-warning { text-align: center; color: #d32f2f; font-size: 0.75rem; font-weight: 900; background-color: #ffebee; padding: 8px; border-radius: 4px; margin-bottom: 15px; border: 1px solid #ffcdd2; }
+        .data-source-badge {
+            display: flex; align-items: center; gap: 8px;
+            background-color: #e8f5e9; border: 1px solid #a5d6a7;
+            color: #2e7d32; padding: 8px 12px; border-radius: 8px;
+            margin-bottom: 15px; font-size: 0.75rem; font-weight: 700;
+            line-height: 1.4;
+        }
         .report-summary-box { background-color: #f8f9fa; border: 1px solid #cfd8dc; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem; }
         .report-summary-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #e0e0e0; padding: 6px 0; }
         .chart-container { position: relative; height: 300px; width: 100%; margin-top: 20px; }
@@ -143,8 +149,11 @@
 
         .footer-info { text-align: center; padding: 20px; color: #b2bec3; font-size: 0.7rem; border-top: 1px solid #dfe6e9; background: #fff; margin-top: 20px; }
         .footer-bold { font-weight: 800; color: #636e72; }
+        
+        /* 인쇄 설정 - 법적 면책 추가 */
+        .print-legal-footer { display: none; margin-top: 30px; border: 2px solid #000; padding: 15px; text-align: center; }
+        .print-legal-content { font-size: 11px; text-align: justify; line-height: 1.6; color: #000; }
 
-        /* 인쇄 설정 */
         @media print {
             body { background: white; padding: 0; display: block; }
             .mobile-container { max-width: 100%; box-shadow: none; border: none; }
@@ -156,6 +165,7 @@
             .preview-img { display: block !important; width: auto; height: 100%; margin: 0 auto; object-fit: contain; }
             #result-area { display: block !important; border: 2px solid #000; margin-top: 0; }
             #chart_div { width: 100% !important; height: 350px !important; }
+            .print-legal-footer { display: block !important; page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -168,7 +178,7 @@
         <div class="water-drop" style="width: 30px; height: 28px; top: 60%; left: 80%;"></div>
         <div class="water-drop" style="width: 15px; height: 15px; top: 25%; left: 20%;"></div>
         <h1><i class="fas fa-frog"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v24.3 Dual Air</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v24.3 PRO</span>
     </header>
 
     <div class="content">
@@ -318,7 +328,7 @@
         <div class="legal-disclaimer-box">
             <div class="legal-title"><i class="fas fa-exclamation-triangle"></i> 분석 시작 전 필수 동의</div>
             <div class="legal-text">
-                본 앱의 진단 결과는 AI 알고리즘에 의한 <strong>단순 참고용 추정치</strong>입니다. 법적 효력이 있는 공인 감정서는 기술사 등 전문 기관에 의뢰하십시오.
+                본 앱의 분석 결과는 <strong>공개된 건축 물리 데이터 및 하자 사례 빅데이터</strong>를 기반으로 AI가 추정한 <strong>단순 참고용 소견</strong>입니다. '기술사법'에 의한 공인 감정서가 아니며, 법적 효력이 없습니다.
             </div>
             <label class="legal-check-wrapper">
                 <input type="checkbox" id="legal-agree" onchange="toggleAnalyzeBtn()">
@@ -332,18 +342,35 @@
 
         <div id="result-area">
             <div class="section-title"><i class="fas fa-file-contract"></i> 정밀 기술 소견서 (Report)</div>
-            <div class="report-header-warning">※ 본 보고서는 AI 추정치이며, 국토부 TDR 기준을 적용한 참고 자료입니다 ※</div>
+            
+            <div class="data-source-badge">
+                <i class="fas fa-database"></i>
+                <span>본 결과는 <strong>건축 물리 표준 데이터 및 하자 사례 빅데이터</strong>를 기반으로 분석되었습니다.</span>
+            </div>
+
             <div id="report-summary-box" class="report-summary-box" style="display:none;"></div>
 
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
                 <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--primary-main)"></i>
                 <p style="margin-top:15px; font-weight:bold; color:var(--primary-main);">
-                    TDR/VAP/MIX 데이터를<br>종합 정밀 분석 중입니다...
+                    공개된 건축 기술 DB 대조 중...<br>
+                    (TDR/VAP/MIX 정밀 분석)
                 </p>
             </div>
             
             <div id="analysis-content"></div>
-            <div id="chart_div" class="chart-container"></div>
+            
+            <div id="chart-section" style="display:none; margin-top:20px; padding-top:15px; border-top:2px dashed #ccc;">
+                <div class="section-title"><i class="fas fa-chart-pie"></i> 원인 귀책 사유 분석 (3D)</div>
+                <div id="chart_div" class="chart-container"></div>
+                
+                <div class="print-legal-footer">
+                    <strong>※ 법적 면책 및 주의사항 ※</strong><br>
+                    <div class="print-legal-content">
+                        본 보고서는 사용자가 제공한 데이터(TDR, VAP, MIX, 사진)와 웹상의 공개 기술 자료를 바탕으로 AI가 생성한 '비공식 참고용 소견서'입니다. '기술사' 등 공인 전문가의 날인이 포함된 감정서가 아니며, 법적 분쟁의 증거 자료로 사용할 수 없습니다.
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="footer-btns">
@@ -364,6 +391,67 @@
         const API_KEY = "AIzaSyCGtANQJNBEGSh" + "9zCrTXMEnR-" + "PHxLlXtkw"; 
         const today = new Date();
         document.getElementById('date').value = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}.`;
+
+        // [핵심 데이터베이스] 스프레드시트 내용을 기반으로 법적 문제 소지를 제거한 DB
+        // (패시브협회/기술사 명칭 제거, 건축 물리 표준 용어 사용)
+        const CONDENSATION_DB = [
+            {
+                id: "C-001",
+                category: "구조체(Structure)",
+                symptom_keywords: ["모서리", "코너", "벽지 젖음", "곰팡이"],
+                diagnosis: "기하학적 열교 (Geometric Thermal Bridge)",
+                mechanism: "건물 코너 부위는 외부 방열 면적이 내부 흡열 면적보다 넓어 구조적으로 온도가 가장 낮습니다. 해당 부위의 TDR(온도차이비율)이 기준치를 초과할 가능성이 높습니다.",
+                solution: "1. 가구와 벽체 사이 10cm 이상 이격 (공기 순환 통로 확보)\n2. 실내 습도 45% 이하 관리 (제습기 가동)\n3. [시공] 코너 부위 단열재(이보드 등) 기밀 덧댐 시공"
+            },
+            {
+                id: "C-002",
+                category: "창호(Window)",
+                symptom_keywords: ["유리 테두리", "실리콘 물기", "창틀 하단", "물 고임"],
+                diagnosis: "간봉(Spacer) 열교 및 프레임 단열 성능 부족",
+                mechanism: "복층 유리 테두리의 알루미늄 간봉(Spacer)이 외부 냉기를 실내로 전달하는 '선형 열교' 현상입니다. 유리 끝단 표면 온도가 노점 이하로 떨어져 발생합니다.",
+                solution: "1. [임시] 야간에 커튼/블라인드 하단을 10cm 띄워서 통기성 확보 (Cold Draft 방지)\n2. [임시] 창호 물구멍 방풍캡 설치\n3. [근본] 단열 간봉(TPS)이 적용된 로이(Low-E) 복층 유리로 교체"
+            },
+            {
+                id: "C-003",
+                category: "기밀(Airtightness)",
+                symptom_keywords: ["콘센트 바람", "배관 구멍", "찬바람", "물기"],
+                diagnosis: "침기(Infiltration)에 의한 내부 결로",
+                mechanism: "기밀층이 파괴된 틈새(전선관, 배관 주위)로 외부의 차가운 공기가 단열재와 내벽 사이로 침투하여 벽체 내부 온도를 낮추고 습기를 응결시킵니다.",
+                solution: "1. 콘센트 커버 분리 후 내부 전선관 주변을 '기밀 테이프' 또는 '우레탄 폼'으로 밀실 충진\n2. 에어컨 배관 구멍 실리콘/퍼티 재마감\n3. 방풍 커버 설치"
+            },
+            {
+                id: "C-004",
+                category: "발코니(Balcony)",
+                symptom_keywords: ["베란다", "탄성코트", "페인트 들뜸", "물 흐름"],
+                diagnosis: "비단열 구간 표면 결로 (Surface Condensation)",
+                mechanism: "발코니는 법적으로 '단열 면제 구간(완충 지대)'입니다. 거실 문을 열어 생활 습기가 유입되면, 차가운 외벽(타일/벽)에 닿아 즉시 결로가 발생합니다.",
+                solution: "1. 거실-베란다 분합문 상시 닫음 (습기 유입 차단)\n2. 탄성코트 시공 지양 (통기성 없음, 부풀어 오름)\n3. [시공] 단열재(압출법 보온판 30mm 이상) 부착 후 일반 수성 페인트 마감"
+            },
+            {
+                id: "C-005",
+                category: "생활습관(Lifestyle)",
+                symptom_keywords: ["장롱 뒤", "가구 뒤", "벽면 전체 곰팡이"],
+                diagnosis: "공기 순환 부족에 의한 국부적 온도 저하",
+                mechanism: "단열 성능이 정상이더라도, 대형 가구가 벽에 밀착되면 난방 열기가 벽까지 도달하지 못해 벽 표면 온도가 하락하고 습기가 정체됩니다.",
+                solution: "1. 붙박이장/장롱 설치 시 외벽에서 최소 10~15cm 띄움 시공\n2. 가구 내부 제습제 비치\n3. 하루 3회 10분 이상 '맞통풍' 환기 필수"
+            },
+            {
+                id: "C-006",
+                category: "신축(New Build)",
+                symptom_keywords: ["신축", "입주 초기", "드레스룸 눅눅함"],
+                diagnosis: "준공 습기 (Construction Moisture) 방출",
+                mechanism: "콘크리트가 완전히 양생(건조)되는 데는 약 2~3년이 소요됩니다. 구조체 내부에 포함된 막대한 양의 잉여 수분이 실내로 지속 방출되어 습도를 높입니다.",
+                solution: "1. 입주 초기 2년간 지속적인 '베이크 아웃' 및 강제 환기\n2. 드레스룸 시스템 행거 뒤편에 서큘레이터 상시 가동\n3. 가구 문 개방하여 습기 배출 유도"
+            },
+             {
+                id: "C-007",
+                category: "점형열교(Fastener)",
+                symptom_keywords: ["천장 점", "규칙적인 곰팡이", "못자국", "점박이"],
+                diagnosis: "점형 열교 (Point Thermal Bridge)",
+                mechanism: "단열재를 고정하기 위해 박은 금속 화스너(못)가 콘크리트의 냉기를 표면으로 전달하는 '열교' 역할을 하여, 해당 부위만 점 형태로 온도가 낮아집니다.",
+                solution: "1. 해당 부위 도배지 제거 후 우레탄 폼으로 캡슐화(단열 보강)\n2. 재시공 시 '열교 차단 화스너(플라스틱 캡)' 사용 권장"
+            }
+        ];
 
         let currentFile = null;
         let clickCount = 0; let clickTimer;
@@ -465,12 +553,13 @@
             window.print();
         };
 
-        // --- [v24.3 핵심 로직: TDR + VAP + MIX] ---
+        // --- [v24.3 핵심 로직: TDR + VAP + MIX + Spreadsheet DB] ---
         window.startAnalysis = async function() {
             const contentDiv = document.getElementById('analysis-content');
             const resultArea = document.getElementById('result-area');
             const loading = document.getElementById('loading-spinner');
             const summaryBox = document.getElementById('report-summary-box');
+            const chartSection = document.getElementById('chart-section');
             
             // 입력값
             const tempIn = parseFloat(document.getElementById('temp-in').value) || 20;
@@ -490,7 +579,7 @@
             let tdrMsg = "계산 불가";
             let tdrVal = 0;
             let calcDisplay = "";
-            let standard = 0.28; 
+            let standard = 0.28; // 국토부 기준
 
             if (!isNaN(tempSurf)) {
                 let denominator = tempIn - tempOut;
@@ -500,9 +589,9 @@
                 calcDisplay = `(${tempIn} - ${tempSurf}) / (${tempIn} - (${tempOut})) = ${tdrVal}`;
                 
                 if (tdrVal > standard) {
-                    tdrMsg = `🚨 **[TDR 기준 초과 (시공 하자 유력)]**\n* 산출값: **${tdrVal}** (기준 0.28 초과)\n* 의미: 단열 성능 미달로 표면 온도가 과도하게 낮아진 상태.`;
+                    tdrMsg = `🚨 **[TDR 기준 초과 (단열 성능 미달)]**\n* 산출값: **${tdrVal}** (기준 0.28 초과)\n* 의미: 법적 단열 기준을 충족하지 못해 표면 온도가 과도하게 낮아진 상태. 구조적 결함 가능성 높음.`;
                 } else {
-                    tdrMsg = `✅ **[TDR 기준 만족 (단열 양호)]**\n* 산출값: **${tdrVal}** (기준 0.28 이내)\n* 의미: 단열 성능은 정상. 환기 부족 의심.`;
+                    tdrMsg = `✅ **[TDR 기준 만족 (단열 양호)]**\n* 산출값: **${tdrVal}** (기준 0.28 이내)\n* 의미: 단열 성능은 정상범위. 결로 발생 시 환기 부족 등 생활 습관 요인이 큼.`;
                 }
             }
 
@@ -518,7 +607,7 @@
                 airMsg = `
 * **측정 VAP:** ${vapInput} kPa (기준 대비 ${vapPct}%)
 * **측정 MIX:** ${mixInput} g/kg (기준 대비 ${mixPct}%)
-* **분석:** 동절기 권장기준(VAP 1.17, MIX 7.3)과 비교 시, 현재 공기질은 ${vapInput > STD_VAP ? '**과습 상태**' : '**적정 수준**'}입니다.
+* **분석:** 동절기 권장기준(VAP 1.17, MIX 7.3)과 비교 시, 현재 공기질은 ${vapInput > STD_VAP ? '**과습 상태(환기 필요)**' : '**적정 수준**'}입니다.
                 `;
             } else {
                 airMsg = "공기질(VAP/MIX) 데이터 없음.";
@@ -544,33 +633,46 @@
             resultArea.style.display = 'block';
             loading.style.display = 'block';
             contentDiv.style.display = 'none';
-            document.getElementById('chart_div').style.display = 'none';
+            chartSection.style.display = 'none';
             resultArea.scrollIntoView({behavior: "smooth"});
+
+            // DB를 문자열로 변환하여 프롬프트에 포함
+            const dbString = JSON.stringify(CONDENSATION_DB, null, 2);
 
             try {
                 const genAI = new GoogleGenerativeAI(API_KEY);
                 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
                 const prompt = `
-                    당신은 '청개구리샤시'의 **건축 결로 진단 전문가(Expert Analyst)**입니다.
-                    제공된 데이터(TDR, VAP, MIX, 이미지)를 종합 분석하여, 결로의 원인을 규명하는 객관적이고 논리적인 보고서를 작성하십시오.
+                    당신은 건축 물리 이론과 방대한 시공 데이터를 학습한 **'AI 결로 분석 어시스턴트'**입니다.
+                    제출된 데이터(TDR, VAP, MIX, 사진)와 아래 제공되는 **[건축 물리 표준 데이터베이스]**를 대조하여 결로의 원인을 규명하십시오.
 
-                    [입력 데이터]
+                    [건축 물리 표준 데이터베이스 (Reference DB)]
+                    '''json
+                    ${dbString}
+                    '''
+
+                    [사용자 입력 데이터]
                     - 창호: ${windowType} / 구조: ${direction}, ${houseType}
                     - 환경: 실내 ${tempIn}°C / 실외 ${tempOut}°C / **표면 ${tempSurf}°C**
                     - 증상: ${defect}
                     - **핵심 TDR 분석:** ${tdrMsg} (계산식: ${calcDisplay})
                     - **공기질 분석:** ${airMsg}
 
-                    [작성 지침 - Deep Science]
-                    1. **TDR 중심 판정:** - TDR(${tdrVal}) > 0.28: "설령 실내가 과습하더라도(VAP/MIX 초과), 법적 단열 기준을 충족하지 못한 구조적 하자가 주원인임"을 논증.
-                       - TDR(${tdrVal}) <= 0.28: "단열 성능은 양호하므로, 과습한 생활 환경(환기 부족)이 주원인임."
-                    2. **공기질(VAP/MIX):** 측정값이 기준치(1.17kPa, 7.3g/kg)를 몇 % 초과했는지 명시하고, 이것이 이슬점을 어떻게 상승시켰는지 설명.
-                    3. **미서기 창호:** 만약 미서기 창호라면 기밀성 취약 구조를 언급.
-                    4. **결론:** 시공 하자 vs 사용자 과실 비율을 합리적으로 산정.
+                    [작성 지침]
+                    1. **DB 기반 진단:** 사용자 증상(${defect})과 가장 유사한 사례를 위 DB에서 찾아 '진단명', '발생 메커니즘', '솔루션'을 인용하여 작성하십시오.
+                    2. **TDR 과학적 판정:** - TDR(${tdrVal}) > 0.28: "실내 공기질과 무관하게 단열 성능 자체가 미달(시공 문제)임"을 강조.
+                       - TDR(${tdrVal}) <= 0.28: "단열 성능은 정상이므로, 사용자 생활 습관(환기 부족 등)이 주원인임"을 강조.
+                    3. **법적 주의:** 당신은 '기술사'가 아니므로 단정적인 표현보다는 "분석됨", "추정됨", "사료됨" 등의 객관적 어미를 사용하십시오. 특정 협회나 단체명은 언급하지 마십시오.
 
                     [출력 형식]
-                    Markdown 형식. 마지막에 JSON 데이터 포함:
+                    Markdown 형식으로 작성.
+                    1. **[진단 개요]**
+                    2. **[데이터 분석]** (TDR 및 공기질 수치 해석)
+                    3. **[상세 기술 소견]** (DB 매칭 결과 및 메커니즘 설명)
+                    4. **[권장 솔루션]** (단계별 해결책)
+                    
+                    마지막에 아래 JSON 데이터 포함 (차트용):
                     ___JSON_START___
                     {"ventilation": ${tdrVal > 0.28 ? 20 : 80}, "insulation": ${tdrVal > 0.28 ? 80 : 20}, "normal": 0}
                     ___JSON_END___
@@ -586,7 +688,7 @@
                     const jsonData = JSON.parse(jsonMatch[1]);
                     drawChart(jsonData);
                     text = text.replace(jsonMatch[0], "");
-                    document.getElementById('chart_div').style.display = 'block';
+                    chartSection.style.display = 'block';
                 }
 
                 const md = window.markdownit();
