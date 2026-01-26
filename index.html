@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.8 Expert)</title>
+    <title>청개구리 결로진단 AI (v26.9 Vision Pro)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -91,7 +91,6 @@
             grid-template-columns: 0.7fr 1fr 1.2fr 1.5fr; 
             gap: 5px; align-items: end; margin-bottom: 8px; 
         }
-        /* 3개 항목 한 줄 배치용 그리드 */
         .info-triple-row { 
             display: grid; 
             grid-template-columns: 1fr 1fr 0.8fr; 
@@ -105,6 +104,14 @@
 
         .tdr-input { background-color: #fff3e0 !important; border: 1px solid #ffb74d !important; color: #e65100 !important; font-weight: 800; }
         .vap-input { background-color: #e1f5fe !important; border: 1px solid #4fc3f7 !important; color: #01579b !important; font-weight: 800; }
+
+        /* [NEW] 스캔 중 애니메이션 효과 */
+        @keyframes scan-glow {
+            0% { box-shadow: 0 0 5px rgba(33, 150, 243, 0); border-color: #cfd8dc; }
+            50% { box-shadow: 0 0 15px rgba(33, 150, 243, 0.5); border-color: #2196f3; background-color: #e3f2fd; }
+            100% { box-shadow: 0 0 5px rgba(33, 150, 243, 0); border-color: #cfd8dc; }
+        }
+        .scanning { animation: scan-glow 1.5s infinite; transition: all 0.3s; }
 
         /* 사진 업로드 UI */
         .photo-stack { display: flex; flex-direction: column; gap: 15px; }
@@ -137,10 +144,7 @@
             transition: all 0.1s;
             margin-top: 5px;
         }
-        .add-photo-btn:active {
-            transform: translateY(3px); 
-            box-shadow: 0 0 0 #0d47a1;
-        }
+        .add-photo-btn:active { transform: translateY(3px); box-shadow: 0 0 0 #0d47a1; }
         .add-photo-btn i { font-size: 0.9rem; }
 
         /* 결과 리포트 스타일 */
@@ -200,7 +204,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.8 Expert</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.9 Vision</span>
     </header>
 
     <div class="content">
@@ -255,11 +259,11 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 8px;">
                     <div class="input-group">
                         <label class="input-label">실내온도(Ti)</label>
-                        <input type="number" id="temp-in" placeholder="°C" oninput="calcDewPoint()" style="text-align:center; font-weight:bold;">
+                        <input type="number" id="temp-in" placeholder="Auto" oninput="calcDewPoint()" style="text-align:center; font-weight:bold;">
                     </div>
                     <div class="input-group">
                         <label class="input-label">상대습도(RH)</label>
-                        <input type="number" id="humid-in" placeholder="%" oninput="calcDewPoint()" style="text-align:center; font-weight:bold;">
+                        <input type="number" id="humid-in" placeholder="Auto" oninput="calcDewPoint()" style="text-align:center; font-weight:bold;">
                     </div>
                     <div class="input-group">
                         <label class="input-label" style="color:#c62828;">🔥 노점온도(Tdp)</label>
@@ -271,8 +275,8 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div class="input-group">
                     <label class="input-label">📉 표면온도(Tsi)</label>
-                    <input type="number" id="temp-surf" class="tdr-input" placeholder="열화상 최저값" style="text-align:center;">
-                    <div style="font-size:0.7rem; color:#ef6c00; margin-top:3px;">* 결로 부위 최저 온도</div>
+                    <input type="number" id="temp-surf" class="tdr-input" placeholder="열화상 Auto" style="text-align:center;">
+                    <div style="font-size:0.7rem; color:#ef6c00; margin-top:3px;">* 열화상 사진 최저값 자동 입력</div>
                 </div>
                 <div class="input-group">
                     <label class="input-label">외기온도(To)</label>
@@ -281,11 +285,12 @@
             </div>
 
             <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #ccc;">
-                <label class="input-label"><i class="fas fa-wind"></i> 공기질 정밀 진단 (선택)</label>
+                <label class="input-label"><i class="fas fa-wind"></i> 공기질 정밀 진단 (Auto)</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <input type="number" id="vap-val" class="vap-input" placeholder="VAP (수증기압 kPa)" step="0.01" style="text-align:center;">
-                    <input type="number" id="mix-val" class="vap-input" placeholder="MIX (절대습도 g/kg)" step="0.01" style="text-align:center;">
+                    <input type="number" id="vap-val" class="vap-input" placeholder="VAP (kPa)" step="0.01" style="text-align:center;">
+                    <input type="number" id="mix-val" class="vap-input" placeholder="MIX (g/kg)" step="0.01" style="text-align:center;">
                 </div>
+                <div style="font-size:0.7rem; color:#0277bd; margin-top:5px; text-align:right;">* MR277 사진 등록 시 자동 입력됨</div>
             </div>
         </div>
 
@@ -314,7 +319,6 @@
                         <img id="view-uv" class="preview-img">
                     </label>
                     <input type="file" id="img-uv" class="file-input" accept="image/*" onchange="handleImage(this)">
-                    <button class="add-photo-btn" onclick="addPhotoInput(this, 'UV 사진')"><i class="fas fa-plus-circle"></i> 사진 추가</button>
                 </div>
 
                 <div class="upload-wrapper" style="border-color:var(--thermal-orange);">
@@ -324,7 +328,7 @@
                         <span style="font-size:0.8rem; color:var(--thermal-orange);">열화상 이미지</span>
                         <img id="view-thermal" class="preview-img">
                     </label>
-                    <input type="file" id="img-thermal" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    <input type="file" id="img-thermal" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'thermal')">
                     <button class="add-photo-btn" onclick="addPhotoInput(this, '열화상 사진')"><i class="fas fa-plus-circle"></i> 사진 추가</button>
                 </div>
 
@@ -335,7 +339,7 @@
                         <span style="font-size:0.8rem; color:var(--primary-main);">MR277 화면</span>
                         <img id="view-mr277" class="preview-img">
                     </label>
-                    <input type="file" id="img-mr277" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    <input type="file" id="img-mr277" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'mr277')">
                     <button class="add-photo-btn" onclick="addPhotoInput(this, 'MR277 사진')"><i class="fas fa-plus-circle"></i> 사진 추가</button>
                 </div>
 
@@ -454,7 +458,6 @@
             clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
         };
 
-        // [내장 DB] 패시브협회/건축물리 기반 핵심 데이터 (법적 문제 회피용 일반화된 용어 사용)
         const CONDENSATION_DB = [
             {
                 id: "C-001",
@@ -479,7 +482,6 @@
             }
         ];
 
-        // 1. 날씨 자동 가져오기
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 try {
@@ -493,7 +495,6 @@
             });
         }
 
-        // 2. 이슬점 계산 로직
         window.calcDewPoint = function() {
             const t = parseFloat(document.getElementById('temp-in').value);
             const h = parseFloat(document.getElementById('humid-in').value);
@@ -505,7 +506,6 @@
             }
         }
 
-        // 3. 사진 처리 로직
         window.handleImage = function(input) {
             if(input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -515,7 +515,6 @@
                     const box = wrapper.querySelector('.upload-box');
                     img.src = e.target.result;
                     img.style.display = 'block';
-                    // 기존 아이콘 숨김
                     box.querySelectorAll('i, span').forEach(el => el.style.display = 'none');
                     wrapper.classList.add('filled');
                 };
@@ -523,13 +522,95 @@
             }
         };
 
-        // 추가 버튼 기능
+        // [NEW] Gemini Vision을 이용한 계측기 값 자동 추출 함수
+        window.autoFillFromImage = async function(input, type) {
+            if(!input.files || !input.files[0]) return;
+
+            // 1. UI 스캔 효과 적용 (로딩 표시)
+            const targetIds = type === 'mr277' 
+                ? ['temp-in', 'humid-in', 'vap-val', 'mix-val'] 
+                : ['temp-surf'];
+            
+            targetIds.forEach(id => {
+                document.getElementById(id).classList.add('scanning');
+                document.getElementById(id).value = ''; // 초기화
+                document.getElementById(id).placeholder = "Scanning...";
+            });
+
+            try {
+                // 2. 이미지 Base64 변환
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                const base64Promise = new Promise((resolve) => {
+                    reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+                    reader.readAsDataURL(file);
+                });
+                const base64Data = await base64Promise;
+
+                // 3. Gemini 호출
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+
+                let prompt = "";
+                if(type === 'mr277') {
+                    prompt = `
+                        Analyze this FLIR MR277 instrument screen.
+                        Extract the following numerical values exactly as shown:
+                        1. Air Temperature (Temp or C)
+                        2. Relative Humidity (RH or %)
+                        3. VAP (Vapor Pressure, kPa)
+                        4. Mixing Ratio (Mix, g/kg or GPP)
+                        
+                        Return ONLY a JSON object: {"temp": number, "humid": number, "vap": number, "mix": number}.
+                        If a value is not visible, use null.
+                    `;
+                } else if(type === 'thermal') {
+                    prompt = `
+                        Analyze this thermal camera image.
+                        Find the 'Minimum' temperature reading (usually labeled as 'Lo', 'Min', or indicated by a crosshair with the lowest value).
+                        Return ONLY a JSON object: {"min_temp": number}.
+                    `;
+                }
+
+                const result = await model.generateContent({ 
+                    contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: file.type, data: base64Data } }] }] 
+                });
+                
+                const response = await result.response;
+                const text = response.text();
+                
+                // 4. JSON 파싱 및 값 입력
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                if(jsonMatch) {
+                    const data = JSON.parse(jsonMatch[0]);
+                    
+                    if(type === 'mr277') {
+                        if(data.temp) document.getElementById('temp-in').value = data.temp;
+                        if(data.humid) document.getElementById('humid-in').value = data.humid;
+                        if(data.vap) document.getElementById('vap-val').value = data.vap;
+                        if(data.mix) document.getElementById('mix-val').value = data.mix;
+                        calcDewPoint(); // 이슬점 재계산
+                    } else if(type === 'thermal') {
+                        if(data.min_temp) document.getElementById('temp-surf').value = data.min_temp;
+                    }
+                }
+
+            } catch(e) {
+                console.error("Auto-fill failed:", e);
+                targetIds.forEach(id => document.getElementById(id).placeholder = "직접입력");
+            } finally {
+                // 5. 스캔 효과 해제
+                targetIds.forEach(id => document.getElementById(id).classList.remove('scanning'));
+            }
+        };
+
         window.addPhotoInput = function(btnElement, labelText) {
             const wrapper = btnElement.closest('.upload-wrapper');
             const container = document.getElementById('photo-container');
             const newDiv = document.createElement('div');
             newDiv.className = 'upload-wrapper';
-            newDiv.style.marginTop = '15px'; // 간격 추가
+            newDiv.style.marginTop = '15px'; 
             const uniqueId = Date.now();
             
             newDiv.innerHTML = `
@@ -543,13 +624,8 @@
                     <i class="fas fa-plus-circle"></i> 사진 추가
                 </button>
             `;
-            
-            // 현재 박스 바로 다음 위치에 삽입
-            if (wrapper.nextSibling) {
-                container.insertBefore(newDiv, wrapper.nextSibling);
-            } else {
-                container.appendChild(newDiv);
-            }
+            if (wrapper.nextSibling) container.insertBefore(newDiv, wrapper.nextSibling);
+            else container.appendChild(newDiv);
         };
 
         window.toggleAnalyzeBtn = function() {
@@ -561,16 +637,13 @@
 
         window.savePdf = function() { window.print(); };
 
-        // 4. 분석 시작 및 리포트 생성
         window.startAnalysis = async function() {
-            // UI 준비
             const loading = document.getElementById('loading-spinner');
             const resultArea = document.getElementById('result-area');
             const contentDiv = document.getElementById('analysis-content');
             const chartSection = document.getElementById('chart-section');
             const gallery = document.getElementById('report-photo-gallery');
 
-            // 데이터 수집
             const tempIn = document.getElementById('temp-in').value || 20;
             const tempOut = document.getElementById('temp-out').value || -5;
             const tempSurf = document.getElementById('temp-surf').value; 
@@ -578,28 +651,22 @@
             const dew = document.getElementById('dew-result').value;
             const defect = document.getElementById('defect-content').value;
             
-            // 신규 필드 수집
             const winType = document.getElementById('window-type').value;
             const houseType = document.getElementById('house-type').value;
             const consideration = document.getElementById('consideration').value;
             const vapVal = document.getElementById('vap-val').value;
             const mixVal = document.getElementById('mix-val').value;
             
-            // 리포트 상단 정보 채우기
             document.getElementById('rep-date').innerText = document.getElementById('date').value;
             document.getElementById('rep-loc').innerText = `${document.getElementById('dong').value}동 ${document.getElementById('ho').value}호 (${document.getElementById('location').value})`;
             document.getElementById('rep-type').innerText = `${winType} / ${houseType} / ${consideration}`;
 
-            // 이미지 수집 및 리포트 갤러리 렌더링
             let imageParts = [];
-            gallery.innerHTML = ''; // 초기화
+            gallery.innerHTML = ''; 
             
             document.querySelectorAll('.preview-img').forEach((img, idx) => {
                 if(img.src.startsWith('data:image')) {
-                    // Gemini 전송용
                     imageParts.push({ inline_data: { mime_type: "image/jpeg", data: img.src.split(',')[1] } });
-                    
-                    // 리포트 표시용
                     const div = document.createElement('div');
                     div.className = 'report-img-item';
                     div.innerHTML = `<img src="${img.src}"><div class="report-img-caption">현장 사진 ${idx+1}</div>`;
@@ -609,7 +676,6 @@
 
             if(imageParts.length === 0) { alert("사진을 최소 1장 이상 등록해주세요."); return; }
 
-            // 화면 전환
             document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
             resultArea.style.display = 'block';
             loading.style.display = 'block';
@@ -617,7 +683,6 @@
             chartSection.style.display = 'none';
             window.scrollTo(0, 0);
 
-            // TDR 계산 및 로직 준비
             let tdrVal = 0;
             let tdrMsg = "데이터 부족";
             if(tempSurf && tempIn && tempOut) {
@@ -629,7 +694,6 @@
                 else tdrMsg = `TDR ${tdrVal} (기준 0.28 이하 -> 단열 양호, 환기 부족 의심)`;
             }
 
-            // [프롬프트 로직 - 요청사항 반영]
             let spacerLogic = "";
             if (consideration.includes("TPS") || consideration.includes("TGI")) {
                 spacerLogic = "현재 '단열 간봉(TPS/TGI)'이 적용되어 있으므로, 간봉으로 인한 열교(Cold Bridge)는 결로의 주된 원인에서 **제외**하십시오.";
@@ -646,7 +710,6 @@
                 airQualityLogic = "VAP/MIX 데이터가 없으므로 TDR과 온습도 위주로 분석하십시오.";
             }
 
-            // Gemini 호출
             try {
                 const genAI = new GoogleGenerativeAI(API_KEY);
                 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
@@ -698,7 +761,6 @@
                 const response = await result.response;
                 let text = response.text();
 
-                // JSON 파싱 및 차트 그리기
                 let jsonMatch = text.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
                 if(jsonMatch) {
                     const jsonData = JSON.parse(jsonMatch[1]);
