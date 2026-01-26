@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.13 UI Patch)</title>
+    <title>청개구리 결로진단 AI (v26.14 Fixed)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -72,9 +72,9 @@
         }
         .section-title i { margin-right: 8px; color: var(--text-secondary); opacity: 0.8; }
 
-        /* [수정 2 & 3] 입력 폼 스타일 개선 (중앙 정렬 + Placeholder) */
+        /* [핵심 수정 2 & 3] 입력 폼 스타일 개선 (중앙 정렬 + Placeholder 스타일) */
         .input-group { margin-bottom: 6px; }
-        .input-label { display: block; font-weight: 700; margin-bottom: 3px; color: var(--text-secondary); font-size: 0.8rem; }
+        .input-label { display: block; font-weight: 700; margin-bottom: 3px; color: var(--text-secondary); font-size: 0.8rem; text-align: center; }
         
         input[type="text"], input[type="number"], textarea, select {
             width: 100%; padding: 8px; 
@@ -83,20 +83,32 @@
             color: var(--text-primary); 
             font-weight: 700; /* 입력된 값은 진하게 */
             transition: border 0.2s;
-            text-align: center; /* [수정] 모든 입력값 중앙 정렬 */
+            
+            /* [강제 중앙 정렬] */
+            text-align: center !important; 
+            text-align-last: center !important; /* 모바일 브라우저 select 중앙 정렬용 */
         }
 
-        /* [수정 3] Placeholder(입력 전 안내문구) 스타일 */
+        /* [미입력 텍스트 스타일] 연한 회색, 얇은 글씨 */
         ::placeholder {
-            color: #cfd8dc !important; /* 연한 회색 */
-            font-weight: 300 !important; /* 얇은 글씨 */
-            opacity: 1; 
+            color: #b0bec5 !important; /* 연한 회색 */
+            font-weight: 300 !important; /* 얇은 폰트 */
+            opacity: 1; /* 파이어폭스 등 투명도 이슈 방지 */
         }
-        /* select의 placeholder 느낌 (선택 전) */
-        select { color: var(--text-primary); }
+        
+        /* Select 요소의 텍스트 정렬 */
+        select {
+            -webkit-appearance: none; /* 브라우저 기본 스타일 제거 후 중앙 정렬 */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 10px auto;
+        }
         
         input:focus, textarea:focus, select:focus { border-color: var(--primary-main); outline: none; background: #fff; }
-        textarea { resize: none; height: 70px; text-align: left; /* 텍스트 영역은 왼쪽 정렬 유지 */ }
+        textarea { resize: none; height: 70px; text-align: left !important; /* 텍스트박스는 예외적으로 왼쪽 정렬 */ }
         
         /* 그리드 조정 */
         .info-grid-row { 
@@ -110,7 +122,7 @@
             gap: 5px; align-items: end; margin-bottom: 8px; 
         }
         .info-triple-row select {
-            padding: 8px 4px; 
+            padding: 8px 20px 8px 8px; /* 화살표 공간 확보 */
             font-size: 0.85rem;
             letter-spacing: -0.5px;
         }
@@ -194,7 +206,7 @@
         .report-summary-table th { color: var(--text-secondary); width: 40%; }
         .report-summary-table td { font-weight: 700; color: var(--primary-dark); }
 
-        /* [수정 1] 차트 컨테이너 크기 확보 */
+        /* [핵심 수정 1] 차트 높이 확보 */
         .chart-container { position: relative; height: 350px; width: 100%; margin-top: 20px; }
 
         .analyze-btn {
@@ -231,7 +243,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.13 UI Patch</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.14 Fixed</span>
     </header>
 
     <div class="content">
@@ -808,7 +820,8 @@
                 is3D: true,
                 slices: { 0: { color: '#FFA726' }, 1: { color: '#EF5350', offset: 0.1 }, 2: { color: '#66BB6A' } },
                 backgroundColor: 'transparent',
-                chartArea: { top: 20, width: '90%', height: '75%' },
+                // [핵심 수정 1] 범례가 잘리지 않도록 높이 70%로 축소
+                chartArea: { top: 20, width: '90%', height: '70%' },
                 legend: { position: 'bottom', alignment: 'center', textStyle: { color: '#555', fontSize: 11 } }
             };
             var c = new google.visualization.PieChart(document.getElementById('chart_div'));
