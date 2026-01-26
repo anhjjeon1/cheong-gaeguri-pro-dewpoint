@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.7 Pro)</title>
+    <title>청개구리 결로진단 AI (v26.8 Expert)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -91,15 +91,14 @@
             grid-template-columns: 0.7fr 1fr 1.2fr 1.5fr; 
             gap: 5px; align-items: end; margin-bottom: 8px; 
         }
-        /* [수정] 3개 항목 한 줄 배치용 그리드 */
+        /* 3개 항목 한 줄 배치용 그리드 */
         .info-triple-row { 
             display: grid; 
-            grid-template-columns: 1fr 1fr 0.8fr; /* 비율 조정 */
+            grid-template-columns: 1fr 1fr 0.8fr; 
             gap: 5px; align-items: end; margin-bottom: 8px; 
         }
-        /* 모바일에서 텍스트 잘림 방지용 */
         .info-triple-row select {
-            padding: 8px 4px; /* 패딩 축소 */
+            padding: 8px 4px; 
             font-size: 0.85rem;
             letter-spacing: -0.5px;
         }
@@ -201,7 +200,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.7 Pro</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.8 Expert</span>
     </header>
 
     <div class="content">
@@ -219,7 +218,8 @@
                     <label class="input-label">창호 사양</label>
                     <select id="window-type">
                         <option value="PVC 이중창">PVC 이중창 (일반)</option>
-                        <option value="입면분할창">입면분할창 (고급형)</option> <option value="PVC 시스템창호">PVC 시스템창호 (TT/LS)</option>
+                        <option value="입면분할창">입면분할창 (고급형)</option>
+                        <option value="PVC 시스템창호">PVC 시스템창호 (TT/LS)</option>
                         <option value="알루미늄 단창">알루미늄 단창 (노후)</option>
                         <option value="커튼월(Curtain Wall)">커튼월 (주상복합)</option>
                     </select>
@@ -235,8 +235,10 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label">고려사항</label>
-                    <select id="consideration"> <option value="알루미늄 간봉">알루미늄 간봉</option>
+                    <select id="consideration">
+                        <option value="알루미늄 간봉">알루미늄 간봉</option>
                         <option value="TPS 단열간봉">TPS 단열간봉</option>
+                        <option value="TGI 단열간봉">TGI 단열간봉</option>
                     </select>
                 </div>
             </div>
@@ -380,7 +382,7 @@
             
             <div class="report-badge">
                 <i class="fas fa-check-circle"></i>
-                본 결과는 <strong>건축 물리 표준 데이터 및 하자 사례 빅데이터</strong>를 근거로 TDR(온도차이비율) 시뮬레이션을 수행한 결과입니다.
+                본 결과는 <strong>건축 물리 표준 데이터 및 하자 사례 빅데이터</strong>를 근거로 TDR(온도차이비율) 및 VAP/MIX(공기질) 분석을 수행한 결과입니다.
             </div>
 
             <div class="input-label" style="margin-bottom:5px;">[현장 채증 데이터]</div>
@@ -396,7 +398,7 @@
                 <i class="fas fa-spinner fa-spin fa-3x" style="color:var(--primary-main)"></i>
                 <p style="margin-top:20px; font-weight:bold; color:var(--text-secondary);">
                     건축 물리 데이터 대조 중...<br>
-                    (TDR 계산 및 결로 원인 판별)
+                    (VAP/MIX 분석 및 결로 원인 판별)
                 </p>
             </div>
             
@@ -576,15 +578,16 @@
             const dew = document.getElementById('dew-result').value;
             const defect = document.getElementById('defect-content').value;
             
-            // [수정] 신규 필드 수집
+            // 신규 필드 수집
             const winType = document.getElementById('window-type').value;
             const houseType = document.getElementById('house-type').value;
             const consideration = document.getElementById('consideration').value;
+            const vapVal = document.getElementById('vap-val').value;
+            const mixVal = document.getElementById('mix-val').value;
             
             // 리포트 상단 정보 채우기
             document.getElementById('rep-date').innerText = document.getElementById('date').value;
             document.getElementById('rep-loc').innerText = `${document.getElementById('dong').value}동 ${document.getElementById('ho').value}호 (${document.getElementById('location').value})`;
-            // [수정] 리포트에 신규 필드 정보 표시
             document.getElementById('rep-type').innerText = `${winType} / ${houseType} / ${consideration}`;
 
             // 이미지 수집 및 리포트 갤러리 렌더링
@@ -622,9 +625,25 @@
                 if(den === 0) den = 1;
                 tdrVal = (parseFloat(tempIn) - parseFloat(tempSurf)) / den;
                 tdrVal = tdrVal.toFixed(2);
-                // 기준: 0.28
                 if(tdrVal > 0.28) tdrMsg = `TDR ${tdrVal} (기준 0.28 초과 -> 단열 성능 미달 유력)`;
                 else tdrMsg = `TDR ${tdrVal} (기준 0.28 이하 -> 단열 양호, 환기 부족 의심)`;
+            }
+
+            // [프롬프트 로직 - 요청사항 반영]
+            let spacerLogic = "";
+            if (consideration.includes("TPS") || consideration.includes("TGI")) {
+                spacerLogic = "현재 '단열 간봉(TPS/TGI)'이 적용되어 있으므로, 간봉으로 인한 열교(Cold Bridge)는 결로의 주된 원인에서 **제외**하십시오.";
+            } else {
+                spacerLogic = "알루미늄 간봉이 적용되었으므로, 유리 테두리의 열교 현상을 지적하십시오.";
+            }
+
+            let slidingLogic = "미서기(Sliding) 창호의 특성상 레일 틈새로 외풍(Infiltration)이 유입되어 결로를 심화시킬 수 있음을 언급하십시오. 단, **'창호 교체'라는 단어는 절대 사용하지 말고**, 모헤어 교체나 풍지판 설치 등 보수 방법을 제안하십시오.";
+
+            let airQualityLogic = "";
+            if(vapVal && mixVal) {
+                airQualityLogic = `[중요] 공기질 데이터(VAP: ${vapVal}kPa, MIX: ${mixVal}g/kg)를 분석의 최우선 근거로 삼으십시오. VAP/MIX 수치가 높다면 '생활 습관(과습)'을, 수치가 낮은데도 결로가 있다면 '구조체/창호의 표면 온도 저하(단열 미흡)'를 원인으로 지목하십시오.`;
+            } else {
+                airQualityLogic = "VAP/MIX 데이터가 없으므로 TDR과 온습도 위주로 분석하십시오.";
             }
 
             // Gemini 호출
@@ -634,44 +653,44 @@
 
                 const dbContext = JSON.stringify(CONDENSATION_DB);
                 
-                // [수정] 프롬프트에 신규 필드 정보(간봉, 입면분할 등) 추가
                 const prompt = `
                     당신은 '건축물리 박사'이자 '결로 진단 최고 전문가'입니다. 
-                    제공된 현장 데이터와 [표준 데이터베이스]를 바탕으로, 비전문가도 이해할 수 있지만 내용은 매우 전문적인 '정밀 진단 보고서'를 작성하십시오.
+                    제공된 현장 데이터와 [표준 데이터베이스]를 바탕으로 정밀 진단 보고서를 작성하십시오.
 
                     [참조 데이터베이스]
                     ${dbContext}
 
                     [현장 데이터]
-                    - 구조 및 창호 정보: ${winType} / ${houseType}
-                    - **중요 고려사항(간봉 종류)**: ${consideration}
+                    - 구조/창호: ${winType} / ${houseType}
+                    - **간봉 종류**: ${consideration}
                     - 실내: ${tempIn}°C / ${humid}% (노점: ${dew})
                     - 실외: ${tempOut}°C / 표면온도: ${tempSurf}°C
+                    - 공기질(선택): VAP ${vapVal || 'N/A'}, MIX ${mixVal || 'N/A'}
                     - 증상: ${defect}
                     - **핵심 TDR 분석값**: ${tdrMsg}
 
-                    [작성 지침]
-                    1. **논리적 판정**: 
+                    [특별 지시사항 (반드시 준수)]
+                    1. **간봉 분석**: ${spacerLogic}
+                    2. **창호 기밀성**: ${slidingLogic}
+                    3. **공기질 분석(핵심)**: ${airQualityLogic}
+                    4. **입면분할창**: 하단부 통바(Transom) 부위의 단열 취약성을 고려하여 분석하십시오.
+                    5. **논리적 판정**: 
                        - 표면온도가 노점온도보다 낮은지 확인하십시오. (T_surf < T_dp 이면 결로 발생)
-                       - TDR 값이 0.28을 초과하면 '구조적/시공적 단열 미흡'을 강력히 시사하십시오. 0.28 이하인데 결로가 생겼다면 '생활 습관(과습/환기부족)'을 지적하십시오.
-                       - **입면분할창**인 경우: 하단부 통바(Transom) 부위의 단열 취약성을 고려하여 분석하십시오.
-                       - **알루미늄 간봉**인 경우: 유리 테두리(Edge) 결로의 주요 원인으로 'Cold Bridge(열교)'를 지적하고 TPS 단열 간봉 교체의 필요성을 언급하십시오.
-                    2. **전문 용어 사용**: '열교(Thermal Bridge)', '노점(Dew Point)', 'TDR(Temperature Difference Ratio)' 용어를 사용하여 신뢰도를 높이십시오. 단, 쉬운 풀이를 덧붙이십시오.
-                    3. **솔루션**: '환기하세요' 같은 뻔한 말 대신, DB에 있는 구체적인 시공법(예: 단열 간봉 교체, 기밀 테이핑 등)을 제안하십시오.
-                    4. **주의**: '기술사', '협회' 등의 단어는 절대 쓰지 말고, '건축 물리 표준', '데이터 분석 결과'라고 표현하십시오.
+                       - TDR 0.28 기준을 적용하되, VAP/MIX 값을 종합하여 최종 귀책(사용자 vs 시공사)을 추정하십시오.
+                    6. **금지어**: '기술사', '협회', '창호 교체 권유' (교체 대신 보수/개선 제안)
 
                     [출력 포맷]
                     Markdown 형식.
                     ## 1. 정밀 데이터 분석
-                    (TDR, 노점, 표면온도 관계 설명)
+                    (TDR, VAP/MIX, 노점, 표면온도 상호 관계 설명)
                     ## 2. 진단 결과 및 발생 메커니즘
-                    (DB 매칭 내용, 간봉 및 창호 종류에 따른 원인 규명)
+                    (데이터에 근거한 원인 규명, 간봉/미서기 특성 반영)
                     ## 3. 전문가 처방 (Solution)
-                    (단계별 해결책)
+                    (단계별 해결책 - 교체 권유 제외)
 
                     마지막에 아래 JSON 포함 (차트용):
                     ___JSON_START___
-                    {"ventilation": ${tdrVal > 0.28 ? 30 : 80}, "insulation": ${tdrVal > 0.28 ? 70 : 20}, "normal": 0}
+                    {"ventilation": ${tdrVal > 0.28 ? 20 : 80}, "insulation": ${tdrVal > 0.28 ? 80 : 20}, "normal": 0}
                     ___JSON_END___
                 `;
 
@@ -702,9 +721,9 @@
         function drawChart(data) {
             var d = google.visualization.arrayToDataTable([
                 ['원인', '비율'],
-                ['사용자 환기 부족', data.ventilation],
-                ['단열/시공 미흡', data.insulation],
-                ['기타 요인', data.normal]
+                ['사용자 환기 부족(생활습관)', data.ventilation],
+                ['단열/시공 미흡(구조체)', data.insulation],
+                ['기타 복합 요인', data.normal]
             ]);
             var options = {
                 title: '귀책 사유 분석 (AI 추정)',
