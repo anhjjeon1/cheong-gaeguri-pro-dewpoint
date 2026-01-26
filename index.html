@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.10 Final)</title>
+    <title>청개구리 결로진단 AI (v26.11 Complete)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -155,7 +155,6 @@
             line-height: 1.4;
         }
         
-        /* [수정 1] 사진 비율 4:3 유지 및 짤림 방지 */
         .report-gallery {
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
             padding-bottom: 20px; border-bottom: 1px dashed #ddd;
@@ -163,18 +162,18 @@
         .report-img-item { 
             border-radius: 8px; overflow: hidden; border: 1px solid #eee; 
             aspect-ratio: 4 / 3; /* 4:3 비율 고정 */
-            background: #000;    /* 빈 공간은 검정색 */
+            background: #000;    
             display: flex; flex-direction: column;
         }
         .report-img-item img { 
             width: 100%; height: 100%; 
-            object-fit: contain; /* 이미지 전체가 보이도록 설정 (짤림 방지) */
+            object-fit: contain; /* 짤림 방지 */
             display: block; 
         }
         .report-img-caption { 
             font-size: 0.7rem; padding: 4px; text-align: center; 
             background: #f5f5f5; color: #555; font-weight: bold; width: 100%;
-            margin-top: auto; /* 캡션을 아래로 */
+            margin-top: auto; 
         }
 
         .report-summary-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem; }
@@ -218,7 +217,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.10 Final</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.11 Complete</span>
     </header>
 
     <div class="content">
@@ -300,9 +299,20 @@
 
             <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #ccc;">
                 <label class="input-label"><i class="fas fa-wind"></i> 공기질 정밀 진단 (Auto)</label>
+                
+                <div style="font-size:0.8rem; color:#c62828; margin-bottom:5px; font-weight:bold;">
+                    ※ 겨울철 적정: VAP 1.0kPa ↓ / MIX 7.0g/kg ↓
+                </div>
+
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <input type="number" id="vap-val" class="vap-input" placeholder="VAP (kPa)" step="0.01" style="text-align:center;">
-                    <input type="number" id="mix-val" class="vap-input" placeholder="MIX (g/kg)" step="0.01" style="text-align:center;">
+                    <div>
+                        <label class="input-label" style="font-size:0.75rem;">VAP (수증기압)</label>
+                        <input type="number" id="vap-val" class="vap-input" placeholder="kPa" step="0.01" style="text-align:center;">
+                    </div>
+                    <div>
+                        <label class="input-label" style="font-size:0.75rem;">MIX (절대습도)</label>
+                        <input type="number" id="mix-val" class="vap-input" placeholder="g/kg" step="0.01" style="text-align:center;">
+                    </div>
                 </div>
                 <div style="font-size:0.7rem; color:#0277bd; margin-top:5px; text-align:right;">* MR277 사진 등록 시 자동 입력됨</div>
             </div>
@@ -357,7 +367,28 @@
                     <button class="add-photo-btn" onclick="addPhotoInput(this, 'MR277 사진')"><i class="fas fa-plus-circle"></i> 사진 추가</button>
                 </div>
 
+                <div class="upload-wrapper" style="border-color:var(--moisture-blue);">
+                    <label class="input-label" style="color:var(--moisture-blue);">5. FLIR MR12 볼 프로브 (비파괴)</label>
+                    <label for="img-mr12" class="upload-box" style="background:#e1f5fe;">
+                        <i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i>
+                        <span style="font-size:0.8rem; color:var(--moisture-blue);">함수율 측정 이미지</span>
+                        <img id="view-mr12" class="preview-img">
+                    </label>
+                    <input type="file" id="img-mr12" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    <button class="add-photo-btn" onclick="addPhotoInput(this, '볼 프로브 사진')"><i class="fas fa-plus-circle"></i> 사진 추가</button>
                 </div>
+
+                <div class="upload-wrapper" style="border-color:var(--sonic-purple);">
+                    <label class="input-label" style="color:var(--sonic-purple);">6. 초음파 음향 카메라 (Sonic)</label>
+                    <label for="img-sonic" class="upload-box" style="background:#f3e5f5;">
+                        <i class="fas fa-wave-square upload-icon" style="color:var(--sonic-purple);"></i>
+                        <span style="font-size:0.8rem; color:var(--sonic-purple);">음향 카메라 이미지</span>
+                        <img id="view-sonic" class="preview-img">
+                    </label>
+                    <input type="file" id="img-sonic" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    <button class="add-photo-btn" onclick="addPhotoInput(this, '초음파 사진')"><i class="fas fa-plus-circle"></i> 사진 추가</button>
+                </div>
+            </div>
         </div>
 
         <div class="legal-box no-print">
@@ -435,7 +466,6 @@
 
         let clickCount = 0; let clickTimer;
 
-        // 개발자 모드
         window.checkDevMode = function() {
             clearTimeout(clickTimer); clickCount++;
             if (clickCount === 5) {
@@ -653,7 +683,6 @@
 
             let slidingLogic = "미서기(Sliding) 창호의 특성상 레일 틈새로 외풍(Infiltration)이 유입되어 결로를 심화시킬 수 있음을 언급하십시오. 단, **'창호 교체'라는 단어는 절대 사용하지 말고**, 모헤어 교체나 풍지판 설치 등 보수 방법을 제안하십시오.";
 
-            // [수정 2] 겨울철 VAP/MIX 기준 및 저감법 제시 로직
             const currentMonth = new Date().getMonth() + 1;
             const isWinter = (currentMonth >= 11 || currentMonth <= 2);
             
@@ -668,7 +697,6 @@
                 airQualityLogic = "VAP/MIX 데이터가 없으므로 TDR과 온습도 위주로 분석하십시오.";
             }
 
-            // [수정 3] 선택된 창호 사양 엄수
             let windowSpecifics = "";
             if(winType.includes("입면분할")) {
                 windowSpecifics = "- 입면분할창 특성: 하단부 통바(Transom) 및 프레임 접합부의 단열 취약성을 집중 분석하십시오.";
@@ -676,7 +704,6 @@
                 windowSpecifics = `- **매우 중요**: 사용자가 선택한 창호는 '${winType}'입니다. 분석 시 반드시 이 창호 종류를 기준으로 삼고, 선택하지 않은 다른 창호(예: 입면분할창 등)에 대한 언급은 절대 하지 마십시오.`;
             }
 
-            // [수정 4] 신축 콘크리트 습기 언급
             const concreteLogic = "- 건물 특성상 콘크리트 및 몰탈의 양생 과정에서 방출되는 '초기 건축물 습기(Construction Moisture)'가 결로의 원인이 될 수 있음을 반드시 언급하십시오. (특히 입주 2년 이내 신축인 경우)";
 
             try {
