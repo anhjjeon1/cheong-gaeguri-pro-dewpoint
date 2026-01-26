@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.4 Final)</title>
+    <title>청개구리 결로진단 AI (v26.5 Final Layout)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -37,26 +37,29 @@
             min-height: 100vh; margin: 0; position: relative;
         }
 
-        /* [수정 1] 헤더 중앙 정렬 */
+        /* [수정됨] 헤더 레이아웃 (타이틀 중앙, 배지 우측 끝) */
         .main-header {
             background: linear-gradient(145deg, var(--primary-dark), var(--primary-main)); color: white;
-            padding: 15px; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; /* 중앙 정렬 */
+            padding: 15px 20px; 
+            display: flex; align-items: center; justify-content: center; /* 타이틀 중앙 정렬 */
             box-shadow: 0 2px 8px rgba(40, 53, 147, 0.2);
             position: sticky; top: 0; z-index: 100;
         }
         .main-header h1 {
             margin: 0; font-size: 1.2rem; font-weight: 800; 
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2); width: 100%;
+            display: flex; align-items: center; gap: 8px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
         .main-header h1 i { color: #81d4fa; font-size: 1.1em; }
         
         .version-badge {
+            position: absolute; /* 절대 위치로 우측 고정 */
+            right: 15px; 
+            top: 50%; transform: translateY(-50%); /* 세로 중앙 정렬 */
+            
             background: rgba(255,255,255,0.2); color: #fff;
-            padding: 2px 10px; border-radius: 10px; font-size: 0.65rem; font-weight: 600;
+            padding: 2px 8px; border-radius: 10px; font-size: 0.65rem; font-weight: 600;
             border: 1px solid rgba(255,255,255,0.3); white-space: nowrap;
-            margin-top: 6px; /* 타이틀 아래 간격 */
         }
         .version-badge.dev-active { background: #6200ea; border-color: #b388ff; box-shadow: 0 0 10px #6200ea; }
 
@@ -191,7 +194,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.4 Final</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.5 Final</span>
     </header>
 
     <div class="content">
