@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.42 Ultimate)</title>
+    <title>청개구리 결로진단 AI (v26.50 Final)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,477 +11,122 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <style>
-        /* ==========================================================================
-           [2. 디자인 시스템 (Design System Variables)]
-           ========================================================================== */
+        /* [디자인 시스템] */
         :root {
-            /* 브랜드 컬러 */
-            --primary-dark: #1a237e;   /* 깊은 남색 (신뢰) */
-            --primary-main: #283593;   /* 메인 블루 (전문성) */
-            --primary-light: #534bae;  /* 라이트 블루 (강조) */
-            --accent-color: #3949ab;   /* 포인트 컬러 */
-            
-            /* 배경 및 카드 컬러 */
-            --bg-color: #eceff1;       /* 전체 배경 (연한 회색) */
-            --card-bg: #ffffff;        /* 컨텐츠 배경 (흰색) */
-            --input-bg: #f9fafb;       /* 입력창 배경 */
-            
-            /* 텍스트 컬러 */
-            --text-primary: #263238;   /* 본문 텍스트 */
-            --text-secondary: #546e7a; /* 설명 텍스트 */
-            --text-hint: #90a4ae;      /* 힌트 텍스트 */
-            
-            /* 기능성 컬러 */
-            --border-color: #cfd8dc;   /* 테두리 */
-            --expert-gold: #f57f17;    /* 전문가 추천/중요 */
-            --moisture-blue: #0277bd;  /* 습기 데이터 */
-            --sonic-purple: #7b1fa2;   /* 초음파 데이터 */
-            --thermal-orange: #d84315; /* 열화상 데이터 */
-            --warning-red: #c62828;    /* 경고/위험 */
-            --success-green: #2e7d32;  /* 안전/양호 */
-            
-            /* 레이아웃 값 */
+            --primary-dark: #1a237e; --primary-main: #283593; --accent-color: #3949ab;
+            --bg-color: #eceff1; --card-bg: #ffffff; 
+            --text-primary: #263238; --text-secondary: #546e7a;
+            --border-color: #cfd8dc; --expert-gold: #f57f17;
+            --moisture-blue: #0277bd; --sonic-purple: #7b1fa2; --uv-violet: #311b92;
+            --thermal-orange: #d84315; --warning-red: #c62828;
             --container-max-width: 600px;
-            --header-height: 60px;
-            --radius-md: 12px;
-            
-            /* 그림자 효과 */
-            --shadow-card: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-            --shadow-floating: 0 10px 20px rgba(0,0,0,0.15);
+            --shadow-card: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
-        /* ==========================================================================
-           [3. 기본 초기화 (Reset & Layout)]
-           ========================================================================== */
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        /* [기본 설정] */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            padding-bottom: 80px; /* 하단 버튼 공간 확보 */
+            font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg-color);
+            color: var(--text-primary); margin: 0; padding: 0; line-height: 1.6;
+            display: flex; justify-content: center; min-height: 100vh; padding-bottom: 80px;
         }
-
         .mobile-container {
-            width: 100%;
-            max-width: var(--container-max-width);
-            background-color: var(--card-bg);
-            box-shadow: var(--shadow-card);
-            min-height: 100vh;
-            margin: 0;
-            position: relative;
-            display: flex;
-            flex-direction: column;
+            width: 100%; max-width: var(--container-max-width); background-color: var(--card-bg);
+            box-shadow: var(--shadow-card); min-height: 100vh; margin: 0; position: relative;
+            display: flex; flex-direction: column;
         }
 
-        /* ==========================================================================
-           [4. 헤더 스타일 (Header)]
-           ========================================================================== */
+        /* [헤더] */
         .main-header {
-            background: linear-gradient(145deg, var(--primary-dark), var(--primary-main));
-            color: white;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            background: linear-gradient(145deg, var(--primary-dark), var(--primary-main)); color: white;
+            padding: 15px; display: flex; align-items: center; justify-content: center;
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-
-        .main-header h1 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: -0.5px;
-        }
-
+        .main-header h1 { margin: 0; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
         .version-badge {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.2);
-            color: #e3f2fd;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.3);
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.2); color: #e3f2fd; padding: 3px 8px; 
+            border-radius: 6px; font-size: 0.65rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.3);
             cursor: pointer;
-            transition: all 0.3s ease;
         }
-        .version-badge.dev-active {
-            background: #6200ea;
-            border-color: #b388ff;
-            color: #fff;
-            box-shadow: 0 0 8px rgba(98, 0, 234, 0.6);
-        }
+        .version-badge.dev-active { background: #6200ea; border-color: #b388ff; box-shadow: 0 0 8px #6200ea; }
 
-        /* ==========================================================================
-           [5. 컨텐츠 및 섹션 (Content & Section)]
-           ========================================================================== */
-        .content {
-            padding: 10px;
-            flex: 1;
-        }
-
-        .section {
-            background: #fff;
-            border-radius: var(--radius-md);
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            margin-bottom: 12px;
-            position: relative;
-        }
-
+        /* [컨텐츠 레이아웃] */
+        .content { padding: 12px; flex: 1; }
+        .section { margin-bottom: 12px; background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 15px; }
         .section-title {
-            font-weight: 800;
-            color: var(--primary-dark);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            font-size: 0.95rem;
-            border-left: 4px solid var(--expert-gold);
-            padding-left: 10px;
-            line-height: 1.2;
+            font-weight: 800; color: var(--primary-dark); margin-bottom: 12px; display: flex; align-items: center; font-size: 0.95rem;
+            border-left: 4px solid var(--expert-gold); padding-left: 10px;
         }
-        .section-title i {
-            margin-right: 8px;
-            color: var(--text-secondary);
-            opacity: 0.8;
-        }
+        .section-title i { margin-right: 8px; color: var(--text-secondary); opacity: 0.8; }
 
-        /* ==========================================================================
-           [6. 입력 폼 및 그리드 (Inputs & Grid)]
-           ========================================================================== */
-        .input-group {
-            margin-bottom: 8px;
-            width: 100%;
+        /* [입력 폼] */
+        .input-group { margin-bottom: 8px; width: 100%; }
+        .input-label { display: block; font-weight: 700; margin-bottom: 4px; color: var(--text-secondary); font-size: 0.75rem; text-align: center; }
+        input, select, textarea {
+            width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;
+            background-color: #f9fafb; font-size: 0.9rem; text-align: center; font-weight: 700;
+            color: var(--text-primary); transition: all 0.2s; -webkit-appearance: none;
         }
+        textarea { resize: none; height: 70px; text-align: left !important; font-weight: 400; padding: 10px; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-main); outline: none; background-color: #fff; }
 
-        .input-label {
-            display: block;
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            text-align: center;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px 5px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: var(--input-bg);
-            font-size: 0.9rem;
-            box-sizing: border-box;
-            text-align: center;
-            font-weight: 700;
-            color: var(--text-primary);
-            transition: all 0.2s ease;
-            -webkit-appearance: none;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--primary-main);
-            background-color: #fff;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(40, 53, 147, 0.1);
-        }
-
-        textarea {
-            resize: none;
-            height: 70px;
-            text-align: left !important;
-            padding: 10px;
-            font-weight: 400;
-        }
-
-        /* 그리드 시스템 */
-        .info-grid-row {
-            display: grid;
-            grid-template-columns: 0.6fr 0.8fr 1.2fr 1.4fr;
-            gap: 6px;
-            margin-bottom: 10px;
-        }
-        .info-triple-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 0.8fr;
-            gap: 6px;
-            margin-bottom: 10px;
-        }
-
-        /* 특수 입력 필드 스타일 */
-        .tdr-input {
-            background-color: #fff3e0 !important;
-            border: 1px solid #ffb74d !important;
-            color: #e65100 !important;
-            font-weight: 900;
-        }
-        .vap-input {
-            background-color: #e1f5fe !important;
-            border: 1px solid #4fc3f7 !important;
-            color: #01579b !important;
-            font-weight: 900;
-        }
-
-        /* ==========================================================================
-           [7. 사진 업로드 (Photo Upload) - 4:3 비율 고정]
-           ========================================================================== */
-        .photo-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .upload-wrapper {
-            border: 1px dashed #b0bec5;
-            padding: 12px;
-            border-radius: 10px;
-            background: #fafafa;
-            position: relative;
-            transition: all 0.3s;
-        }
-        .upload-wrapper.filled {
-            border-style: solid;
-            border-color: var(--primary-main);
-            background: #e8eaf6;
-        }
-
-        .upload-box {
-            border: 2px dashed #cfd8dc;
-            background-color: #fff;
-            border-radius: 8px;
-            width: 100%;
-            aspect-ratio: 4 / 3; /* 4:3 비율 강제 고정 */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.2s;
-        }
-        .upload-box:hover {
-            border-color: var(--primary-main);
-            background-color: #f5f5f5;
-        }
-
-        .upload-icon {
-            font-size: 2rem;
-            margin-bottom: 5px;
-            opacity: 0.5;
-        }
-        .preview-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: none;
-            background: #000;
-        }
-        .file-input { display: none; }
-
-        /* 사진 추가 버튼 */
-        .add-photo-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 10px;
-            background: linear-gradient(145deg, #42a5f5, #1565c0);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
-            box-shadow: 0 3px 0 #0d47a1;
-        }
-        .add-photo-btn:active {
-            transform: translateY(3px);
-            box-shadow: none;
-        }
-
-        /* ==========================================================================
-           [8. 결과 리포트 및 차트 (Report & Chart)]
-           ========================================================================== */
-        #result-area {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 15px;
-            border: 2px solid var(--primary-main);
-            display: none;
-            box-shadow: var(--shadow-floating);
-        }
-
-        .report-badge {
-            background-color: #e8eaf6;
-            color: var(--primary-dark);
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--primary-main);
-            line-height: 1.4;
-        }
-
-        .report-gallery {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .report-img-item {
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #eee;
-            aspect-ratio: 4/3;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-        }
-        .report-img-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            flex-grow: 1;
-        }
-        .report-img-caption {
-            font-size: 0.7rem;
-            padding: 4px;
-            text-align: center;
-            background: #f5f5f5;
-            color: #333;
-            font-weight: 800;
-            border-top: 1px solid #eee;
-        }
-
-        .report-summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
-        }
-        .report-summary-table th, .report-summary-table td {
-            padding: 8px;
-            border-bottom: 1px solid #eee;
-            text-align: left;
-        }
-        .report-summary-table th {
-            color: var(--text-secondary);
-            width: 35%;
-            background: #fafafa;
-            font-weight: 600;
-        }
-        .report-summary-table td {
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        /* ==========================================================================
-           [9. 버튼 및 푸터 (Buttons & Footer)]
-           ========================================================================== */
-        .analyze-btn {
-            width: 100%;
-            padding: 16px;
-            background: #cfd8dc;
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 800;
-            cursor: not-allowed;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-            transition: all 0.3s;
-        }
-        .analyze-btn.active {
-            background: linear-gradient(135deg, var(--primary-main), #1a237e);
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .footer-btns {
-            display: flex;
-            gap: 10px;
-            margin-top: 25px;
-        }
-        .footer-btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-        }
-        .btn-pdf { background: #455a64; }
-        .btn-reserve { background: var(--expert-gold); }
-
-        .legal-box {
-            background: #fff3e0;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-size: 0.75rem;
-            color: #e65100;
-            border: 1px solid #ffe0b2;
-            line-height: 1.4;
-        }
-        .legal-check {
-            display: flex;
-            align-items: center;
-            margin-top: 8px;
-            font-weight: 800;
-            cursor: pointer;
-        }
+        /* [그리드 시스템] */
+        .info-grid-row { display: grid; grid-template-columns: 0.6fr 0.8fr 1.2fr 1.4fr; gap: 6px; margin-bottom: 10px; }
+        .info-triple-row { display: grid; grid-template-columns: 1fr 1fr 0.8fr; gap: 6px; margin-bottom: 10px; }
         
-        .footer-info {
-            text-align: center;
-            margin-top: 30px;
-            color: #90a4ae;
-            font-size: 0.7rem;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
+        .tdr-input { background-color: #fff3e0 !important; border: 1px solid #ffb74d !important; color: #e65100 !important; }
+        .vap-input { background-color: #e1f5fe !important; border: 1px solid #4fc3f7 !important; color: #01579b !important; }
+
+        /* [사진 업로드 - 4:3 고정] */
+        .photo-stack { display: flex; flex-direction: column; gap: 12px; }
+        .upload-wrapper { border: 1px dashed #b0bec5; padding: 10px; border-radius: 10px; background: #fafafa; position: relative; transition: 0.3s; }
+        .upload-wrapper.filled { border-style: solid; border-color: var(--primary-main); background: #e8eaf6; }
+        .upload-box {
+            border: 2px dashed #cfd8dc; background-color: #fff; border-radius: 8px;
+            width: 100%; aspect-ratio: 4 / 3; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; overflow: hidden; cursor: pointer;
+        }
+        .upload-icon { font-size: 2rem; margin-bottom: 5px; opacity: 0.5; }
+        .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
+        .file-input { display: none; }
+        
+        .add-photo-btn {
+            display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px; width: 100%;
+            background: linear-gradient(145deg, #42a5f5, #1565c0); color: white; border: none; border-radius: 8px;
+            font-weight: 700; margin-top: 15px; font-size: 0.9rem; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
 
-        /* 로딩 스캔 효과 */
+        /* [결과 리포트] */
+        #result-area { margin-top: 30px; padding: 20px; background-color: #fff; border-radius: 15px; border: 2px solid var(--primary-main); display: none; }
+        .report-badge { background-color: #e8eaf6; color: var(--primary-dark); padding: 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; margin-bottom: 20px; border-left: 4px solid var(--primary-main); }
+        .report-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .report-img-item { border-radius: 8px; overflow: hidden; border: 1px solid #eee; aspect-ratio: 4/3; background: #000; display: flex; flex-direction: column; }
+        .report-img-item img { width: 100%; height: 100%; object-fit: contain; flex-grow: 1; }
+        .report-img-caption { font-size: 0.7rem; padding: 4px; text-align: center; background: #f5f5f5; color: #333; font-weight: 800; border-top: 1px solid #eee; }
+        .report-summary-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem; }
+        .report-summary-table th, .report-summary-table td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+        .report-summary-table th { color: var(--text-secondary); width: 35%; background: #fafafa; }
+        .report-summary-table td { font-weight: 700; color: var(--primary-dark); }
+        .chart-container { height: 300px; margin-top: 20px; }
+
+        /* [버튼 및 푸터] */
+        .analyze-btn {
+            width: 100%; padding: 16px; background: #cfd8dc; color: #fff; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 800; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-top: 20px; transition: all 0.3s;
+        }
+        .analyze-btn.active { background: linear-gradient(135deg, var(--primary-main), #1a237e); cursor: pointer; box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3); transform: translateY(-2px); }
+
+        .footer-btns { display: flex; gap: 10px; margin-top: 25px; }
+        .footer-btn { flex: 1; padding: 14px; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; color: white; cursor: pointer; display: flex; justify-content: center; gap: 6px; box-shadow: 0 3px 6px rgba(0,0,0,0.15); }
+        .btn-pdf { background: #455a64; } .btn-reserve { background: var(--expert-gold); }
+
+        .legal-box { background: #fff3e0; padding: 12px; border-radius: 8px; margin-top: 20px; font-size: 0.75rem; color: #e65100; border: 1px solid #ffe0b2; }
+        .legal-check { display: flex; align-items: center; margin-top: 8px; font-weight: 800; cursor: pointer; }
+        .footer-info { text-align: center; margin-top: 30px; font-size: 0.7rem; color: #90a4ae; border-top: 1px solid #eee; padding-top: 15px; }
+
+        /* 로딩 애니메이션 */
         @keyframes scan { 
             0% { border-color: #ccc; } 
             50% { border-color: #2196f3; box-shadow: 0 0 10px #2196f3; } 
@@ -502,7 +147,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.42 Ultimate</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.50 Complete</span>
     </header>
 
     <div class="content">
@@ -542,7 +187,7 @@
                 </div>
             </div>
             <div class="input-group">
-                <textarea id="defect-content" placeholder="[증상] 예: 아침마다 유리 하단 물고임 등"></textarea>
+                <textarea id="defect-content" placeholder="[상세 증상] 예: 아침마다 유리 하단 물고임 등"></textarea>
             </div>
         </div>
 
@@ -579,7 +224,7 @@
 
             <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #ccc;">
                 <label class="input-label"><i class="fas fa-wind"></i> 공기질 정밀 진단 (Auto)</label>
-                <div style="font-size:0.8rem; color:#c62828; margin-bottom:5px; font-weight:bold; text-align:center;">※ 겨울철 적정: VAP 1.2kPa ↓ / MIX 7.3g/kg ↓</div>
+                <div style="font-size:0.8rem; color:#c62828; margin-bottom:5px; font-weight:bold; text-align:center;">※ 겨울철 적정: VAP 1.2↓ / MIX 7.3↓</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div class="input-group">
                         <label class="input-label" style="color:#0277bd;">VAP (kPa)</label>
@@ -596,72 +241,24 @@
         <div class="section no-print">
             <div class="section-title"><i class="fas fa-camera"></i> 현장 채증 (9종)</div>
             <div class="photo-stack" id="photo-container">
+                <div class="upload-wrapper" style="border-color:#546e7a;"><label class="input-label">1. 결로 전체 (필수)</label><label for="img-1" class="upload-box"><i class="fas fa-camera upload-icon"></i><img id="view-1" class="preview-img"></label><input type="file" id="img-1" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
+                <div class="upload-wrapper" style="border-color:#78909c;"><label class="input-label">2. 결로 부분 (선택)</label><label for="img-2" class="upload-box"><i class="fas fa-search-plus upload-icon"></i><img id="view-2" class="preview-img"></label><input type="file" id="img-2" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
+                <div class="upload-wrapper" style="background:#fff3e0; border-color:var(--thermal-orange);"><label class="input-label" style="color:var(--thermal-orange);">3. 열화상 카메라 (전체)</label><label for="img-3" class="upload-box"><i class="fas fa-temperature-high upload-icon" style="color:var(--thermal-orange);"></i><img id="view-3" class="preview-img"></label><input type="file" id="img-3" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
                 
-                <div class="upload-wrapper" style="border-color:#546e7a;">
-                    <label class="input-label">1. 결로 전체 (필수)</label>
-                    <label for="img-1" class="upload-box"><i class="fas fa-camera upload-icon"></i><img id="view-1" class="preview-img"></label>
-                    <input type="file" id="img-1" class="file-input" accept="image/*" onchange="handleImage(this)">
-                </div>
-
-                <div class="upload-wrapper" style="border-color:#78909c;">
-                    <label class="input-label">2. 결로 부분 (선택)</label>
-                    <label for="img-2" class="upload-box"><i class="fas fa-search-plus upload-icon"></i><img id="view-2" class="preview-img"></label>
-                    <input type="file" id="img-2" class="file-input" accept="image/*" onchange="handleImage(this)">
-                </div>
-
-                <div class="upload-wrapper" style="border-color:var(--thermal-orange); background:#fff3e0;">
-                    <label class="input-label" style="color:var(--thermal-orange);">3. 열화상 카메라 (전체)</label>
-                    <label for="img-3" class="upload-box"><i class="fas fa-temperature-high upload-icon" style="color:var(--thermal-orange);"></i><img id="view-3" class="preview-img"></label>
-                    <input type="file" id="img-3" class="file-input" accept="image/*" onchange="handleImage(this)">
-                </div>
-
-                <div class="upload-wrapper" style="border-color:var(--thermal-orange);">
-                    <label class="input-label" style="color:var(--thermal-orange);">4. 열화상 (부분) - Tsi 자동</label>
-                    <label for="img-4" class="upload-box"><i class="fas fa-temperature-low upload-icon" style="color:var(--thermal-orange);"></i><img id="view-4" class="preview-img"></label>
-                    <input type="file" id="img-4" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'thermal')">
-                </div>
-
-                <div class="upload-wrapper" style="border-color:var(--primary-main); background:#e3f2fd;">
-                    <label class="input-label" style="color:var(--primary-main);">5. FLIR MR277 (전체) - 온습도 자동</label>
-                    <label for="img-5" class="upload-box"><i class="fas fa-ruler-combined upload-icon" style="color:var(--primary-main);"></i><img id="view-5" class="preview-img"></label>
-                    <input type="file" id="img-5" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'mr277')">
-                </div>
-
-                <div class="upload-wrapper" style="border-color:var(--sonic-purple);">
-                    <label class="input-label" style="color:var(--sonic-purple);">6. 초음파 음향 (전체)</label>
-                    <label for="img-6" class="upload-box"><i class="fas fa-wave-square upload-icon" style="color:var(--sonic-purple);"></i><img id="view-6" class="preview-img"></label>
-                    <input type="file" id="img-6" class="file-input" accept="image/*" onchange="handleImage(this)">
-                </div>
-
-                <div class="upload-wrapper" style="border-color:var(--sonic-purple);">
-                    <label class="input-label" style="color:var(--sonic-purple);">7. 초음파 음향 (하부)</label>
-                    <label for="img-7" class="upload-box"><i class="fas fa-arrow-down upload-icon" style="color:var(--sonic-purple);"></i><img id="view-7" class="preview-img"></label>
-                    <input type="file" id="img-7" class="file-input" accept="image/*" onchange="handleImage(this)">
-                </div>
-
-                <div class="upload-wrapper" style="border-color:var(--sonic-purple);">
-                    <label class="input-label" style="color:var(--sonic-purple);">8. 초음파 음향 (상부)</label>
-                    <label for="img-8" class="upload-box"><i class="fas fa-arrow-up upload-icon" style="color:var(--sonic-purple);"></i><img id="view-8" class="preview-img"></label>
-                    <input type="file" id="img-8" class="file-input" accept="image/*" onchange="handleImage(this)">
-                </div>
-
-                <div class="upload-wrapper" style="border-color:var(--sonic-purple);">
-                    <label class="input-label" style="color:var(--sonic-purple);">9. 초음파 음향 (측부)</label>
-                    <label for="img-9" class="upload-box"><i class="fas fa-arrows-alt-h upload-icon" style="color:var(--sonic-purple);"></i><img id="view-9" class="preview-img"></label>
-                    <input type="file" id="img-9" class="file-input" accept="image/*" onchange="handleImage(this)">
-                </div>
+                <div class="upload-wrapper" style="border-color:var(--thermal-orange);"><label class="input-label" style="color:var(--thermal-orange);">4. 열화상 (부분) - Tsi 자동</label><label for="img-4" class="upload-box"><i class="fas fa-temperature-low upload-icon" style="color:var(--thermal-orange);"></i><img id="view-4" class="preview-img"></label><input type="file" id="img-4" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'thermal')"></div>
+                <div class="upload-wrapper" style="border-color:var(--primary-main); background:#e3f2fd;"><label class="input-label" style="color:var(--primary-main);">5. FLIR MR277 - 환경 자동</label><label for="img-5" class="upload-box"><i class="fas fa-ruler-combined upload-icon" style="color:var(--primary-main);"></i><img id="view-5" class="preview-img"></label><input type="file" id="img-5" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'mr277')"></div>
+                
+                <div class="upload-wrapper" style="border-color:var(--sonic-purple);"><label class="input-label" style="color:var(--sonic-purple);">6. 초음파 음향 (전체)</label><label for="img-6" class="upload-box"><i class="fas fa-wave-square upload-icon" style="color:var(--sonic-purple);"></i><img id="view-6" class="preview-img"></label><input type="file" id="img-6" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
+                <div class="upload-wrapper" style="border-color:var(--sonic-purple);"><label class="input-label" style="color:var(--sonic-purple);">7. 초음파 음향 (하부)</label><label for="img-7" class="upload-box"><i class="fas fa-arrow-down upload-icon" style="color:var(--sonic-purple);"></i><img id="view-7" class="preview-img"></label><input type="file" id="img-7" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
+                <div class="upload-wrapper" style="border-color:var(--sonic-purple);"><label class="input-label" style="color:var(--sonic-purple);">8. 초음파 음향 (상부)</label><label for="img-8" class="upload-box"><i class="fas fa-arrow-up upload-icon" style="color:var(--sonic-purple);"></i><img id="view-8" class="preview-img"></label><input type="file" id="img-8" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
+                <div class="upload-wrapper" style="border-color:var(--sonic-purple);"><label class="input-label" style="color:var(--sonic-purple);">9. 초음파 음향 (측부)</label><label for="img-9" class="upload-box"><i class="fas fa-arrows-alt-h upload-icon" style="color:var(--sonic-purple);"></i><img id="view-9" class="preview-img"></label><input type="file" id="img-9" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
             </div>
-            
-            <button class="add-photo-btn" onclick="addPhotoInput(this, '추가 사진')" style="margin-top:15px;">
-                <i class="fas fa-plus-circle"></i> 사진 슬롯 추가
-            </button>
+            <button class="add-photo-btn" onclick="addPhotoInput(this, '추가 사진')"><i class="fas fa-plus-circle"></i> 사진 슬롯 추가</button>
         </div>
 
         <div class="section no-print">
             <div class="section-title"><i class="fas fa-user-edit"></i> 검사자 종합 의견</div>
-            <div class="input-group">
-                <textarea id="human-opinion" placeholder="[선택] 검사자의 종합 소견을 입력하세요."></textarea>
-            </div>
+            <div class="input-group"><textarea id="human-opinion" placeholder="[선택] 검사자의 종합 소견을 입력하세요."></textarea></div>
         </div>
 
         <div class="legal-box no-print">
@@ -705,8 +302,8 @@
         </div>
 
         <div class="footer-btns no-print">
-            <button class="footer-btn btn-reserve" onclick="window.location.href='tel:01023220949'"><i class="fas fa-phone-alt"></i> 상담</button>
-            <button class="footer-btn btn-pdf" onclick="savePdf()"><i class="fas fa-file-download"></i> PDF</button>
+            <button class="footer-btn btn-reserve" onclick="window.location.href='tel:01023220949'"><i class="fas fa-phone-alt"></i> 기술 상담 연결</button>
+            <button class="footer-btn btn-pdf" onclick="savePdf()"><i class="fas fa-file-download"></i> PDF 보고서 저장</button>
         </div>
         
         <div class="footer-info no-print">
@@ -727,7 +324,7 @@
         const today = new Date();
         document.getElementById('date').value = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
 
-        // [복구된 결로 판정 지식 DB]
+        // [복구된 결로 판정 지식 베이스]
         const CONDENSATION_DB = `
             [지식 베이스: 결로 원인 판정 기준]
             1. TDR (온도차이비율):
@@ -800,12 +397,19 @@
         // [핵심] 하이브리드 AI 엔진 (Flash -> Pro Fallback)
         async function runHybridGenAI(prompt, imageParts) {
             const genAI = new GoogleGenerativeAI(API_KEY);
+            // 안전 필터 해제
+            const safetySettings = [
+                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+            ];
             const loadingText = document.getElementById('loading-text');
             
             // 1단계: Flash 모델 시도 (빠름/저렴)
             try {
                 if(loadingText) loadingText.innerText = "1차 분석 중 (Flash)...";
-                const modelFlash = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                const modelFlash = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings });
                 const result = await modelFlash.generateContent({ contents: [{ parts: [{ text: prompt }, ...imageParts] }] });
                 return result.response.text();
             } catch (error) {
@@ -813,7 +417,7 @@
                 
                 // 2단계: Pro 모델 시도 (고성능/백업)
                 if(loadingText) loadingText.innerText = "⚡ 정밀 분석 모드 (Pro) 전환 중...";
-                const modelPro = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+                const modelPro = genAI.getGenerativeModel({ model: "gemini-1.5-pro", safetySettings });
                 const result = await modelPro.generateContent({ contents: [{ parts: [{ text: prompt }, ...imageParts] }] });
                 return result.response.text();
             }
@@ -864,7 +468,7 @@
                 }
             } catch(e) {
                 console.error(e);
-                alert("자동입력 실패. 직접 입력해주세요.");
+                alert("자동입력 실패 (" + e.message + "). 직접 입력해주세요.");
                 targetIds.forEach(id => document.getElementById(id).placeholder = "직접입력");
             } finally {
                 targetIds.forEach(id => document.getElementById(id).classList.remove('scanning'));
@@ -987,4 +591,3 @@
     </script>
 </body>
 </html>
-
