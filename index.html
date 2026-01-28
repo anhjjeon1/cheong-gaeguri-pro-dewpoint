@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v27.60 Logic Fix)</title>
+    <title>청개구리 결로진단 AI (v27.80 Exp)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -127,7 +127,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" onclick="checkDevMode()">v27.60 Logic Fix</span>
+        <span class="version-badge" onclick="checkDevMode()">v27.80 Exp</span>
     </header>
 
     <div class="content">
@@ -236,6 +236,7 @@
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
         google.charts.load("current", {packages:["corechart"]});
 
+        // [API KEY] 청개구리님의 작동 키 적용
         const API_KEY = "AIzaSyDifNzK4eCyj" + "7OQBZbqVDU1D-" + "9AgrTCDGo"; 
         
         const today = new Date();
@@ -244,7 +245,7 @@
         let clickCount = 0; let clickTimer;
         window.checkDevMode = function() {
             clearTimeout(clickTimer); clickCount++;
-            if (clickCount === 5) { alert("🐸 1.5 Flash 엔진 활성화됨"); clickCount = 0; }
+            if (clickCount === 5) { alert("🐸 2.0 Exp 엔진 활성화됨"); clickCount = 0; }
             clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
         };
 
@@ -293,10 +294,10 @@
             }
         };
 
-        // [수정됨] MR277 통합 계측 (환경 + 표면온도)
+        // [MR277 통합 계측 (환경 + 표면온도)]
         window.autoFillFromImage = async function(input, type) {
             if(!input.files || !input.files[0]) return;
-            const targetIds = type === 'mr277' ? ['temp-in', 'humid-in', 'vap-val', 'mix-val', 'temp-surf'] : []; // temp-surf 추가됨
+            const targetIds = type === 'mr277' ? ['temp-in', 'humid-in', 'vap-val', 'mix-val', 'temp-surf'] : [];
             targetIds.forEach(id => {
                 const el = document.getElementById(id);
                 if(el) {
@@ -315,8 +316,9 @@
                 });
 
                 const genAI = new GoogleGenerativeAI(API_KEY);
+                // [모델 변경] gemini-2.0-flash-exp 적용
                 const model = genAI.getGenerativeModel({ 
-                    model: "gemini-1.5-flash-001",
+                    model: "gemini-2.0-flash-exp",
                     safetySettings: [
                         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
                         { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
@@ -327,13 +329,12 @@
 
                 let prompt = "";
                 if(type === 'mr277') {
-                    // [핵심 변경] 프롬프트 수정: MR277 화면에서 환경변수 + 열화상 최저온도(Tsi) 모두 추출 요청
                     prompt = `Analyze this FLIR MR277 screen. 
                     1. Extract Air Temp (C) -> 'temp'
                     2. Extract Relative Humidity (%) -> 'humid'
                     3. Extract Vapor Pressure (kPa) -> 'vap'
                     4. Extract Mixing Ratio (g/kg) -> 'mix'
-                    5. Find the Thermal Image part (usually in center). Look for the 'Lo' or 'Min' temperature value (often at bottom corners) -> 'tsi'
+                    5. Find the Thermal Image part. Look for the 'Lo' or 'Min' temperature (usually bottom corners) -> 'tsi'
                     Return ONLY valid JSON: {"temp": number, "humid": number, "vap": number, "mix": number, "tsi": number}`;
                 }
 
@@ -350,7 +351,6 @@
                     if(data.humid) document.getElementById('humid-in').value = data.humid;
                     if(data.vap) document.getElementById('vap-val').value = data.vap;
                     if(data.mix) document.getElementById('mix-val').value = data.mix;
-                    // [추가됨] 표면온도(Tsi) 자동 입력
                     if(data.tsi) document.getElementById('temp-surf').value = data.tsi;
                     calcDewPoint(); 
                 }
@@ -359,7 +359,7 @@
                     const el = document.getElementById(id);
                     if(el) el.placeholder = "직접입력";
                 });
-                alert("자동인식 실패. 직접 입력해주세요.");
+                alert("자동인식 실패 (API 오류). 직접 입력해주세요.");
             } finally {
                 targetIds.forEach(id => {
                     const el = document.getElementById(id);
@@ -446,7 +446,16 @@
 
             try {
                 const genAI = new GoogleGenerativeAI(API_KEY);
-                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-001" });
+                // [모델 변경] gemini-2.0-flash-exp 적용
+                const model = genAI.getGenerativeModel({ 
+                    model: "gemini-2.0-flash-exp",
+                    safetySettings: [
+                        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                    ]
+                });
 
                 const prompt = `
                     당신은 건축물리 전문가입니다.
