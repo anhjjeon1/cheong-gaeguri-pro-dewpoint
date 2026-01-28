@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.22 Masterpiece)</title>
+    <title>청개구리 결로진단 AI (v26.25 Full)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -11,29 +11,52 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <style>
-        /* =========================================
-           [디자인 시스템] 
-           전문가용 앱에 걸맞은 신뢰감 있는 컬러 팔레트
-           ========================================= */
+        /* ==========================================================================
+           [1. DESIGN SYSTEM & VARIABLES]
+           전문가용 앱의 신뢰도를 높이는 컬러 및 레이아웃 변수 정의
+           ========================================================================== */
         :root {
-            --primary-dark: #1a237e;   /* 깊은 남색 (신뢰) */
+            /* Brand Colors */
+            --primary-dark: #1a237e;   /* 깊은 남색 (전문성) */
             --primary-main: #283593;   /* 메인 블루 */
-            --accent-color: #3949ab;   /* 강조색 */
-            --bg-color: #f5f5f5;       /* 배경색 */
-            --card-bg: #ffffff;        /* 카드 배경 */
+            --primary-light: #534bae;
+            --accent-color: #3949ab;
             
-            --text-primary: #212121;   /* 본문 텍스트 */
-            --text-secondary: #546e7a; /* 보조 텍스트 */
-            --border-color: #cfd8dc;   /* 테두리 */
+            /* Backgrounds */
+            --bg-color: #eceff1;       /* 전체 배경 (연한 회색) */
+            --card-bg: #ffffff;        /* 카드 배경 (흰색) */
             
-            --expert-gold: #f57f17;    /* 전문가 강조 (오렌지 골드) */
-            --moisture-blue: #0277bd;  /* 습기 관련 */
-            --sonic-purple: #7b1fa2;   /* 초음파 관련 */
-            --thermal-orange: #d84315; /* 열화상 관련 */
+            /* Text Colors */
+            --text-primary: #263238;   /* 본문 */
+            --text-secondary: #546e7a; /* 보조 설명 */
+            --text-hint: #90a4ae;      /* 힌트 텍스트 */
+            
+            /* Borders & Highlights */
+            --border-color: #cfd8dc;
+            --expert-gold: #f57f17;    /* 핵심 강조색 */
+            
+            /* Functional Colors */
+            --moisture-blue: #0277bd;  /* 습기/VAP */
+            --sonic-purple: #7b1fa2;   /* 초음파/음향 */
+            --thermal-orange: #d84315; /* 열화상/온도 */
             --warning-red: #c62828;    /* 경고/위험 */
+            --success-green: #2e7d32;  /* 양호/완료 */
             
+            /* Shadows & Dimensions */
             --shadow-card: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-floating: 0 10px 20px rgba(0,0,0,0.15);
             --container-max-width: 600px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+        }
+
+        /* ==========================================================================
+           [2. GLOBAL RESET & LAYOUT]
+           기본 초기화 및 반응형 컨테이너 설정
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -44,7 +67,7 @@
             line-height: 1.6;
             display: flex; justify-content: center;
             min-height: 100vh;
-            padding-bottom: 80px; /* 하단 버튼 여백 */
+            padding-bottom: 70px; /* 하단 고정 버튼 여백 확보 */
         }
 
         .mobile-container {
@@ -55,252 +78,374 @@
             min-height: 100vh;
             margin: 0;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* [헤더] 물방울 애니메이션 및 그라데이션 */
+        /* ==========================================================================
+           [3. COMPACT HEADER]
+           높이를 최소화하고 시인성을 높인 상단 헤더
+           ========================================================================== */
         .main-header {
-            background: linear-gradient(145deg, var(--primary-dark), var(--primary-main));
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-main));
             color: white;
-            padding: 20px 15px;
-            display: flex; flex-direction: column; align-items: center;
-            box-shadow: 0 4px 15px rgba(40, 53, 147, 0.3);
-            position: sticky; top: 0; z-index: 100;
+            padding: 12px 15px; /* 세로 높이 최소화 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(26, 35, 126, 0.25);
             overflow: hidden;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
         }
         
+        /* 물방울 애니메이션 효과 */
         .water-drop {
             position: absolute;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
             z-index: 0;
+            pointer-events: none;
             animation: float 6s infinite ease-in-out;
         }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
 
         .main-header h1 {
             margin: 0;
-            font-size: 1.3rem;
-            font-weight: 900;
-            display: flex; align-items: center; gap: 10px;
+            font-size: 1.15rem;
+            font-weight: 800;
+            display: flex; align-items: center; gap: 8px;
             position: relative; z-index: 1;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            letter-spacing: -0.5px;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .version-badge {
-            align-self: flex-end;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             background: rgba(255,255,255,0.15);
-            color: #e3f2fd;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.65rem;
+            color: #e8eaf6;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.6rem;
             font-weight: 500;
             border: 1px solid rgba(255,255,255,0.2);
-            margin-top: 8px;
             cursor: pointer;
-            position: relative; z-index: 1;
+            z-index: 2;
             transition: all 0.3s;
         }
-        .version-badge:hover { background: rgba(255,255,255,0.3); }
-        .version-badge.dev-active { background: #6200ea; border-color: #b388ff; color: #fff; box-shadow: 0 0 10px #651fff; }
-
-        .content { padding: 20px 15px; }
-        
-        .section {
-            margin-bottom: 25px;
-            background: #fff;
-            border-radius: 16px;
-            border: 1px solid #f0f0f0;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        .version-badge:hover { background: rgba(255,255,255,0.25); }
+        .version-badge.dev-active { 
+            background: #6200ea; 
+            border-color: #b388ff; 
+            color: #fff; 
+            box-shadow: 0 0 8px rgba(98, 0, 234, 0.6);
         }
 
+        /* ==========================================================================
+           [4. SECTION & CONTENT STYLING]
+           여백을 최적화한 컨텐츠 영역
+           ========================================================================== */
+        .content { 
+            padding: 10px; /* 좌우 여백 축소 */
+            flex: 1;
+        }
+        
+        .section {
+            margin-bottom: 12px; /* 섹션 간격 축소 */
+            background: #fff;
+            border-radius: var(--radius-md);
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            position: relative;
+        }
+        
         .section-title {
             font-weight: 800;
             color: var(--primary-dark);
-            margin-bottom: 15px;
-            display: flex; align-items: center;
-            font-size: 1.05rem;
-            border-left: 5px solid var(--expert-gold);
-            padding-left: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            border-left: 4px solid var(--expert-gold);
+            padding-left: 10px;
+            line-height: 1.2;
         }
+        .section-title i { margin-right: 6px; color: var(--text-secondary); opacity: 0.7; }
 
-        /* [입력 폼] 그리드 레이아웃 최적화 */
-        .input-group { margin-bottom: 10px; }
+        /* ==========================================================================
+           [5. INPUT FORMS & GRID]
+           가독성을 높인 입력 폼 디자인
+           ========================================================================== */
+        .input-group { margin-bottom: 8px; }
+        
         .input-label {
             display: block;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             color: var(--text-secondary);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-align: center;
+            white-space: nowrap;
         }
         
-        input, select, textarea {
+        /* 공통 인풋 스타일 */
+        input[type="text"], input[type="number"], select, textarea {
             width: 100%;
-            padding: 12px;
+            padding: 10px 5px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            background-color: #fcfcfc;
-            font-size: 0.95rem;
+            background-color: #f9fafb;
+            font-size: 0.9rem;
             box-sizing: border-box;
-            text-align: center;
+            text-align: center; /* 텍스트 중앙 정렬 */
             font-weight: 700;
             color: var(--text-primary);
-            transition: border-color 0.3s;
+            transition: all 0.2s ease;
+            -webkit-appearance: none; /* 모바일 기본 스타일 제거 */
         }
+        
         input:focus, select:focus, textarea:focus {
             border-color: var(--primary-main);
             outline: none;
             background-color: #fff;
             box-shadow: 0 0 0 3px rgba(40, 53, 147, 0.1);
         }
-        textarea { resize: none; height: 80px; text-align: left; padding: 12px; font-weight: 400; }
+        
+        textarea { 
+            resize: none; 
+            height: 70px; 
+            text-align: left; /* 텍스트에어리어는 좌측 정렬 */
+            padding: 10px;
+            font-weight: 400; 
+            line-height: 1.5;
+        }
 
-        .info-grid-row { display: grid; grid-template-columns: 0.8fr 1fr 1.2fr 1.5fr; gap: 8px; margin-bottom: 12px; }
-        .info-triple-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+        /* 그리드 시스템 (반응형 대응) */
+        .info-grid-row { 
+            display: grid; 
+            grid-template-columns: 0.6fr 0.8fr 1.2fr 1.4fr; /* 동/호/장소/일자 비율 */
+            gap: 5px; 
+            margin-bottom: 8px; 
+        }
+        .info-triple-row { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 0.9fr; /* 창호/구조/간봉 비율 */
+            gap: 5px; 
+            margin-bottom: 8px; 
+        }
 
-        /* [특수 입력창] TDR 및 VAP 강조 */
-        .tdr-input { background-color: #fff3e0 !important; border: 1px solid #ffb74d !important; color: #e65100 !important; font-weight: 900; }
-        .vap-input { background-color: #e1f5fe !important; border: 1px solid #4fc3f7 !important; color: #01579b !important; font-weight: 900; }
+        /* 중요 수치 강조 스타일 */
+        .tdr-input { 
+            background-color: #fff3e0 !important; 
+            border: 1px solid #ffb74d !important; 
+            color: #e65100 !important; 
+            font-weight: 900; 
+        }
+        .vap-input { 
+            background-color: #e1f5fe !important; 
+            border: 1px solid #4fc3f7 !important; 
+            color: #01579b !important; 
+            font-weight: 900; 
+        }
 
-        /* [사진 업로드] 9종 슬롯 스타일 */
-        .photo-stack { display: flex; flex-direction: column; gap: 15px; }
+        /* ==========================================================================
+           [6. PHOTO UPLOAD UI]
+           4:3 비율 고정 및 9종 슬롯 디자인
+           ========================================================================== */
+        .photo-stack { display: flex; flex-direction: column; gap: 10px; }
         
         .upload-wrapper { 
             border: 1px dashed #b0bec5;
-            padding: 15px;
-            border-radius: 12px; 
+            padding: 10px;
+            border-radius: 10px; 
             background: #fafafa;
             position: relative;
             transition: all 0.3s;
         }
-        .upload-wrapper.filled {
-            border-style: solid;
-            border-color: var(--primary-main);
-            background: #e8eaf6;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        /* 사진이 업로드되면 테두리와 배경 변경 */
+        .upload-wrapper.filled { 
+            border-style: solid; 
+            border-color: var(--primary-main); 
+            background: #e8eaf6; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         
         .upload-box {
             border: 2px dashed #cfd8dc;
             background-color: #fff;
-            border-radius: 10px;
+            border-radius: 8px;
             width: 100%;
-            aspect-ratio: 16 / 9; 
+            aspect-ratio: 4 / 3; /* 4:3 비율 강제 고정 */
             text-align: center;
             color: #90a4ae;
             cursor: pointer;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
             overflow: hidden;
             margin-bottom: 0;
             transition: all 0.2s;
+            position: relative;
         }
-        .upload-box:hover { border-color: var(--primary-main); background-color: #f5f5f5; }
-        .upload-icon { font-size: 2.2rem; margin-bottom: 8px; opacity: 0.6; }
-        .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
+        .upload-box:hover { 
+            background-color: #f5f5f5; 
+            border-color: var(--primary-light);
+        }
+        
+        .upload-icon { font-size: 2rem; margin-bottom: 5px; opacity: 0.5; }
+        .preview-img { 
+            width: 100%; height: 100%; 
+            object-fit: contain; /* 비율 유지하며 꽉 채움 */
+            display: none; 
+            background: #000; 
+        }
         .file-input { display: none; }
 
-        /* [결과 리포트] */
+        /* ==========================================================================
+           [7. REPORT & CHART AREA]
+           결과 리포트 및 시각화 영역
+           ========================================================================== */
         #result-area {
-            margin-top: 30px;
-            padding: 25px;
+            margin-top: 25px;
+            padding: 20px;
             background-color: #fff;
-            border-radius: 20px;
+            border-radius: var(--radius-lg);
             border: 2px solid var(--primary-main);
-            display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none; /* 초기엔 숨김 */
+            box-shadow: var(--shadow-floating);
         }
+        
         .report-badge {
             background-color: #e8eaf6;
             color: var(--primary-dark);
-            padding: 10px 15px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             font-size: 0.8rem;
             font-weight: 700;
             margin-bottom: 20px;
-            border-left: 5px solid var(--primary-main);
-            line-height: 1.5;
+            border-left: 4px solid var(--primary-main);
+            line-height: 1.4;
         }
 
-        .report-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        /* 갤러리 그리드 */
+        .report-gallery { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; /* 2열 배치 */
+            gap: 8px; 
+            margin-bottom: 20px; 
+        }
         .report-img-item {
-            border-radius: 10px; overflow: hidden;
+            border-radius: 8px; 
+            overflow: hidden;
             border: 1px solid #eee;
             aspect-ratio: 4/3;
             background: #000;
             display: flex; flex-direction: column;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .report-img-item img { width: 100%; height: 100%; object-fit: contain; flex-grow: 1; }
         .report-img-caption {
-            font-size: 0.75rem; padding: 6px; text-align: center;
+            font-size: 0.7rem; padding: 4px; text-align: center;
             background: #f5f5f5; color: #333; font-weight: 800;
             border-top: 1px solid #eee;
         }
 
-        .report-summary-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 0.9rem; }
-        .report-summary-table th, .report-summary-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-        .report-summary-table th { color: var(--text-secondary); width: 35%; background: #fafafa; }
+        /* 요약 테이블 */
+        .report-summary-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 0.85rem; }
+        .report-summary-table th, .report-summary-table td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+        .report-summary-table th { color: var(--text-secondary); width: 35%; background: #fafafa; font-weight: 600; }
         .report-summary-table td { font-weight: 700; color: var(--primary-dark); }
 
-        /* [차트 및 버튼] */
-        .chart-container { position: relative; height: 350px; width: 100%; margin-top: 20px; }
+        /* 차트 컨테이너 */
+        .chart-container { 
+            position: relative; 
+            height: 300px; 
+            width: 100%; 
+            margin-top: 20px; 
+            overflow: hidden;
+        }
 
+        /* ==========================================================================
+           [8. BUTTONS & ACTIONS]
+           3D 효과 버튼 및 로딩/스캔 애니메이션
+           ========================================================================== */
         .analyze-btn {
-            width: 100%; padding: 18px;
+            width: 100%; padding: 16px;
             background: #cfd8dc; color: #fff;
-            border: none; border-radius: 14px;
-            font-size: 1.15rem; font-weight: 800;
+            border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 800;
             cursor: not-allowed;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            margin-top: 25px;
-            transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 20px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: none;
         }
         .analyze-btn.active {
             background: linear-gradient(135deg, var(--primary-main), #1a237e);
-            color: #00e676; /* 녹색 텍스트로 강조 */
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(26, 35, 126, 0.3);
+            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
             transform: translateY(-2px);
         }
+        .analyze-btn.active:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 5px rgba(26, 35, 126, 0.3);
+        }
 
-        .footer-btns { display: flex; gap: 10px; margin-top: 30px; }
+        .footer-btns { display: flex; gap: 8px; margin-top: 25px; }
         .footer-btn {
-            flex: 1; padding: 15px; border: none; border-radius: 12px;
-            font-size: 1rem; font-weight: 700; cursor: pointer; color: white;
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            flex: 1; padding: 14px; border: none; border-radius: 10px;
+            font-size: 0.95rem; font-weight: 700; cursor: pointer; color: white;
+            display: flex; justify-content: center; align-items: center; gap: 6px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
             transition: transform 0.1s;
         }
-        .footer-btn:active { transform: scale(0.98); }
+        .footer-btn:active { transform: scale(0.98); box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
         .btn-pdf { background: #455a64; } 
         .btn-reserve { background: var(--expert-gold); }
 
-        /* [스캔 애니메이션 & 로딩] */
-        @keyframes scan { 0% { border-color: #ccc; } 50% { border-color: #2196f3; box-shadow: 0 0 15px #2196f3; } 100% { border-color: #ccc; } }
-        .scanning { animation: scan 1.5s infinite; }
-
-        .legal-box {
-            background: #fff3e0; padding: 15px; border-radius: 10px; margin-top: 25px;
-            font-size: 0.8rem; color: #e65100; border: 1px solid #ffe0b2;
-            line-height: 1.5;
+        /* 로딩 스피너 및 스캔 효과 */
+        @keyframes scan { 
+            0% { border-color: #ccc; box-shadow: none; } 
+            50% { border-color: #2196f3; box-shadow: 0 0 10px #2196f3; background-color: #e3f2fd; } 
+            100% { border-color: #ccc; box-shadow: none; } 
         }
-        .legal-check { display: flex; align-items: center; margin-top: 10px; font-weight: 800; cursor: pointer; font-size: 0.9rem; }
+        .scanning { animation: scan 1.2s infinite; }
 
-        .footer-info { text-align: center; margin-top: 40px; color: #b0bec5; font-size: 0.75rem; }
+        /* 법적 고지 박스 */
+        .legal-box {
+            background: #fff3e0; padding: 12px; border-radius: 8px; margin-top: 20px;
+            font-size: 0.75rem; color: #e65100; border: 1px solid #ffe0b2;
+            line-height: 1.4;
+        }
+        .legal-check { 
+            display: flex; align-items: center; margin-top: 8px; 
+            font-weight: 800; cursor: pointer; font-size: 0.85rem; 
+        }
+        .legal-check input { width: 18px; height: 18px; margin-right: 8px; accent-color: var(--primary-main); }
 
-        /* 인쇄 시 레이아웃 */
+        /* 하단 푸터 (2줄 압축) */
+        .footer-info {
+            text-align: center; margin-top: 30px;
+            color: #90a4ae; font-size: 0.7rem; line-height: 1.4;
+            border-top: 1px solid #eee; padding-top: 15px;
+        }
+        .footer-info strong { color: #546e7a; font-weight: 700; }
+
+        /* 인쇄 미디어 쿼리 */
         @media print {
-            body { background: #fff; }
+            body { background: #fff; padding: 0; }
             .mobile-container { box-shadow: none; max-width: 100%; border: none; }
             .no-print { display: none !important; }
             #result-area { display: block !important; border: 2px solid #000; box-shadow: none; }
-            .section { page-break-inside: avoid; }
+            .section { page-break-inside: avoid; border: 1px solid #ccc; }
         }
     </style>
 </head>
@@ -308,16 +453,16 @@
 
 <div class="mobile-container">
     <header class="main-header">
-        <div class="water-drop" style="width: 25px; height: 25px; top: 15%; left: 10%;"></div>
-        <div class="water-drop" style="width: 15px; height: 15px; top: 25%; left: 80%;"></div>
-        <div class="water-drop" style="width: 10px; height: 10px; top: 60%; left: 20%;"></div>
+        <div class="water-drop" style="width: 30px; height: 30px; top: 10%; left: 5%;"></div>
+        <div class="water-drop" style="width: 15px; height: 15px; top: 30%; left: 85%;"></div>
+        <div class="water-drop" style="width: 10px; height: 10px; top: 70%; left: 15%;"></div>
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.22 True Masterpiece</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.25 Full</span>
     </header>
 
     <div class="content">
         <div class="section no-print">
-            <div class="section-title"><i class="fas fa-home"></i> 진단 개요 (Overview)</div>
+            <div class="section-title"><i class="fas fa-home"></i> 진단 개요</div>
             <div class="info-grid-row">
                 <div class="input-group"><label class="input-label">동</label><input type="text" id="dong" placeholder="101"></div>
                 <div class="input-group"><label class="input-label">호</label><input type="text" id="ho" placeholder="1204"></div>
@@ -329,28 +474,28 @@
                 <div class="input-group">
                     <label class="input-label">창호 사양</label>
                     <select id="window-type">
-                        <option value="입면분할창">입면분할창 (고급형)</option>
-                        <option value="PVC 이중창">PVC 이중창 (일반)</option>
-                        <option value="PVC 시스템창호">PVC 시스템창호</option>
-                        <option value="알루미늄 단창">알루미늄 단창</option>
-                        <option value="커튼월">커튼월 (주상복합)</option>
+                        <option value="입면분할창">입면분할창</option>
+                        <option value="PVC 이중창">PVC 이중창</option>
+                        <option value="PVC 시스템창호">PVC 시스템</option>
+                        <option value="알루미늄 단창">알루미늄</option>
+                        <option value="커튼월">커튼월</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label class="input-label">구조 특성</label>
                     <select id="house-type">
-                        <option value="확장형(Extension)">발코니 확장형</option>
-                        <option value="비확장(Non-Ext)">비확장 (기본형)</option>
-                        <option value="측벽세대">측벽 세대 (End)</option>
+                        <option value="확장형(Extension)">확장형</option>
+                        <option value="비확장(Non-Ext)">비확장</option>
+                        <option value="측벽세대">측벽세대</option>
                         <option value="필로티/최상층">필로티/최상층</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label class="input-label">간봉 종류</label>
                     <select id="consideration">
-                        <option value="알루미늄 간봉">알루미늄 (일반)</option>
-                        <option value="TPS 단열간봉">TPS 단열 (고급)</option>
-                        <option value="TGI 단열간봉">TGI 단열 (고급)</option>
+                        <option value="알루미늄 간봉">알루미늄</option>
+                        <option value="TPS 단열간봉">TPS 단열</option>
+                        <option value="TGI 단열간봉">TGI 단열</option>
                     </select>
                 </div>
             </div>
@@ -363,8 +508,8 @@
         <div class="section no-print">
             <div class="section-title"><i class="fas fa-temperature-high"></i> 정밀 계측 (Auto OCR)</div>
             
-            <div style="background:#e3f2fd; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #bbdefb;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 10px;">
+            <div style="background:#e3f2fd; padding:12px; border-radius:8px; margin-bottom:12px; border:1px solid #bbdefb;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 8px;">
                     <div class="input-group">
                         <label class="input-label">실내온도(Ti)</label>
                         <input type="number" id="temp-in" placeholder="Auto" oninput="calcDewPoint()">
@@ -375,7 +520,7 @@
                     </div>
                     <div class="input-group">
                         <label class="input-label" style="color:#c62828;">🔥 노점온도(Dew)</label>
-                        <input type="text" id="dew-result" placeholder="자동계산" readonly style="background:#ffebee; color:#c62828;">
+                        <input type="text" id="dew-result" placeholder="-" readonly style="background:#ffebee; color:#c62828;">
                     </div>
                 </div>
             </div>
@@ -383,8 +528,8 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div class="input-group">
                     <label class="input-label" style="color:#e65100;">📉 표면온도(Tsi)</label>
-                    <input type="number" id="temp-surf" class="tdr-input" placeholder="열화상 Auto">
-                    <div style="font-size:0.7rem; color:#ef6c00; text-align:center; margin-top:4px;">* 열화상 최저값</div>
+                    <input type="number" id="temp-surf" class="tdr-input" placeholder="열화상(부분)">
+                    <div style="font-size:0.65rem; color:#ef6c00; text-align:center; margin-top:2px;">* 4번 사진 최저값</div>
                 </div>
                 <div class="input-group">
                     <label class="input-label">외기온도(To)</label>
@@ -392,7 +537,7 @@
                 </div>
             </div>
 
-            <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #ccc; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="margin-top:12px; padding-top:12px; border-top:1px dashed #ccc; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div class="input-group">
                     <label class="input-label" style="color:#0277bd;">VAP (수증기압)</label>
                     <input type="number" id="vap-val" class="vap-input" placeholder="Auto" step="0.01">
@@ -402,11 +547,11 @@
                     <input type="number" id="mix-val" class="vap-input" placeholder="Auto" step="0.01">
                 </div>
             </div>
-            <div style="font-size:0.75rem; color:#0277bd; text-align:right; margin-top:5px;">* MR277 사진 등록 시 자동 입력됨</div>
+            <div style="font-size:0.7rem; color:#0277bd; text-align:right; margin-top:4px;">* 5번 MR277 사진 등록 시 자동 입력</div>
         </div>
 
         <div class="section no-print">
-            <div class="section-title"><i class="fas fa-camera"></i> 현장 채증 데이터 (9종)</div>
+            <div class="section-title"><i class="fas fa-camera"></i> 현장 채증 (9종 슬롯)</div>
             <div class="photo-stack" id="photo-container">
                 
                 <div class="upload-wrapper" style="border-color:#546e7a;">
@@ -426,23 +571,23 @@
                 </div>
 
                 <div class="upload-wrapper" style="border-color:var(--thermal-orange); background:#fff3e0;">
-                    <label class="input-label" style="color:var(--thermal-orange);">3. 열화상 카메라 (전체) - Auto Input</label>
+                    <label class="input-label" style="color:var(--thermal-orange);">3. 열화상 카메라 (전체)</label>
                     <label for="img-3" class="upload-box">
                         <i class="fas fa-temperature-high upload-icon" style="color:var(--thermal-orange);"></i><img id="view-3" class="preview-img">
                     </label>
-                    <input type="file" id="img-3" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'thermal')">
+                    <input type="file" id="img-3" class="file-input" accept="image/*" onchange="handleImage(this)">
                 </div>
 
                 <div class="upload-wrapper" style="border-color:var(--thermal-orange);">
-                    <label class="input-label" style="color:var(--thermal-orange);">4. 열화상 카메라 (부분)</label>
+                    <label class="input-label" style="color:var(--thermal-orange);">4. 열화상 카메라 (부분) - Tsi 자동</label>
                     <label for="img-4" class="upload-box">
                         <i class="fas fa-temperature-low upload-icon" style="color:var(--thermal-orange);"></i><img id="view-4" class="preview-img">
                     </label>
-                    <input type="file" id="img-4" class="file-input" accept="image/*" onchange="handleImage(this)">
+                    <input type="file" id="img-4" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'thermal')">
                 </div>
 
                 <div class="upload-wrapper" style="border-color:var(--primary-main); background:#e3f2fd;">
-                    <label class="input-label" style="color:var(--primary-main);">5. FLIR MR277 (습도/VAP 계측) - Auto Input</label>
+                    <label class="input-label" style="color:var(--primary-main);">5. FLIR MR277 (전체) - 온습도 자동</label>
                     <label for="img-5" class="upload-box">
                         <i class="fas fa-ruler-combined upload-icon" style="color:var(--primary-main);"></i><img id="view-5" class="preview-img">
                     </label>
@@ -480,14 +625,20 @@
                     </label>
                     <input type="file" id="img-9" class="file-input" accept="image/*" onchange="handleImage(this)">
                 </div>
+            </div>
+        </div>
 
+        <div class="section no-print">
+            <div class="section-title"><i class="fas fa-user-edit"></i> 검사자 종합 의견 (Additional Opinion)</div>
+            <div class="input-group">
+                <textarea id="human-opinion" placeholder="[선택] AI 진단 외에 검사자가 현장에서 발견한 특이사항이나 종합 소견을 입력하세요. (최종 리포트 하단에 '종합 의견'으로 출력됩니다)"></textarea>
             </div>
         </div>
 
         <div class="legal-box no-print">
             <strong>[필수 동의]</strong> 본 리포트는 AI 참고용 소견서입니다. 법적 효력은 없으며 전문 기술사의 확인이 필요합니다.
             <label class="legal-check">
-                <input type="checkbox" id="legal-agree" onchange="toggleAnalyzeBtn()" style="width:20px; height:20px; margin-right:8px; accent-color:#1a237e;">
+                <input type="checkbox" id="legal-agree" onchange="toggleAnalyzeBtn()">
                 위 내용을 확인하였으며 동의합니다.
             </label>
         </div>
@@ -499,7 +650,7 @@
         <div id="result-area">
             <div class="section-title"><i class="fas fa-file-signature"></i> 결로 정밀 진단 소견서</div>
             <div class="report-badge">
-                <i class="fas fa-check-circle"></i> 본 리포트는 <strong>건축 물리 표준 데이터(PHIKO, 국토부)</strong> 및 <strong>하자 사례 빅데이터</strong>를 기반으로 자동 생성되었습니다.
+                <i class="fas fa-check-circle"></i> AI 및 건축물리 데이터 기반 자동 생성 리포트
             </div>
             
             <div class="input-label" style="margin-bottom:10px; font-size:0.9rem;">[현장 채증 데이터 갤러리]</div>
@@ -523,7 +674,7 @@
             
             <div id="chart-section" style="display:none; margin-top:40px; border-top:2px dashed #eee; padding-top:20px;">
                 <div class="section-title"><i class="fas fa-chart-pie"></i> 원인 귀책 사유 분석 (AI 추정)</div>
-                <div id="chart_div" class="chart-container" style="height:350px;"></div>
+                <div id="chart_div" class="chart-container"></div>
                 
                 <div style="margin-top:30px; font-size:0.75rem; color:#90a4ae; text-align:center; border:1px solid #eceff1; padding:15px; border-radius:8px; background:#fafafa;">
                     ※ 본 문서는 AI 어시스턴트가 작성한 비공식 소견서입니다. 법적 분쟁 시 효력이 없으며, 정확한 원인 규명을 위해서는 전문 기술사의 현장 정밀 진단이 반드시 필요합니다.
@@ -541,8 +692,8 @@
         </div>
         
         <div class="footer-info no-print">
-            <p><strong>청개구리샤시</strong> | 데이터 기반 스마트 결로 솔루션</p>
-            <p>Copyright © 2026 Cheong-gaeguri Corp. All rights reserved.</p>
+            <strong>청개구리샤시</strong> | 대표: 전영웅 | 010-2322-0949<br>
+            본 서비스는 참고용이며 법적 책임을 지지 않습니다.
         </div>
     </div>
 
@@ -550,28 +701,35 @@
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
         google.charts.load("current", {packages:["corechart"]});
 
+        // API 키 설정 (보안상 주의 필요하지만 데모용으로 유지)
         const API_KEY = "AIzaSyCGtANQJNBEGSh" + "9zCrTXMEnR-" + "PHxLlXtkw"; 
+        
+        // 날짜 초기화
         const today = new Date();
         document.getElementById('date').value = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
 
-        // [결로 지식 DB] AI 프롬프트 주입용
+        // [복구된 결로 판정 지식 DB]
         const CONDENSATION_DB = `
             [지식 베이스: 결로 원인 판정 기준]
             1. TDR (온도차이비율):
-               - TDR = (실내온도 - 표면온도) / (실내온도 - 실외온도)
-               - 판정 기준: 0.28 초과 시 '단열 성능 미달(하자)'로 강력 추정. 0.28 이하 시 '사용자 환경 요인' 가능성 큼.
+               - 식: TDR = (실내온도 - 표면온도) / (실내온도 - 실외온도)
+               - 기준: 공동주택 설계 기준 0.28.
+               - 판정: 0.28 초과 시 '단열 성능 미달(시공사 귀책)' 강력 추정. 0.28 이하 시 '사용자 환경 요인(환기 부족)' 가능성 큼.
             2. 공기질 (VAP, MIX):
-               - 겨울철 신축 아파트 기준: VAP > 1.2 kPa 또는 MIX > 7.3 g/kg 이면 '과습(환기부족)' 상태.
-            3. 창호 특성:
-               - 알루미늄 간봉: 유리 테두리 결로(Cold Edge)의 주원인.
-               - 입면분할창: 하부 고정창과 상부 미서기창 연결 부위(통바)의 단열 취약성.
+               - 겨울철 신축 아파트 기준: VAP > 1.2 kPa 또는 MIX > 7.3 g/kg 이면 '과습 상태'로 간주.
+               - 이 경우 환기가 부족하거나 가습 행위가 과도함.
+            3. 창호 특성별 취약점:
+               - 알루미늄 간봉: 유리 테두리 'Cold Edge' 현상 주범 (ㅁ자 결로).
+               - 입면분할창: 하부 고정창과 상부 미서기창 연결 부위(통바/Transom)의 단열 취약성.
+               - 시스템 창호: 기밀성은 우수하나 시공 시 프레임 주변 폼 충진 불량 가능성.
         `;
 
-        // 위치 API (자동 날씨)
+        // 위치 기반 외기온도 자동 조회 (Open-Meteo API)
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 try {
-                    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current=temperature_2m&timezone=auto`);
+                    const url = `https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current=temperature_2m&timezone=auto`;
+                    const res = await fetch(url);
                     if(res.ok) {
                         const data = await res.json();
                         document.getElementById('temp-out').value = data.current.temperature_2m.toFixed(1);
@@ -580,6 +738,7 @@
             });
         }
 
+        // 개발자 모드 토글 (히든 기능)
         let clickCount = 0; let clickTimer;
         window.checkDevMode = function() {
             clearTimeout(clickTimer); clickCount++;
@@ -595,6 +754,7 @@
             clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
         };
 
+        // 노점온도 자동 계산 함수
         window.calcDewPoint = function() {
             const t = parseFloat(document.getElementById('temp-in').value);
             const h = parseFloat(document.getElementById('humid-in').value);
@@ -606,6 +766,7 @@
             }
         };
 
+        // 이미지 미리보기 처리
         window.handleImage = function(input) {
             if(input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -622,16 +783,19 @@
             }
         };
 
-        // [핵심] OCR 자동 입력 기능 (비동기 처리 완벽 수정)
+        // [요청 2: 스마트 OCR 타겟팅]
         window.autoFillFromImage = async function(input, type) {
             if(!input.files || !input.files[0]) return;
+            
+            // type에 따라 타겟 ID 설정 (thermal: 4번사진->표면온도, mr277: 5번사진->실내온습도)
             const targetIds = type === 'mr277' ? ['temp-in', 'humid-in', 'vap-val', 'mix-val'] : ['temp-surf'];
             
+            // 로딩 상태 표시
             targetIds.forEach(id => {
                 const el = document.getElementById(id);
                 el.classList.add('scanning');
                 el.value = '';
-                el.placeholder = "Scanning...";
+                el.placeholder = "Scan..";
             });
 
             try {
@@ -647,9 +811,14 @@
 
                 let prompt = "";
                 if(type === 'mr277') {
-                    prompt = `Read the digital screen of this FLIR MR277. Extract: Air Temp(C), Relative Humidity(%), Vapor Pressure(kPa), Mixing Ratio(g/kg or GPP). Return JSON ONLY: {"temp": 24.5, "humid": 50, "vap": 1.4, "mix": 9.2}`;
+                    prompt = `Read the LCD screen of this FLIR MR277 instrument. Extract numbers for:
+                        1. Air Temp (C) -> key: temp
+                        2. RH (%) -> key: humid
+                        3. VAP (kPa) -> key: vap
+                        4. Mix Ratio (g/kg) -> key: mix
+                        Return ONLY valid JSON format like {"temp": 24.5, "humid": 50.2, "vap": 1.4, "mix": 9.2}. Do NOT wrap in markdown.`;
                 } else {
-                    prompt = `Analyze this thermal image. Find the lowest (coldest) temperature value displayed (usually marked 'Lo' or 'Min'). Return JSON ONLY: {"min_temp": 12.5}`;
+                    prompt = `Analyze this thermal image. Find the LOWEST (Coldest) temperature value displayed on screen (usually marked 'Lo', 'Min' or blue crosshair). Return ONLY valid JSON: {"min_temp": 12.5}.`;
                 }
 
                 const result = await model.generateContent({
@@ -657,7 +826,7 @@
                 });
                 
                 const text = result.response.text();
-                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                const jsonMatch = text.match(/\{[\s\S]*\}/); // JSON 추출
                 
                 if(jsonMatch) {
                     const data = JSON.parse(jsonMatch[0]);
@@ -736,13 +905,12 @@
             }
 
             if(imageParts.length === 0) {
-                 alert("사진이 없습니다."); 
+                 alert("사진을 최소 1장 이상 등록해주세요."); 
                  document.querySelectorAll('.no-print').forEach(el => el.style.display = 'block');
                  resultArea.style.display = 'none';
                  return;
             }
 
-            // AI 호출
             try {
                 const genAI = new GoogleGenerativeAI(API_KEY);
                 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
@@ -750,6 +918,7 @@
                 const tIn = document.getElementById('temp-in').value || 20;
                 const tOut = document.getElementById('temp-out').value || -5;
                 const vap = document.getElementById('vap-val').value;
+                const humanOp = document.getElementById('human-opinion').value; // 검사자 의견
                 
                 // TDR 계산
                 let tdr = 0;
@@ -759,7 +928,7 @@
                 tdr = tdr.toFixed(2);
 
                 const prompt = `
-                    당신은 건축물리 전문가입니다. 아래 데이터를 분석해 전문적인 결로 진단 보고서를 작성하세요.
+                    당신은 '건축물리 박사'이자 '결로 진단 최고 전문가'입니다. 아래 데이터를 분석해 전문적인 결로 진단 보고서를 작성하세요.
                     
                     ${CONDENSATION_DB}
 
@@ -768,11 +937,13 @@
                     - VAP: ${vap || 'N/A'} kPa (겨울 기준 1.2 초과시 과습)
                     - 창호: ${document.getElementById('window-type').value} / ${document.getElementById('consideration').value}
                     - 증상: ${document.getElementById('defect-content').value}
+                    - **검사자 종합 의견**: ${humanOp}
 
                     [작성 요령]
                     1. **정밀 분석**: TDR 값과 VAP 값을 근거로 원인(단열미흡 vs 생활습관)을 명확히 판정하세요.
                     2. **사진 분석**: 각 사진(열화상, 초음파 등)에서 보이는 특징(모서리 결로, 틈새 누기 등)을 언급하세요.
                     3. **솔루션**: 3단계 해결책(환기/단열보강/기밀시공 등)을 제시하세요.
+                    4. '검사자 종합 의견'이 있다면 리포트 결론부에 반영하세요.
                     
                     마지막에 JSON 포함 필수: ___JSON_START___ {"ventilation": 50, "insulation": 50, "normal": 0} ___JSON_END___
                     (수치는 TDR > 0.28 이면 insulation 높게, VAP > 1.2 이면 ventilation 높게 설정)
@@ -799,17 +970,14 @@
             } catch(e) {
                 console.error(e);
                 loading.style.display = 'none';
-                contentDiv.innerHTML = "<p style='color:red; text-align:center;'>분석 중 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요.</p>";
+                contentDiv.innerHTML = "<p style='color:red; text-align:center;'>분석 중 오류가 발생했습니다.<br>네트워크를 확인하거나 잠시 후 다시 시도해주세요.</p>";
                 contentDiv.style.display = 'block';
             }
         };
 
         function drawChart(data) {
             var d = google.visualization.arrayToDataTable([
-                ['원인', '비율'],
-                ['환기 부족(생활)', data.ventilation],
-                ['단열/기밀 미흡(시공)', data.insulation],
-                ['기타 요인', data.normal]
+                ['원인', '비율'], ['환기 부족(생활)', data.ventilation], ['단열/기밀 미흡(시공)', data.insulation], ['기타 요인', data.normal]
             ]);
             var options = {
                 title: '귀책 사유 분석 (AI 추정)', is3D: true,
