@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v26.50 Final)</title>
+    <title>청개구리 결로진단 AI (v26.70 New Key)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -78,7 +78,7 @@
         .tdr-input { background-color: #fff3e0 !important; border: 1px solid #ffb74d !important; color: #e65100 !important; }
         .vap-input { background-color: #e1f5fe !important; border: 1px solid #4fc3f7 !important; color: #01579b !important; }
 
-        /* [사진 업로드 - 4:3 고정] */
+        /* [사진 업로드] */
         .photo-stack { display: flex; flex-direction: column; gap: 12px; }
         .upload-wrapper { border: 1px dashed #b0bec5; padding: 10px; border-radius: 10px; background: #fafafa; position: relative; transition: 0.3s; }
         .upload-wrapper.filled { border-style: solid; border-color: var(--primary-main); background: #e8eaf6; }
@@ -110,7 +110,7 @@
         .report-summary-table td { font-weight: 700; color: var(--primary-dark); }
         .chart-container { height: 300px; margin-top: 20px; }
 
-        /* [버튼 및 푸터] */
+        /* [버튼] */
         .analyze-btn {
             width: 100%; padding: 16px; background: #cfd8dc; color: #fff; border: none; border-radius: 12px;
             font-size: 1.1rem; font-weight: 800; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -126,17 +126,11 @@
         .legal-check { display: flex; align-items: center; margin-top: 8px; font-weight: 800; cursor: pointer; }
         .footer-info { text-align: center; margin-top: 30px; font-size: 0.7rem; color: #90a4ae; border-top: 1px solid #eee; padding-top: 15px; }
 
-        /* 로딩 애니메이션 */
-        @keyframes scan { 
-            0% { border-color: #ccc; } 
-            50% { border-color: #2196f3; box-shadow: 0 0 10px #2196f3; } 
-            100% { border-color: #ccc; } 
-        }
+        @keyframes scan { 0% { border-color: #ccc; } 50% { border-color: #2196f3; box-shadow: 0 0 10px #2196f3; } 100% { border-color: #ccc; } }
         .scanning { animation: scan 1.2s infinite; }
 
         @media print {
-            body { background: #fff; }
-            .mobile-container { box-shadow: none; border: none; max-width: 100%; }
+            body { background: #fff; } .mobile-container { box-shadow: none; border: none; max-width: 100%; }
             .no-print { display: none !important; }
             #result-area { display: block !important; border: 2px solid #000; }
         }
@@ -147,7 +141,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.50 Complete</span>
+        <span class="version-badge" id="version-badge" onclick="checkDevMode()">v26.70 New Key</span>
     </header>
 
     <div class="content">
@@ -276,10 +270,10 @@
         <div id="result-area">
             <div class="section-title"><i class="fas fa-file-signature"></i> 결로 정밀 진단 소견서</div>
             <div class="report-badge">
-                <i class="fas fa-check-circle"></i> AI(Hybrid) 및 건축물리 데이터 기반 자동 생성 리포트
+                <i class="fas fa-check-circle"></i> AI(Flash) 및 건축물리 데이터 기반 자동 생성 리포트
             </div>
             
-            <div class="input-label" style="margin-bottom:5px;">[현장 채증 데이터]</div>
+            <div class="input-label" style="margin-bottom:10px;">[현장 채증 데이터]</div>
             <div id="report-photo-gallery" class="report-gallery"></div>
 
             <table class="report-summary-table">
@@ -302,13 +296,11 @@
         </div>
 
         <div class="footer-btns no-print">
-            <button class="footer-btn btn-reserve" onclick="window.location.href='tel:01023220949'"><i class="fas fa-phone-alt"></i> 기술 상담 연결</button>
+            <button class="footer-btn btn-reserve" onclick="window.location.href='tel:01023220949'"><i class="fas fa-phone-alt"></i> 상담</button>
             <button class="footer-btn btn-pdf" onclick="savePdf()"><i class="fas fa-file-download"></i> PDF 보고서 저장</button>
         </div>
-        
         <div class="footer-info no-print">
-            <strong>청개구리샤시</strong> | 대표: 전영웅 | 010-2322-0949<br>
-            본 서비스는 참고용이며 법적 책임을 지지 않습니다.
+            <strong>청개구리샤시</strong> | 대표: 전영웅 | 010-2322-0949<br>본 서비스는 참고용입니다.
         </div>
     </div>
 
@@ -317,14 +309,14 @@
         google.charts.load("current", {packages:["corechart"]});
 
         // =================================================================
-        // [중요] 사용자의 실제 API Key (수정 금지)
+        // [중요] 사용자의 새로운 API Key 적용 완료
         // =================================================================
         const API_KEY = "AIzaSyDifNzK4eCyj" + "7OQBZbqVDU1D-" + "9AgrTCDGo"; 
         
         const today = new Date();
         document.getElementById('date').value = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
 
-        // [복구된 결로 판정 지식 베이스]
+        // [결로 판정 지식 베이스 복구]
         const CONDENSATION_DB = `
             [지식 베이스: 결로 원인 판정 기준]
             1. TDR (온도차이비율):
@@ -394,36 +386,7 @@
             }
         };
 
-        // [핵심] 하이브리드 AI 엔진 (Flash -> Pro Fallback)
-        async function runHybridGenAI(prompt, imageParts) {
-            const genAI = new GoogleGenerativeAI(API_KEY);
-            // 안전 필터 해제
-            const safetySettings = [
-                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-            ];
-            const loadingText = document.getElementById('loading-text');
-            
-            // 1단계: Flash 모델 시도 (빠름/저렴)
-            try {
-                if(loadingText) loadingText.innerText = "1차 분석 중 (Flash)...";
-                const modelFlash = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings });
-                const result = await modelFlash.generateContent({ contents: [{ parts: [{ text: prompt }, ...imageParts] }] });
-                return result.response.text();
-            } catch (error) {
-                console.warn("Flash failed, switching to Pro...", error);
-                
-                // 2단계: Pro 모델 시도 (고성능/백업)
-                if(loadingText) loadingText.innerText = "⚡ 정밀 분석 모드 (Pro) 전환 중...";
-                const modelPro = genAI.getGenerativeModel({ model: "gemini-1.5-pro", safetySettings });
-                const result = await modelPro.generateContent({ contents: [{ parts: [{ text: prompt }, ...imageParts] }] });
-                return result.response.text();
-            }
-        }
-
-        // [스마트 OCR - 하이브리드 엔진 적용]
+        // [스마트 OCR - Flash 모델 사용]
         window.autoFillFromImage = async function(input, type) {
             if(!input.files || !input.files[0]) return;
             const targetIds = type === 'mr277' ? ['temp-in', 'humid-in', 'vap-val', 'mix-val'] : ['temp-surf'];
@@ -443,6 +406,10 @@
                     reader.readAsDataURL(file);
                 });
 
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                // 안정적인 Flash 모델 사용
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
                 let prompt = "";
                 if(type === 'mr277') {
                     prompt = `Read LCD screen numbers. Return JSON: {"temp": 24.5, "humid": 50, "vap": 1.4, "mix": 9.2}`;
@@ -450,8 +417,9 @@
                     prompt = `Find Lowest Temperature ('Lo'/'Min'). Return JSON: {"min_temp": 12.5}`;
                 }
 
-                // 하이브리드 엔진 호출 (OCR)
-                const text = await runHybridGenAI(prompt, [{ inline_data: { mime_type: file.type, data: base64Data } }]);
+                const result = await model.generateContent({ contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: file.type, data: base64Data } }] }] });
+                const response = await result.response;
+                const text = response.text();
                 const jsonMatch = text.match(/\{[\s\S]*\}/);
                 
                 if(jsonMatch) {
@@ -557,8 +525,12 @@
                     [요청] 원인, 사진분석, 솔루션 작성. JSON포함: ___JSON_START___ {"ventilation": 50, "insulation": 50, "normal": 0} ___JSON_END___
                 `;
 
-                // 하이브리드 엔진 호출 (진단)
-                let text = await runHybridGenAI(prompt, imageParts);
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+                const result = await model.generateContent({ contents: [{ parts: [{ text: prompt }, ...imageParts] }] });
+                const response = await result.response;
+                let text = response.text();
 
                 let jsonMatch = text.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
                 if(jsonMatch) {
