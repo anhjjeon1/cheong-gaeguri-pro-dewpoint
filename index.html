@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v30.00 Excel)</title>
+    <title>청개구리 결로진단 AI (v31.00 Gemini 2.0)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
@@ -17,6 +16,7 @@
         :root {
             --primary: #283593; --gold: #f57f17; --orange: #d84315;
             --bg: #f5f5f5; --text: #212121; --border: #cfd8dc;
+            --moisture-blue: #0277bd;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -66,6 +66,8 @@
         .upload-icon { font-size: 1.5rem; margin-bottom: 4px; opacity: 0.5; }
         .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
         .file-input { display: none; }
+        
+        /* 3D 버튼 */
         .btn-3d {
             width: 100%; padding: 12px; border: none; border-radius: 10px;
             font-size: 0.95rem; font-weight: 800; color: white; cursor: pointer;
@@ -83,7 +85,9 @@
         .btn-green:active { box-shadow: 0 0 0 #1b5e20; }
         .btn-grey { background: linear-gradient(180deg, #78909c 0%, #37474f 100%); box-shadow: 0 4px 0 #263238, 0 5px 10px rgba(0,0,0,0.2); }
         .btn-grey:active { box-shadow: 0 0 0 #263238; }
-        
+        .btn-gold { background: linear-gradient(180deg, #ffa726 0%, #ef6c00 100%); box-shadow: 0 4px 0 #e65100, 0 5px 10px rgba(0,0,0,0.2); }
+        .btn-gold:active { box-shadow: 0 0 0 #e65100; }
+
         #result-area { margin-top: 20px; padding: 15px; background-color: #fff; border: 2px solid var(--primary); border-radius: 10px; display: none; }
         .report-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
         .report-img-item { border: 1px solid #eee; background: #000; display: flex; flex-direction: column; border-radius: 6px; overflow: hidden; }
@@ -99,8 +103,8 @@
         input[type="checkbox"] { width: 20px; height: 20px; margin-right: 6px; accent-color: var(--primary); }
         .legal-text { font-size: 0.75rem; color: #e65100; font-weight: bold; word-break: keep-all; line-height: 1.2; }
         
-        /* 저장 버튼 영역 */
         .save-btns { display: flex; gap: 8px; margin-top: 20px; }
+        .footer-btns { display: flex; gap: 8px; margin-top: 20px; }
         
         .footer-info { text-align: center; margin-top: 30px; font-size: 0.75rem; color: #757575; border-top: 1px solid #eee; padding-top: 15px; line-height: 1.4; }
         @keyframes scan { 0% { border-color: #ccc; } 50% { border-color: #2196f3; box-shadow: 0 0 5px #2196f3; } 100% { border-color: #ccc; } }
@@ -112,7 +116,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" onclick="checkDevMode()">v30.00 Excel</span>
+        <span class="version-badge" onclick="checkDevMode()">v31.00 Gemini 2.0</span>
     </header>
 
     <div class="content">
@@ -158,8 +162,11 @@
                 <div class="upload-wrapper" style="border-color:#78909c;"><label class="input-label">2. 결로 부분 (선택)</label><label for="img-2" class="upload-box"><i class="fas fa-search-plus upload-icon"></i><img id="view-2" class="preview-img"></label><input type="file" id="img-2" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
                 <div class="upload-wrapper" style="background:#fff3e0; border-color:var(--thermal-orange);"><label class="input-label" style="color:var(--thermal-orange);">3. 열화상 카메라 (전체)</label><label for="img-3" class="upload-box"><i class="fas fa-temperature-high upload-icon" style="color:var(--thermal-orange);"></i><img id="view-3" class="preview-img"></label><input type="file" id="img-3" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
                 <div class="upload-wrapper" style="border-color:var(--thermal-orange);"><label class="input-label" style="color:var(--thermal-orange);">4. 열화상 카메라 (부분)</label><label for="img-4" class="upload-box"><i class="fas fa-temperature-low upload-icon" style="color:var(--thermal-orange);"></i><img id="view-4" class="preview-img"></label><input type="file" id="img-4" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
+                
                 <div class="upload-wrapper" style="border-color:var(--primary); background:#e3f2fd;"><label class="input-label" style="color:var(--primary);">5. FLIR MR277 (통합 계측)</label><label for="img-5" class="upload-box"><i class="fas fa-ruler-combined upload-icon" style="color:var(--primary);"></i><img id="view-5" class="preview-img"></label><input type="file" id="img-5" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'mr277')"></div>
-                <div class="upload-wrapper" style="border-color:#0277bd; background:#e1f5fe;"><label class="input-label" style="color:#0277bd;">6. FLIR MR12 볼 프로브 (비파괴)</label><label for="img-6" class="upload-box"><i class="fas fa-bullseye upload-icon" style="color:#0277bd;"></i><img id="view-6" class="preview-img"></label><input type="file" id="img-6" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
+                
+                <div class="upload-wrapper" style="border-color:var(--moisture-blue); background:#e1f5fe;"><label class="input-label" style="color:var(--moisture-blue);">6. FLIR MR12 볼 프로브 (비파괴)</label><label for="img-6" class="upload-box"><i class="fas fa-bullseye upload-icon" style="color:var(--moisture-blue);"></i><img id="view-6" class="preview-img"></label><input type="file" id="img-6" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
+                
                 <div class="upload-wrapper" style="border-color:#7b1fa2;"><label class="input-label" style="color:#7b1fa2;">7. 초음파 음향 (전체)</label><label for="img-7" class="upload-box"><i class="fas fa-wave-square upload-icon" style="color:#7b1fa2;"></i><img id="view-7" class="preview-img"></label><input type="file" id="img-7" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
                 <div class="upload-wrapper" style="border-color:#7b1fa2;"><label class="input-label" style="color:#7b1fa2;">8. 초음파 음향 (하부)</label><label for="img-8" class="upload-box"><i class="fas fa-arrow-down upload-icon" style="color:#7b1fa2;"></i><img id="view-8" class="preview-img"></label><input type="file" id="img-8" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
                 <div class="upload-wrapper" style="border-color:#7b1fa2;"><label class="input-label" style="color:#7b1fa2;">9. 초음파 음향 (상부)</label><label for="img-9" class="upload-box"><i class="fas fa-arrow-up upload-icon" style="color:#7b1fa2;"></i><img id="view-9" class="preview-img"></label><input type="file" id="img-9" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
@@ -195,7 +202,7 @@
             </table>
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
                 <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i>
-                <p style="margin-top:10px;">데이터 분석 중... 잠시만 기다려주세요.</p>
+                <p style="margin-top:10px;">Gemini 2.0 분석 중...</p>
             </div>
             <div id="analysis-content" style="font-size:0.9rem; line-height:1.7;"></div>
             <div id="chart-section" style="display:none; margin-top:20px;">
@@ -213,6 +220,12 @@
             </div>
         </div>
         
+        <div class="footer-btns no-print" style="margin-top:10px;">
+            <button class="btn-3d btn-gold" style="width:100%;" onclick="window.location.href='tel:01023220949'">
+                <i class="fas fa-phone-alt"></i> 기술 상담 연결
+            </button>
+        </div>
+
         <div class="footer-info no-print">
             <strong>청개구리샤시</strong> | 대표: 전영웅 | 010-2322-0949<br>
             데이터 기반 결로 솔루션 전문 기업
@@ -231,7 +244,7 @@
         let clickCount = 0; let clickTimer;
         window.checkDevMode = function() {
             clearTimeout(clickTimer); clickCount++;
-            if (clickCount === 5) { alert("🐸 1.5 Flash 엔진 활성화됨 (Safe Mode)"); clickCount = 0; }
+            if (clickCount === 5) { alert("🐸 v31.00 Gemini 2.0 엔진 탑재"); clickCount = 0; }
             clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
         };
 
@@ -281,6 +294,7 @@
             }
         };
 
+        // [자동입력] 하이브리드 엔진 (2.0 -> 1.5 Auto Fallback)
         window.autoFillFromImage = async function(input, type) {
             if(!input.files || !input.files[0]) return;
             const targetIds = type === 'mr277' ? ['temp-in', 'humid-in', 'vap-val', 'mix-val', 'temp-surf'] : [];
@@ -298,26 +312,41 @@
                 });
 
                 const genAI = new GoogleGenerativeAI(API_KEY);
-                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings: [{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }] });
-
+                const safetySettings = [{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }];
+                
+                // 1차 시도: 2.0 Flash
+                let model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp", safetySettings });
+                
                 let prompt = "";
                 if(type === 'mr277') {
-                    prompt = `Analyze this FLIR MR277 screen. Return ONLY valid JSON: {"temp": number, "humid": number, "vap": number, "mix": number, "tsi": number (thermal low temp)}`;
+                    prompt = `Analyze FLIR MR277. Extract: Air Temp(temp), Humidity(humid), VAP(vap), MIX(mix), Thermal Low Temp(tsi). Return JSON only.`;
                 }
 
-                const result = await model.generateContent({ contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: file.type, data: base64Data } }] }] });
+                let result;
+                try {
+                    result = await model.generateContent({ contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: file.type, data: base64Data } }] }] });
+                } catch(err) {
+                    console.log("2.0 failed, switching to 1.5");
+                    // 2차 시도: 1.5 Flash (Fallback)
+                    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings });
+                    result = await model.generateContent({ contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: file.type, data: base64Data } }] }] });
+                }
+                
                 let text = result.response.text();
                 text = text.replace(/```json|```/g, '').trim();
                 const data = JSON.parse(text);
                 
-                if(data.temp) document.getElementById('temp-in').value = data.temp;
-                if(data.humid) document.getElementById('humid-in').value = data.humid;
-                if(data.vap) document.getElementById('vap-val').value = data.vap;
-                if(data.mix) document.getElementById('mix-val').value = data.mix;
-                if(data.tsi) document.getElementById('temp-surf').value = data.tsi;
-                calcDewPoint();
+                if(type === 'mr277') {
+                    if(data.temp) document.getElementById('temp-in').value = data.temp;
+                    if(data.humid) document.getElementById('humid-in').value = data.humid;
+                    if(data.vap) document.getElementById('vap-val').value = data.vap;
+                    if(data.mix) document.getElementById('mix-val').value = data.mix;
+                    if(data.tsi) document.getElementById('temp-surf').value = data.tsi;
+                    calcDewPoint(); 
+                }
             } catch(e) {
                 targetIds.forEach(id => { const el = document.getElementById(id); if(el) el.placeholder = "직접입력"; });
+                alert("자동인식 실패. 직접 입력해주세요.");
             } finally {
                 targetIds.forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('scanning'); });
             }
@@ -343,69 +372,26 @@
 
         window.savePdf = function() { window.print(); };
 
-        // [신규 기능] 엑셀(XLSX) 저장 - 폰 화면과 비슷하게
+        // [Excel 저장]
         window.saveExcel = async function() {
             const workbook = new ExcelJS.Workbook();
             const sheet = workbook.addWorksheet('결로진단리포트');
-
-            // 기본 스타일 설정
-            sheet.columns = [
-                { width: 15 }, { width: 30 }
-            ];
-
-            // 1. 진단 정보 입력
+            
+            sheet.columns = [{ width: 15 }, { width: 30 }];
+            
             const date = document.getElementById('date').value;
-            const loc = `${document.getElementById('dong').value}동 ${document.getElementById('ho').value}호 (${document.getElementById('location').value})`;
-            const type = `${document.getElementById('window-type').value} / ${document.getElementById('house-type').value}`;
+            const loc = `${document.getElementById('dong').value}동 ${document.getElementById('ho').value}호`;
             
             sheet.addRow(["[청개구리 결로진단 리포트]"]);
-            sheet.addRow(["진단 일자", date]);
-            sheet.addRow(["현장 위치", loc]);
-            sheet.addRow(["창호/구조", type]);
+            sheet.addRow(["진단일자", date]);
+            sheet.addRow(["현장위치", loc]);
             sheet.addRow([]);
-
-            // 2. 진단 결과 (텍스트)
-            const analysisText = document.getElementById('analysis-content').innerText;
-            sheet.addRow(["[상세 분석 결과]"]);
-            // 줄바꿈 처리하여 행 추가
-            const lines = analysisText.split('\n');
-            lines.forEach(line => {
-                if(line.trim() !== "") sheet.addRow([line]);
-            });
-            sheet.addRow([]);
-
-            // 3. 사진 추가 (중요: 이미지 처리)
-            sheet.addRow(["[현장 채증 사진]"]);
+            sheet.addRow(["[진단 결과]"]);
             
-            const images = document.querySelectorAll('.report-img-item img');
-            let currentRow = sheet.rowCount + 1;
-
-            for (let i = 0; i < images.length; i++) {
-                const img = images[i];
-                const base64 = img.src;
-                
-                // Base64 데이터 확인
-                if(base64.startsWith('data:image')) {
-                    const imageId = workbook.addImage({
-                        base64: base64,
-                        extension: 'jpeg',
-                    });
-
-                    // 이미지를 엑셀 셀 범위에 맞게 배치 (세로로 나열)
-                    sheet.addImage(imageId, {
-                        tl: { col: 0, row: currentRow },
-                        br: { col: 2, row: currentRow + 10 } // 높이 10행 차지
-                    });
-                    
-                    // 캡션 추가
-                    const caption = img.nextElementSibling ? img.nextElementSibling.innerText : `사진 ${i+1}`;
-                    sheet.getCell(`A${currentRow + 11}`).value = caption;
-                    
-                    currentRow += 13; // 다음 사진 위치 (여백 포함)
-                }
-            }
-
-            // 파일 저장
+            const text = document.getElementById('analysis-content').innerText;
+            const lines = text.split('\n');
+            lines.forEach(line => { if(line.trim()) sheet.addRow([line]); });
+            
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             saveAs(blob, `결로진단_${date}.xlsx`);
@@ -468,24 +454,30 @@
 
             try {
                 const genAI = new GoogleGenerativeAI(API_KEY);
-                // [오류 해결] gemini-1.5-flash (안정판) 사용
-                const model = genAI.getGenerativeModel({ 
-                    model: "gemini-1.5-flash",
-                    safetySettings: [{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }]
-                });
-
+                const safetySettings = [{ category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }];
+                
+                // 분석은 하이브리드: 2.0 시도 후 실패시 1.5
+                let model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp", safetySettings });
+                
                 const prompt = `
                     당신은 건축물리 전문가입니다.
                     ${CONDENSATION_DB}
                     [현장] TDR:${tdrVal}, VAP:${vapVal}, 창호:${winType}, 증상:${defect}
-                    [특별 요청] 6번(MR12 볼프로브) 사진이 있다면 수치를 확인하고 내부 습기 여부를 판단하라.
-                    [출력] 원인, 사진분석, 솔루션. JSON포함: ___JSON_START___ {"ventilation": 50, "insulation": 50, "normal": 0} ___JSON_END___
+                    [요청] 원인, 사진분석(특히 6번 MR12 수치), 솔루션 작성. JSON포함: ___JSON_START___ {"ventilation": 50, "insulation": 50, "normal": 0} ___JSON_END___
                 `;
 
-                const result = await model.generateContent({ contents: [{ parts: [{ text: prompt }, ...imageParts] }] });
-                let text = result.response.text();
+                let result;
+                try {
+                    result = await model.generateContent({ contents: [{ parts: [{ text: prompt }, ...imageParts] }] });
+                } catch(err) {
+                    console.log("Analysis 2.0 failed, switching to 1.5");
+                    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings });
+                    result = await model.generateContent({ contents: [{ parts: [{ text: prompt }, ...imageParts] }] });
+                }
 
+                let text = result.response.text();
                 let jsonMatch = text.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
+                
                 if(jsonMatch) {
                     const jsonStr = jsonMatch[1].replace(/```json|```/g, '').trim();
                     const jsonData = JSON.parse(jsonStr);
@@ -501,7 +493,7 @@
 
             } catch(e) {
                 loading.style.display = 'none';
-                contentDiv.innerHTML = `<div style="color:red; text-align:center;">오류: ${e.toString()}</div>`;
+                contentDiv.innerHTML = `<div style="color:red; text-align:center;">분석 오류.<br>${e.toString()}</div>`;
                 contentDiv.style.display = 'block';
             }
         };
@@ -511,7 +503,7 @@
                 ['원인', '비율'], ['환기 부족', data.ventilation], ['단열 미흡', data.insulation], ['기타', data.normal]
             ]);
             var c = new google.visualization.PieChart(document.getElementById('chart_div'));
-            c.draw(d, { title: '귀책 사유 분석', is3D: true, legend: { position: 'bottom' }, chartArea: {width:'90%', height:'80%'} });
+            c.draw(d, { title: '귀책 사유 분석', is3D: true, backgroundColor: 'transparent', chartArea: {width:'80%', height:'80%'} });
         }
     </script>
 </body>
