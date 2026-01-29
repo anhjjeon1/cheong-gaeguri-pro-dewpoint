@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v27.90 3D)</title>
+    <title>청개구리 결로진단 AI (v28.00 UI Fix)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,7 +14,7 @@
         /* [디자인 시스템] */
         :root {
             --primary: #283593; --gold: #f57f17; --orange: #d84315;
-            --bg: #f0f2f5; --text: #212121; --border: #cfd8dc;
+            --bg: #f5f5f5; --text: #212121; --border: #cfd8dc;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -33,75 +33,71 @@
         .main-header {
             background: linear-gradient(145deg, #1a237e, var(--primary)); color: white;
             padding: 12px; display: flex; align-items: center; justify-content: center;
-            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        .main-header h1 { margin: 0; font-size: 1.1rem; font-weight: 800; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .main-header h1 { margin: 0; font-size: 1.1rem; font-weight: 800; }
         .version-badge {
             position: absolute; right: 10px; background: rgba(255,255,255,0.2); 
-            padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.3);
+            padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; cursor: pointer;
         }
 
         /* 컨텐츠 */
-        .content { padding: 10px; flex: 1; }
-        .section { margin-bottom: 12px; background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+        .content { padding: 8px; flex: 1; }
+        .section { margin-bottom: 10px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; }
         .section-title {
-            font-weight: 800; color: var(--primary); margin-bottom: 10px; font-size: 0.9rem;
-            border-left: 4px solid var(--gold); padding-left: 8px;
+            font-weight: 800; color: var(--primary); margin-bottom: 8px; font-size: 0.9rem;
+            border-left: 3px solid var(--gold); padding-left: 6px;
         }
 
         /* 입력 폼 */
-        .input-group { margin-bottom: 6px; }
-        .input-label { display: block; font-weight: 700; margin-bottom: 3px; color: #546e7a; font-size: 0.7rem; text-align: center; }
+        .input-group { margin-bottom: 5px; }
+        .input-label { display: block; font-weight: 700; margin-bottom: 2px; color: #546e7a; font-size: 0.7rem; text-align: center; }
+        
+        /* 입력창 좌우 여백 최소화 */
         input:not([type="checkbox"]), select, textarea {
-            width: 100%; padding: 10px 4px; border: 1px solid var(--border); border-radius: 8px;
+            width: 100%; padding: 8px 2px; border: 1px solid var(--border); border-radius: 6px;
             background-color: #f9f9f9; font-size: 0.85rem; letter-spacing: -0.5px;
             text-align: center; font-weight: 700; color: var(--text); -webkit-appearance: none;
         }
         select { padding-right: 20px; }
         textarea { resize: none; height: 60px; text-align: left !important; padding: 8px; font-weight: 400; }
         
-        .info-grid-row { display: grid; grid-template-columns: 0.6fr 0.7fr 1.2fr 1.5fr; gap: 5px; margin-bottom: 6px; }
-        .info-triple-row { display: grid; grid-template-columns: 1fr 1fr 0.9fr; gap: 5px; margin-bottom: 6px; }
+        .info-grid-row { display: grid; grid-template-columns: 0.6fr 0.7fr 1.2fr 1.5fr; gap: 4px; margin-bottom: 5px; }
+        .info-triple-row { display: grid; grid-template-columns: 1fr 1fr 0.9fr; gap: 4px; margin-bottom: 5px; }
         .tdr-input { background-color: #fff3e0 !important; border-color: #ffb74d !important; color: #e65100 !important; }
         .vap-input { background-color: #e1f5fe !important; border-color: #4fc3f7 !important; color: #01579b !important; }
 
         /* 사진 업로드 */
-        .photo-stack { display: flex; flex-direction: column; gap: 10px; }
-        .upload-wrapper { border: 1px dashed #b0bec5; padding: 8px; border-radius: 8px; background: #fafafa; position: relative; }
+        .photo-stack { display: flex; flex-direction: column; gap: 8px; }
+        .upload-wrapper { border: 1px dashed #b0bec5; padding: 6px; border-radius: 6px; background: #fafafa; position: relative; }
         .upload-wrapper.filled { border-style: solid; border-color: var(--primary); background: #e8eaf6; }
         
-        /* [요청반영] 라벨 좌측 정렬 */
+        /* 라벨 좌측 정렬 */
         .upload-wrapper .input-label { 
-            text-align: left !important; 
-            padding-left: 4px; 
-            font-size: 0.8rem;
-            color: #37474f;
+            text-align: left !important; padding-left: 4px; font-size: 0.8rem; color: #37474f;
         }
 
         .upload-box {
-            border: 2px dashed #cfd8dc; background-color: #fff; border-radius: 8px; width: 100%; aspect-ratio: 4 / 3; 
+            border: 2px dashed #cfd8dc; background-color: #fff; border-radius: 6px; width: 100%; aspect-ratio: 4 / 3; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; overflow: hidden;
         }
-        .upload-icon { font-size: 1.8rem; margin-bottom: 5px; opacity: 0.5; }
+        .upload-icon { font-size: 1.5rem; margin-bottom: 4px; opacity: 0.5; }
         .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
         .file-input { display: none; }
         
-        /* [3D 버튼 스타일 공통] */
+        /* 3D 버튼 스타일 */
         .btn-3d {
             width: 100%; padding: 12px; border: none; border-radius: 10px;
             font-size: 0.95rem; font-weight: 800; color: white; cursor: pointer;
             transition: all 0.1s; position: relative;
-            /* 3D 효과 그림자 */
             box-shadow: 0 4px 0 rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.1);
             text-shadow: 0 1px 1px rgba(0,0,0,0.3);
         }
         .btn-3d:active:not(:disabled) {
-            transform: translateY(4px); /* 눌리는 효과 */
-            box-shadow: 0 0 0 rgba(0,0,0,0.2), 0 0 0 rgba(0,0,0,0.1);
+            transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.2), 0 0 0 rgba(0,0,0,0.1);
         }
         .btn-3d i { margin-right: 6px; }
 
-        /* 버튼 색상별 클래스 */
         .btn-blue { background: linear-gradient(180deg, #42a5f5 0%, #1565c0 100%); box-shadow: 0 4px 0 #0d47a1, 0 5px 10px rgba(0,0,0,0.2); }
         .btn-blue:active { box-shadow: 0 0 0 #0d47a1; }
 
@@ -115,8 +111,11 @@
         .btn-grey { background: linear-gradient(180deg, #78909c 0%, #37474f 100%); box-shadow: 0 4px 0 #263238, 0 5px 10px rgba(0,0,0,0.2); }
         .btn-grey:active { box-shadow: 0 0 0 #263238; }
 
-        /* 결과 리포트 */
-        #result-area { margin-top: 20px; padding: 15px; background-color: #fff; border: 2px solid var(--primary); border-radius: 10px; display: none; }
+        /* 결과 리포트 (버튼 아래 배치) */
+        #result-area { 
+            margin-top: 20px; padding: 15px; background-color: #fff; 
+            border: 2px solid var(--primary); border-radius: 10px; display: none; 
+        }
         .report-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
         .report-img-item { border: 1px solid #eee; aspect-ratio: 4/3; background: #000; display: flex; }
         .report-img-item img { width: 100%; height: 100%; object-fit: contain; }
@@ -126,18 +125,26 @@
         .report-summary-table td { font-weight: 700; padding: 5px; }
         .chart-container { height: 250px; margin-top: 15px; }
 
-        /* 동의 체크박스 (작게 유지) */
+        /* [수정됨] 동의 체크박스 한 줄 배치 */
         .legal-box { 
             background: #fff3e0; padding: 10px; border-radius: 8px; margin-top: 15px; 
-            border: 1px solid #ffe0b2; display: flex; align-items: center; justify-content: space-between;
+            border: 1px solid #ffe0b2; 
+            display: flex; align-items: center; gap: 10px; /* 좌우 간격 */
         }
-        .legal-text { font-size: 0.75rem; color: #e65100; font-weight: bold; }
-        .legal-check-label { display: flex; align-items: center; font-size: 0.85rem; font-weight: 800; cursor: pointer; }
-        input[type="checkbox"] { width: 20px; height: 20px; margin-right: 6px; accent-color: var(--primary); }
+        .legal-check-label { 
+            display: flex; align-items: center; font-size: 0.9rem; font-weight: 800; 
+            cursor: pointer; white-space: nowrap; flex-shrink: 0;
+        }
+        input[type="checkbox"] { 
+            width: 20px; height: 20px; margin-right: 6px; accent-color: var(--primary); 
+        }
+        .legal-text { 
+            font-size: 0.75rem; color: #e65100; font-weight: bold; 
+            word-break: keep-all; line-height: 1.2;
+        }
 
-        .footer-btns { display: flex; gap: 8px; margin-top: 25px; }
+        .footer-btns { display: flex; gap: 8px; margin-top: 20px; }
         
-        /* [요청반영] 주소 삭제 */
         .footer-info { 
             text-align: center; margin-top: 30px; font-size: 0.75rem; color: #757575; 
             border-top: 1px solid #eee; padding-top: 15px; line-height: 1.4;
@@ -152,7 +159,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" onclick="checkDevMode()">v27.90 3D</span>
+        <span class="version-badge" onclick="checkDevMode()">v28.00 UI Fix</span>
     </header>
 
     <div class="content">
@@ -213,10 +220,10 @@
         </div>
 
         <div class="legal-box no-print">
-            <span class="legal-text"><strong>[필수]</strong> 본 리포트는 AI 참고용입니다.</span>
             <label class="legal-check-label">
-                <input type="checkbox" id="legal-agree" onchange="toggleAnalyzeBtn()"> 동의합니다.
+                <input type="checkbox" id="legal-agree" onchange="toggleAnalyzeBtn()"> 동의
             </label>
+            <span class="legal-text">[필수] 본 리포트는 AI 참고용입니다.</span>
         </div>
 
         <button class="btn-3d btn-primary" id="analyze-btn" onclick="startAnalysis()" disabled style="margin-top:20px;">
@@ -340,6 +347,7 @@
                 });
 
                 const genAI = new GoogleGenerativeAI(API_KEY);
+                // [모델 변경] gemini-2.0-flash-exp (404 오류 해결용)
                 const model = genAI.getGenerativeModel({ 
                     model: "gemini-2.0-flash-exp",
                     safetySettings: [
@@ -444,7 +452,6 @@
                         imageParts.push({ inline_data: { mime_type: inputs[i].files[0].type, data: base64 } });
                         const div = document.createElement('div');
                         div.className = 'report-img-item';
-                        // 캡션이 없으면 추가사진으로 표시
                         const caption = labels[i] ? labels[i] : '추가사진';
                         div.innerHTML = `<img src="${img.src}"><div class="report-img-caption">${caption}</div>`;
                         gallery.appendChild(div);
