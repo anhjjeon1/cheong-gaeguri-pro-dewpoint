@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>청개구리 결로진단 AI (v28.50 Special)</title>
+    <title>청개구리 결로진단 AI (v29.00 Direct)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,25 +11,21 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <style>
-        /* [디자인 시스템] */
         :root {
             --primary: #283593; --gold: #f57f17; --orange: #d84315;
-            --bg: #f5f5f5; --text: #212121; --border: #cfd8dc;
-            --moisture-blue: #0277bd; /* 습기 컬러 */
+            --bg: #f0f2f5; --text: #212121; --border: #cfd8dc;
+            --moisture-blue: #0277bd;
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg); color: var(--text);
             margin: 0; padding: 0; line-height: 1.5; display: flex; justify-content: center;
             min-height: 100vh; padding-bottom: 60px;
         }
-
         .mobile-container {
             width: 100%; max-width: 600px; background-color: #fff;
             min-height: 100vh; display: flex; flex-direction: column;
         }
-
         /* 헤더 */
         .main-header {
             background: linear-gradient(145deg, #1a237e, var(--primary)); color: white;
@@ -41,7 +37,6 @@
             position: absolute; right: 10px; background: rgba(255,255,255,0.2); 
             padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; cursor: pointer;
         }
-
         /* 컨텐츠 */
         .content { padding: 8px; flex: 1; }
         .section { margin-bottom: 10px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; }
@@ -49,7 +44,6 @@
             font-weight: 800; color: var(--primary); margin-bottom: 8px; font-size: 0.9rem;
             border-left: 3px solid var(--gold); padding-left: 6px;
         }
-
         /* 입력 폼 */
         .input-group { margin-bottom: 5px; }
         .input-label { display: block; font-weight: 700; margin-bottom: 2px; color: #546e7a; font-size: 0.7rem; text-align: center; }
@@ -60,22 +54,15 @@
         }
         select { padding-right: 20px; }
         textarea { resize: none; height: 60px; text-align: left !important; padding: 8px; font-weight: 400; }
-        
         .info-grid-row { display: grid; grid-template-columns: 0.6fr 0.7fr 1.2fr 1.5fr; gap: 4px; margin-bottom: 5px; }
         .info-triple-row { display: grid; grid-template-columns: 1fr 1fr 0.9fr; gap: 4px; margin-bottom: 5px; }
         .tdr-input { background-color: #fff3e0 !important; border-color: #ffb74d !important; color: #e65100 !important; }
         .vap-input { background-color: #e1f5fe !important; border-color: #4fc3f7 !important; color: #01579b !important; }
-
         /* 사진 업로드 */
         .photo-stack { display: flex; flex-direction: column; gap: 8px; }
         .upload-wrapper { border: 1px dashed #b0bec5; padding: 6px; border-radius: 6px; background: #fafafa; position: relative; }
         .upload-wrapper.filled { border-style: solid; border-color: var(--primary); background: #e8eaf6; }
-        
-        /* 라벨 좌측 정렬 */
-        .upload-wrapper .input-label { 
-            text-align: left !important; padding-left: 4px; font-size: 0.8rem; color: #37474f;
-        }
-
+        .upload-wrapper .input-label { text-align: left !important; padding-left: 4px; font-size: 0.8rem; color: #37474f; }
         .upload-box {
             border: 2px dashed #cfd8dc; background-color: #fff; border-radius: 6px; width: 100%; aspect-ratio: 4 / 3; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; overflow: hidden;
@@ -83,7 +70,6 @@
         .upload-icon { font-size: 1.5rem; margin-bottom: 4px; opacity: 0.5; }
         .preview-img { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
         .file-input { display: none; }
-        
         /* 3D 버튼 */
         .btn-3d {
             width: 100%; padding: 12px; border: none; border-radius: 10px;
@@ -92,65 +78,33 @@
             box-shadow: 0 4px 0 rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.1);
             text-shadow: 0 1px 1px rgba(0,0,0,0.3);
         }
-        .btn-3d:active:not(:disabled) {
-            transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.2), 0 0 0 rgba(0,0,0,0.1);
-        }
-        .btn-3d i { margin-right: 6px; }
-
+        .btn-3d:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.2), 0 0 0 rgba(0,0,0,0.1); }
         .btn-blue { background: linear-gradient(180deg, #42a5f5 0%, #1565c0 100%); box-shadow: 0 4px 0 #0d47a1, 0 5px 10px rgba(0,0,0,0.2); }
         .btn-blue:active { box-shadow: 0 0 0 #0d47a1; }
-
         .btn-primary { background: linear-gradient(180deg, #5c6bc0 0%, #1a237e 100%); box-shadow: 0 4px 0 #000051, 0 5px 10px rgba(0,0,0,0.3); }
         .btn-primary:active { box-shadow: 0 0 0 #000051; }
         .btn-primary:disabled { background: #cfd8dc; box-shadow: none; cursor: not-allowed; transform: none; color: #90a4ae; }
-
         .btn-gold { background: linear-gradient(180deg, #ffa726 0%, #ef6c00 100%); box-shadow: 0 4px 0 #e65100, 0 5px 10px rgba(0,0,0,0.2); }
         .btn-gold:active { box-shadow: 0 0 0 #e65100; }
-
         .btn-grey { background: linear-gradient(180deg, #78909c 0%, #37474f 100%); box-shadow: 0 4px 0 #263238, 0 5px 10px rgba(0,0,0,0.2); }
         .btn-grey:active { box-shadow: 0 0 0 #263238; }
-
         /* 결과 리포트 */
-        #result-area { 
-            margin-top: 20px; padding: 15px; background-color: #fff; 
-            border: 2px solid var(--primary); border-radius: 10px; display: none; 
-        }
+        #result-area { margin-top: 20px; padding: 15px; background-color: #fff; border: 2px solid var(--primary); border-radius: 10px; display: none; }
         .report-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-        
-        /* [수정됨] 사진 설명 아래로 배치 */
-        .report-img-item { 
-            border: 1px solid #eee; background: #000; display: flex; flex-direction: column; /* 세로 정렬 */
-            border-radius: 6px; overflow: hidden;
-        }
-        .report-img-item img { width: 100%; aspect-ratio: 4/3; object-fit: contain; background: #000; }
-        .report-img-caption { 
-            font-size: 0.7rem; padding: 4px; text-align: center; background: #f5f5f5; 
-            font-weight: 800; color: #333; width: 100%; border-top: 1px solid #eee;
-        }
-        
+        .report-img-item { border: 1px solid #eee; background: #000; display: flex; flex-direction: column; border-radius: 6px; overflow: hidden; }
+        .report-img-item img { width: 100%; aspect-ratio: 4/3; object-fit: contain; }
+        .report-img-caption { font-size: 0.7rem; padding: 4px; text-align: center; background: #f5f5f5; font-weight: 800; color: #333; border-top: 1px solid #eee; }
         .report-summary-table { width: 100%; font-size: 0.8rem; margin-bottom: 15px; border-collapse: collapse; }
         .report-summary-table th { width: 35%; background: #f5f5f5; text-align: left; padding: 5px; }
         .report-summary-table td { font-weight: 700; padding: 5px; }
         .chart-container { height: 250px; margin-top: 15px; }
-
-        /* 동의 체크박스 한 줄 배치 */
-        .legal-box { 
-            background: #fff3e0; padding: 10px; border-radius: 8px; margin-top: 15px; 
-            border: 1px solid #ffe0b2; display: flex; align-items: center; gap: 10px; 
-        }
-        .legal-check-label { 
-            display: flex; align-items: center; font-size: 0.9rem; font-weight: 800; 
-            cursor: pointer; white-space: nowrap; flex-shrink: 0;
-        }
+        /* 동의 체크박스 */
+        .legal-box { background: #fff3e0; padding: 10px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffe0b2; display: flex; align-items: center; gap: 10px; }
+        .legal-check-label { display: flex; align-items: center; font-size: 0.9rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
         input[type="checkbox"] { width: 20px; height: 20px; margin-right: 6px; accent-color: var(--primary); }
         .legal-text { font-size: 0.75rem; color: #e65100; font-weight: bold; word-break: keep-all; line-height: 1.2; }
-
         .footer-btns { display: flex; gap: 8px; margin-top: 20px; }
-        .footer-info { 
-            text-align: center; margin-top: 30px; font-size: 0.75rem; color: #757575; 
-            border-top: 1px solid #eee; padding-top: 15px; line-height: 1.4;
-        }
-
+        .footer-info { text-align: center; margin-top: 30px; font-size: 0.75rem; color: #757575; border-top: 1px solid #eee; padding-top: 15px; line-height: 1.4; }
         @keyframes scan { 0% { border-color: #ccc; } 50% { border-color: #2196f3; box-shadow: 0 0 5px #2196f3; } 100% { border-color: #ccc; } }
         .scanning { animation: scan 1s infinite; }
     </style>
@@ -160,7 +114,7 @@
 <div class="mobile-container">
     <header class="main-header">
         <h1><i class="fas fa-microscope"></i> 청개구리 결로진단 AI</h1>
-        <span class="version-badge" onclick="checkDevMode()">v28.50 Special</span>
+        <span class="version-badge" onclick="checkDevMode()">v29.00 Direct</span>
     </header>
 
     <div class="content">
@@ -205,6 +159,7 @@
                 <div class="upload-wrapper" style="border-color:#546e7a;"><label class="input-label">1. 결로 전체 (필수)</label><label for="img-1" class="upload-box"><i class="fas fa-camera upload-icon"></i><img id="view-1" class="preview-img"></label><input type="file" id="img-1" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
                 <div class="upload-wrapper" style="border-color:#78909c;"><label class="input-label">2. 결로 부분 (선택)</label><label for="img-2" class="upload-box"><i class="fas fa-search-plus upload-icon"></i><img id="view-2" class="preview-img"></label><input type="file" id="img-2" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
                 <div class="upload-wrapper" style="background:#fff3e0; border-color:var(--thermal-orange);"><label class="input-label" style="color:var(--thermal-orange);">3. 열화상 카메라 (전체)</label><label for="img-3" class="upload-box"><i class="fas fa-temperature-high upload-icon" style="color:var(--thermal-orange);"></i><img id="view-3" class="preview-img"></label><input type="file" id="img-3" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
+                
                 <div class="upload-wrapper" style="border-color:var(--thermal-orange);"><label class="input-label" style="color:var(--thermal-orange);">4. 열화상 카메라 (부분)</label><label for="img-4" class="upload-box"><i class="fas fa-temperature-low upload-icon" style="color:var(--thermal-orange);"></i><img id="view-4" class="preview-img"></label><input type="file" id="img-4" class="file-input" accept="image/*" onchange="handleImage(this)"></div>
                 
                 <div class="upload-wrapper" style="border-color:var(--primary); background:#e3f2fd;"><label class="input-label" style="color:var(--primary);">5. FLIR MR277 (통합 계측)</label><label for="img-5" class="upload-box"><i class="fas fa-ruler-combined upload-icon" style="color:var(--primary);"></i><img id="view-5" class="preview-img"></label><input type="file" id="img-5" class="file-input" accept="image/*" onchange="handleImage(this); autoFillFromImage(this, 'mr277')"></div>
@@ -246,7 +201,7 @@
             </table>
             <div id="loading-spinner" style="text-align:center; padding:30px; display:none;">
                 <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i>
-                <p style="margin-top:10px;">데이터 분석 중...</p>
+                <p style="margin-top:10px;">정밀 분석 중...</p>
             </div>
             <div id="analysis-content" style="font-size:0.9rem; line-height:1.7;"></div>
             <div id="chart-section" style="display:none; margin-top:20px;">
@@ -270,29 +225,58 @@
         </div>
     </div>
 
-    <script type="module">
-        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+    <script type="text/javascript">
         google.charts.load("current", {packages:["corechart"]});
 
+        // [API KEY] 청개구리님의 키
         const API_KEY = "AIzaSyDifNzK4eCyj" + "7OQBZbqVDU1D-" + "9AgrTCDGo"; 
         
         const today = new Date();
         document.getElementById('date').value = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
 
-        let clickCount = 0; let clickTimer;
-        window.checkDevMode = function() {
-            clearTimeout(clickTimer); clickCount++;
-            if (clickCount === 5) { alert("🐸 1.5 Flash 엔진 활성화됨 (Safe Mode)"); clickCount = 0; }
-            clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
-        };
+        // [근본 해결] 라이브러리 없이 직접 호출 함수
+        async function callGemini(prompt, imageBase64) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            
+            const payload = {
+                contents: [{
+                    parts: [
+                        { text: prompt },
+                        { inline_data: { mime_type: "image/jpeg", data: imageBase64 } }
+                    ]
+                }],
+                safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                ]
+            };
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error.message || response.statusText);
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
 
         const CONDENSATION_DB = `
-            1. TDR (온도차이비율): 식=(Ti-Tsi)/(Ti-To). 기준 0.28 이하 양호. 0.28 초과 시 단열 미흡.
+            [지식 베이스]
+            1. TDR (온도차이비율): 식=(Ti-Tsi)/(Ti-To). 0.28 이하 양호. 0.28 초과 시 단열 미흡(결로).
             2. 공기질: 겨울철 VAP > 1.2 kPa 과습.
             3. 창호: 알루미늄 간봉(냉교 발생), 입면분할창(통바 취약).
-            4. MR12 볼 프로브: 측정값 > 20% (목재 기준) 이면 단열재 내부 습기 침투 의심.
+            4. MR12 볼프로브: 수치 100%에 가까울수록 내부 습기 과다(누수/결로).
         `;
 
+        // 날씨 API
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 try {
@@ -337,11 +321,7 @@
             const targetIds = type === 'mr277' ? ['temp-in', 'humid-in', 'vap-val', 'mix-val', 'temp-surf'] : [];
             targetIds.forEach(id => {
                 const el = document.getElementById(id);
-                if(el) {
-                    el.classList.add('scanning');
-                    el.value = ''; 
-                    el.placeholder = "Scan..";
-                }
+                if(el) { el.classList.add('scanning'); el.value = ''; el.placeholder = "Scan.."; }
             });
 
             try {
@@ -352,37 +332,19 @@
                     reader.readAsDataURL(file);
                 });
 
-                const genAI = new GoogleGenerativeAI(API_KEY);
-                // [오류 해결] gemini-1.5-flash로 엔진 교체 (2.0은 404 오류)
-                const model = genAI.getGenerativeModel({ 
-                    model: "gemini-1.5-flash",
-                    safetySettings: [
-                        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                    ]
-                });
-
-                let prompt = "";
-                if(type === 'mr277') {
-                    prompt = `Analyze this FLIR MR277 screen. 
+                let prompt = `Analyze this FLIR MR277 screen. 
                     1. Extract Air Temp (C) -> 'temp'
                     2. Extract Relative Humidity (%) -> 'humid'
                     3. Extract Vapor Pressure (kPa) -> 'vap'
                     4. Extract Mixing Ratio (g/kg) -> 'mix'
                     5. Find Thermal Image. Look for 'Lo' or 'Min' temp -> 'tsi'
                     Return ONLY valid JSON: {"temp": number, "humid": number, "vap": number, "mix": number, "tsi": number}`;
-                }
 
-                const result = await model.generateContent({ 
-                    contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: file.type, data: base64Data } }] }] 
-                });
-                
-                let text = result.response.text();
-                text = text.replace(/```json|```/g, '').trim();
-                
-                const data = JSON.parse(text);
+                // [직접 호출]
+                const text = await callGemini(prompt, base64Data);
+                const jsonStr = text.replace(/```json|```/g, '').trim();
+                const data = JSON.parse(jsonStr);
+
                 if(type === 'mr277') {
                     if(data.temp) document.getElementById('temp-in').value = data.temp;
                     if(data.humid) document.getElementById('humid-in').value = data.humid;
@@ -392,16 +354,10 @@
                     calcDewPoint(); 
                 }
             } catch(e) {
-                targetIds.forEach(id => {
-                    const el = document.getElementById(id);
-                    if(el) el.placeholder = "직접입력";
-                });
+                targetIds.forEach(id => { const el = document.getElementById(id); if(el) el.placeholder = "직접입력"; });
                 alert("자동인식 실패. 직접 입력해주세요.");
             } finally {
-                targetIds.forEach(id => {
-                    const el = document.getElementById(id);
-                    if(el) el.classList.remove('scanning');
-                });
+                targetIds.forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('scanning'); });
             }
         };
 
@@ -447,19 +403,25 @@
 
             let imageParts = [];
             gallery.innerHTML = ''; 
-            const labels = [
-                "결로전체", "결로부분", "열화상전체", "열화상부분", 
-                "MR277(통합)", "MR12(볼프로브)", 
-                "초음파(전)", "초음파(하)", "초음파(상)", "초음파(측)"
-            ];
+            const labels = ["결로전체", "결로부분", "열화상전체", "열화상부분", "MR277(통합)", "MR12(볼프로브)", "초음파(전)", "초음파(하)", "초음파(상)", "초음파(측)"];
             
             const inputs = document.querySelectorAll('.file-input');
+            let hasImage = false; // 이미지 유무 확인용
+
             for(let i=0; i<inputs.length; i++) {
                 if(inputs[i].files[0]) {
+                    hasImage = true; // 이미지 있음
                     const img = inputs[i].closest('.upload-wrapper').querySelector('.preview-img');
+                    // 미리보기 이미지가 로드된 상태인지 확인 (src가 data:image로 시작)
                     if(img.src.startsWith('data:image')) {
                         const base64 = img.src.split(',')[1];
-                        imageParts.push({ inline_data: { mime_type: inputs[i].files[0].type, data: base64 } });
+                        // Gemini는 여러 이미지를 받을 수 없거나 제한적이므로, 메인 이미지 1장만 보내거나 순차적으로 처리해야 함.
+                        // 여기서는 **가장 마지막에 업로드된 이미지** 하나를 분석용으로 보내는 방식으로 단순화 (오류 최소화)
+                        // 또는 텍스트 프롬프트에 '여러 이미지를 참조했다'는 식의 가정을 넣음.
+                        // 하지만 이 코드는 '모든 이미지'를 다 보내도록 설계되어 있음.
+                        // **중요:** 직접 호출 방식에서는 parts 배열에 텍스트와 이미지를 섞어서 보낼 수 있음.
+                        
+                        // 갤러리 생성 (보여주기용)
                         const div = document.createElement('div');
                         div.className = 'report-img-item';
                         const caption = labels[i] ? labels[i] : '추가사진';
@@ -469,7 +431,7 @@
                 }
             }
 
-            if(imageParts.length === 0) { alert("사진을 최소 1장 이상 등록해주세요."); return; }
+            if(!hasImage) { alert("사진을 최소 1장 이상 등록해주세요."); return; }
 
             document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
             resultArea.style.display = 'block';
@@ -487,40 +449,74 @@
             }
 
             try {
-                const genAI = new GoogleGenerativeAI(API_KEY);
-                // [오류 해결] 안정적인 Flash 모델 사용
-                const model = genAI.getGenerativeModel({ 
-                    model: "gemini-1.5-flash",
+                const prompt = `
+                    당신은 건축물리 전문가입니다.
+                    ${CONDENSATION_DB}
+                    [현장 데이터] TDR:${tdrVal}, VAP:${vapVal}, 창호:${winType}, 증상:${defect}
+                    [특별 지시] 
+                    1. 6번 사진(MR12 볼프로브)이 있다면, 화면 숫자를 읽고 단열재 내부 습기 상태를 분석하라.
+                    2. 전체적인 결로 원인을 파악하라.
+                    [출력 요청] 원인, 사진분석, 솔루션 작성. 
+                    반드시 마지막에 다음 JSON을 포함하라: ___JSON_START___ {"ventilation": 50, "insulation": 50, "normal": 0} ___JSON_END___
+                `;
+
+                // 이미지 수집 (비동기 처리를 위해 다시 순회)
+                // 주의: FileReader는 비동기이므로, 위에서 이미 img.src에 base64가 있다고 가정하고 가져옴.
+                let contentParts = [{ text: prompt }];
+                
+                for(let i=0; i<inputs.length; i++) {
+                    if(inputs[i].files[0]) {
+                        const img = inputs[i].closest('.upload-wrapper').querySelector('.preview-img');
+                        if(img.src.startsWith('data:image')) {
+                            contentParts.push({ 
+                                inline_data: { 
+                                    mime_type: "image/jpeg", 
+                                    data: img.src.split(',')[1] 
+                                } 
+                            });
+                        }
+                    }
+                }
+
+                // [직접 호출]
+                // callGemini 함수는 하나의 텍스트와 하나의 이미지만 받도록 간단히 짰었지만,
+                // 여기서는 여러 이미지를 보내야 하므로 fetch 로직을 여기서 직접 구성하는 게 안전함.
+                
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+                const payload = {
+                    contents: [{ parts: contentParts }],
                     safetySettings: [
                         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
                         { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
                         { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
                         { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
                     ]
+                };
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
 
-                const prompt = `
-                    당신은 건축물리 전문가입니다.
-                    ${CONDENSATION_DB}
-                    [현장] TDR:${tdrVal}, VAP:${vapVal}, 창호:${winType}, 증상:${defect}
-                    [특별 요청] 6번 사진(MR12)이 있다면, 화면의 숫자를 읽고 단열 불량 여부를 상세히 분석하라.
-                    [요청] 원인, 사진분석, 솔루션 작성. JSON포함: ___JSON_START___ {"ventilation": 50, "insulation": 50, "normal": 0} ___JSON_END___
-                `;
-
-                const result = await model.generateContent({ contents: [{ parts: [{ text: prompt }, ...imageParts] }] });
-                let text = result.response.text();
+                if (!response.ok) throw new Error(response.statusText);
+                
+                const data = await response.json();
+                const text = data.candidates[0].content.parts[0].text;
 
                 let jsonMatch = text.match(/___JSON_START___([\s\S]*?)___JSON_END___/);
+                let cleanText = text;
+                
                 if(jsonMatch) {
                     const jsonStr = jsonMatch[1].replace(/```json|```/g, '').trim();
                     const jsonData = JSON.parse(jsonStr);
                     drawChart(jsonData);
-                    text = text.replace(jsonMatch[0], "");
+                    cleanText = text.replace(jsonMatch[0], "");
                     chartSection.style.display = 'block';
                 }
 
                 const md = window.markdownit();
-                contentDiv.innerHTML = md.render(text);
+                contentDiv.innerHTML = md.render(cleanText);
                 loading.style.display = 'none';
                 contentDiv.style.display = 'block';
 
